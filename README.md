@@ -19,5 +19,5 @@ To actively develop a pack, do the same but with `watch` instead of `build`. Thi
 Example:
 
 ```sh
-npm run build datapacks/1.16/graves
+npm run watch datapacks/1.16/graves
 ```
