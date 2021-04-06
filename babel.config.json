@@ -1,0 +1,21 @@
+{
+	"presets": [
+		"@babel/preset-typescript"
+	],
+	"plugins": [
+		[
+			"module-resolver",
+			{
+				"root": [
+					"."
+				],
+				"extensions": [
+					".js",
+					".ts",
+					".json"
+				]
+			}
+		]
+	],
+	"sourceMaps": true
+}

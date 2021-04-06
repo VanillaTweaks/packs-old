@@ -13,10 +13,8 @@
 		"noImplicitAny": true,
 		"allowJs": true,
 		"forceConsistentCasingInFileNames": true,
+		"noEmit": true,
+		"isolatedModules": true,
 		"baseUrl": "."
-	},
-	"include": [
-		"datapacks/**/*.ts",
-		"modules/**/*.ts"
-	]
+	}
 }
