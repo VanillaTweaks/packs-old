@@ -30,7 +30,7 @@ export const pageHead = (options: {
 	horizontalBar();
 	const spaces = ' '.repeat(options.spaces);
 	tellraw('@s', [
-		spaces + (options.title || meta.name),
+		spaces + (options.title || meta.title),
 		{ text: ' / ', color: 'gray' },
 		(options.subtitle || 'Global Settings') + (options.dev ? `${spaces.slice(0, -1)}.` : spaces)
 	]);

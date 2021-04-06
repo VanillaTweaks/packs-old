@@ -1,7 +1,7 @@
 import type { SandstoneConfig } from 'sandstone';
 import path from 'path';
 import fs from 'fs-extra';
-import { gameVersion, namespace, name, version, listed } from 'modules/meta';
+import { gameVersion, namespace, title, version, listed } from 'modules/meta';
 import { packState } from 'modules/datapacks/pack/state';
 import packFormats from 'modules/datapacks/packFormats.json';
 
@@ -12,7 +12,7 @@ const config: SandstoneConfig = {
 	formatVersion: packFormats.default || (packFormats as any)[gameVersion],
 	description: [
 		'',
-		{ text: `${name} ${version} for MC ${gameVersion}.x`, color: 'gold' },
+		{ text: `${title} ${version} for MC ${gameVersion}.x`, color: 'gold' },
 		{ text: '\nvanillatweaks.net', color: 'yellow' }
 	],
 	saveOptions: {

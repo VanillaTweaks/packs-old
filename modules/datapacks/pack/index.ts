@@ -49,7 +49,7 @@ const packProperties = {
 		let lastAdvancement = pack.Advancement(`meta/${advancementIndex++}`, {
 			display: {
 				icon: options.root.icon,
-				title: pack.name + ' '.repeat(options.root.titleSpaces || 0),
+				title: pack.title + ' '.repeat(options.root.titleSpaces || 0),
 				description: options.root.description,
 				show_toast: false,
 				announce_to_chat: false

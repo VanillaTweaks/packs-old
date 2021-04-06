@@ -12,10 +12,9 @@ export const gameVersion: string = packDirectory.slice(packDirectory.lastIndexOf
 
 export const namespace: string = packDirectory.slice(lastSlashIndex + 1);
 
-export const { name, version, listed }: {
-	name: string,
+export const { title, version, listed }: {
+	// This is `title` and not `name` because assigning a `name` property to a `BasePath` throws an error from assigning to the read-only function property `name`.
+	title: string,
 	version: string,
 	listed: boolean
 } = JSON.parse(fs.readFileSync(path.join(packDirectory, 'pack.json'), 'utf8'));
-
-console.log(version);
