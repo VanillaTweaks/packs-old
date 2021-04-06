@@ -3,5 +3,8 @@
 	"eslint.format.enable": true,
 	"editor.defaultFormatter": null,
 	"javascript.preferences.quoteStyle": "single",
-	"typescript.preferences.quoteStyle": "single"
+	"typescript.preferences.quoteStyle": "single",
+	"search.exclude": {
+		"**/out": true
+	}
 }
