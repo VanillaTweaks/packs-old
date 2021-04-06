@@ -1,0 +1,1 @@
+npx sand build .

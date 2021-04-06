@@ -1,0 +1,7 @@
+{
+	"editor.insertSpaces": false,
+	"eslint.format.enable": true,
+	"editor.defaultFormatter": null,
+	"javascript.preferences.quoteStyle": "single",
+	"typescript.preferences.quoteStyle": "single"
+}
