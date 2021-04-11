@@ -1,4 +1,4 @@
-import type { JsonTextComponent } from 'sandstone';
+import type { JSONTextComponent } from 'sandstone';
 
 export const specialFormattingKeys = [
 	'font',
@@ -12,7 +12,7 @@ export const specialFormattingKeys = [
 	'clickEvent'
 ] as const;
 
-export const hasNoSpecialFormatting = (component: JsonTextComponent): boolean => {
+export const hasNoSpecialFormatting = (component: JSONTextComponent): boolean => {
 	if (typeof component === 'object') {
 		if ('text' in component) {
 			for (const key of specialFormattingKeys) {
@@ -31,15 +31,15 @@ const lineBreaks = /^\n*$/;
 const whitespace = /^\s*$/;
 
 /** Checks whether the `source` JSON text component can be merged into the `target` JSON text component, given neither are arrays. */
-export const canMergeComponents = (source: JsonTextComponent, target: JsonTextComponent, toLeft = false): boolean => {
+export const canMergeComponents = (source: JSONTextComponent, target: JSONTextComponent, toLeft = false): boolean => {
 	if (source instanceof Array || target instanceof Array || typeof target === 'number' || typeof target === 'boolean') {
 		return false;
 	}
-	
+
 	if (typeof source === 'string' && typeof target === 'string') {
 		return true;
 	}
-	
+
 	if (typeof source === 'object') {
 		if (
 			'text' in source
@@ -50,25 +50,25 @@ export const canMergeComponents = (source: JsonTextComponent, target: JsonTextCo
 		) {
 			if (!lineBreaks.test(source.text.toString())) {
 				const keysWhichMustMatch: Array<keyof typeof source> = [...specialFormattingKeys];
-				
+
 				if (!whitespace.test(source.text.toString())) {
 					keysWhichMustMatch.push('color');
 				}
-				
+
 				for (const key of keysWhichMustMatch) {
 					if (source[key] !== target[key]) {
 						return false;
 					}
 				}
 			}
-			
+
 			// If this point is reached, either the source text is line breaks or all necessary keys match.
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	// If this point is reached, the source is primitive.
 	return typeof target === 'object' && 'text' in target && (
 		lineBreaks.test(source.toString()) || (
@@ -80,32 +80,32 @@ export const canMergeComponents = (source: JsonTextComponent, target: JsonTextCo
 };
 
 /** Concatenates line breaks and spaces into their siblings, spreads unnecessary arrays, and merges sibling components which have equivalent properties. */
-export function optimizeComponent(component: JsonTextComponent, options?: {
+export function optimizeComponent(component: JSONTextComponent, options?: {
 	mustReturnArray?: false,
 	modifiedCallback?: () => void
-}): JsonTextComponent;
+}): JSONTextComponent;
 
-export function optimizeComponent(component: JsonTextComponent, options: {
+export function optimizeComponent(component: JSONTextComponent, options: {
 	mustReturnArray: true,
 	modifiedCallback?: () => void
-}): JsonTextComponent[];
+}): JSONTextComponent[];
 
 // This ESLint comment is necessary because the rule wants me to use an arrow function, which does not allow for the overloading used here.
 // eslint-disable-next-line func-style
-export function optimizeComponent(component: JsonTextComponent, options: {
+export function optimizeComponent(component: JSONTextComponent, options: {
 	mustReturnArray?: boolean,
 	modifiedCallback?: () => void
-} = {}): JsonTextComponent {
+} = {}): JSONTextComponent {
 	let modified = false;
-	
+
 	if (component instanceof Array) {
 		for (let i = 0; i < component.length; i++) {
 			if (i < 0) {
 				continue;
 			}
-			
+
 			const item = component[i];
-			
+
 			if (item instanceof Array) {
 				component.splice(i, 1, ...item);
 				modified = true;
@@ -159,7 +159,7 @@ export function optimizeComponent(component: JsonTextComponent, options: {
 				}
 			}
 		}
-		
+
 		if (!options.mustReturnArray && component.length === 1) {
 			component = component[0];
 			modified = true;
@@ -170,7 +170,7 @@ export function optimizeComponent(component: JsonTextComponent, options: {
 				optimizeComponent(item);
 			}
 		}
-		
+
 		if ('extra' in component && component.extra) {
 			component.extra = optimizeComponent(component.extra, {
 				mustReturnArray: true,
@@ -179,17 +179,17 @@ export function optimizeComponent(component: JsonTextComponent, options: {
 				}
 			})!;
 		}
-		
+
 		const keys = Object.keys(component);
 		if (keys.length === 1 && keys[0] === 'text') {
 			component = (component as { text: string }).text;
 			modified = true;
 		}
 	}
-	
+
 	if (modified && options.modifiedCallback) {
 		options.modifiedCallback();
 	}
-	
+
 	return component;
 }

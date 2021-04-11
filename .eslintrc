@@ -171,10 +171,10 @@
 		"no-negated-condition": "error",
 		"no-new-object": "error",
 		"no-trailing-spaces": [
-			"error",
+			"warn",
 			{
-				"skipBlankLines": true,
-				"ignoreComments": true
+				"skipBlankLines": false,
+				"ignoreComments": false
 			}
 		],
 		"no-unneeded-ternary": "error",
@@ -211,7 +211,7 @@
 		"prefer-object-spread": "error",
 		"quote-props": [
 			"error",
-			"as-needed"
+			"consistent-as-needed"
 		],
 		"quotes": [
 			"error",

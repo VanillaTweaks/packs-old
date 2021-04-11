@@ -3,13 +3,13 @@ import { useVT, VT } from 'modules/datapacks/vanillatweaks';
 import type { RootVTBasePath } from 'modules/datapacks/vanillatweaks';
 import { packState } from 'modules/datapacks/pack/state';
 import { BasePath } from 'sandstone';
-import type { AdvancementJSON, JsonTextComponent } from 'sandstone';
+import type { AdvancementJSON, JSONTextComponent } from 'sandstone';
 
 export { packState };
 
 type MetaAdvancementOptions = {
 	titleSpaces?: number,
-	description: JsonTextComponent & ['', ...unknown[]]
+	description: JSONTextComponent & ['', ...unknown[]]
 };
 
 type AdvancementIcon = NonNullable<AdvancementJSON['display']>['icon'];

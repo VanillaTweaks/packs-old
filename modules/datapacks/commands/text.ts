@@ -1,7 +1,7 @@
 import * as meta from 'modules/meta';
 import { optimizeComponent } from 'modules/datapacks/textComponents';
 import { tellraw } from 'sandstone';
-import type { JsonTextComponent } from 'sandstone';
+import type { JSONTextComponent } from 'sandstone';
 
 /** Runs a `tellraw` command to display a horizontal bar in chat to `@s`. */
 export const horizontalBar = () => {
@@ -85,19 +85,19 @@ export const configLine = (
 						description?: never,
 						runCommand?: never
 					} | {
-						description?: JsonTextComponent,
+						description?: JSONTextComponent,
 						runCommand: string
 					}
 				)
 			) | {
 				type: 'input',
-				description: JsonTextComponent,
+				description: JSONTextComponent,
 				suggestCommand: string,
 				runCommand?: never,
 				accepts?: string,
 				default?: string,
 				current?: {
-					value: JsonTextComponent,
+					value: JSONTextComponent,
 					unit?: string
 				}
 			}
@@ -105,11 +105,11 @@ export const configLine = (
 	)
 ) => {
 	const color = configColors[options.type];
-	const component: JsonTextComponent & {
+	const component: JSONTextComponent & {
 		hoverEvent?: {
-			contents: JsonTextComponent[]
+			contents: JSONTextComponent[]
 		},
-		extra: JsonTextComponent[]
+		extra: JSONTextComponent[]
 	} = {
 		text: '',
 		extra: [
