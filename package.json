@@ -14,7 +14,7 @@
 	},
 	"dependencies": {
 		"fs-extra": "^9.1.0",
-		"sandstone": "^0.11.1"
+		"sandstone": "^0.12.6"
 	},
 	"devDependencies": {
 		"@babel/cli": "^7.13.14",

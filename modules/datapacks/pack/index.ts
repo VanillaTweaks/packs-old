@@ -2,7 +2,7 @@ import * as meta from 'modules/meta';
 import { useVT, VT } from 'modules/datapacks/vanillatweaks';
 import type { RootVTBasePath } from 'modules/datapacks/vanillatweaks';
 import { packState } from 'modules/datapacks/pack/state';
-import { BasePath } from 'sandstone';
+import { BasePath, NBT } from 'sandstone';
 import type { AdvancementJSON, JSONTextComponent } from 'sandstone';
 
 export { packState };
@@ -45,7 +45,7 @@ const packProperties = {
 		opUsage?: Partial<MetaAdvancementOptions>
 	}) => {
 		let advancementIndex = 1;
-		
+
 		let lastAdvancement = pack.Advancement(`meta/${advancementIndex++}`, {
 			display: {
 				icon: options.root.icon,
@@ -58,7 +58,14 @@ const packProperties = {
 				display: {
 					icon: {
 						item: 'minecraft:player_head',
-						nbt: '{SkullOwner:{Id:[I;0,0,0,0],Properties:{textures:[{Value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTg1YzMzNWM1MjVjZGFkY2Q4MmU4MDA4MzU1N2M2OTYzMGRmYjlhMWVkZjU5OTc0YzdmNjU4ZGI1MWEwYTFkOSJ9fX0="}]}}}'
+						nbt: NBT.stringify({
+							SkullOwner: NBT.intArray([0, 0, 0, 0]),
+							Properties: {
+								textures: [{
+									Value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTg1YzMzNWM1MjVjZGFkY2Q4MmU4MDA4MzU1N2M2OTYzMGRmYjlhMWVkZjU5OTc0YzdmNjU4ZGI1MWEwYTFkOSJ9fX0='
+								}]
+							}
+						})
 					},
 					title: 'Vanilla Tweaks',
 					frame: 'challenge',
@@ -83,11 +90,11 @@ const packProperties = {
 				}
 			}
 		});
-		
+
 		packState.finishFunctions.push(() => {
 			if (packState.hasUninstallFunction || packState.hasConfigFunction) {
 				// Automatically update `opUsage` meta advancement.
-				
+
 				if (!options.opUsage) {
 					options.opUsage = {};
 				}
@@ -109,13 +116,13 @@ const packProperties = {
 					);
 				}
 			}
-			
+
 			for (const metaAdvancementKey in metaAdvancementsJSON) {
 				const advancementOptions = options[metaAdvancementKey as keyof typeof metaAdvancementsJSON] as MetaAdvancementOptions | undefined;
-				
+
 				if (advancementOptions) {
 					const metaAdvancementType = metaAdvancementsJSON[metaAdvancementKey as keyof typeof metaAdvancementsJSON];
-					
+
 					lastAdvancement = pack.Advancement(`meta/${advancementIndex++}`, {
 						display: {
 							icon: metaAdvancementType.icon,

@@ -1,6 +1,6 @@
 import { pack, pack_ } from 'modules/datapacks/pack';
 import { configLine, horizontalBar, pageHead } from 'modules/datapacks/commands/text';
-import { advancement, execute, schedule, tag } from 'sandstone';
+import { advancement, execute, NBT, schedule, tag } from 'sandstone';
 
 pack.options.shortName = 'graves';
 
@@ -31,15 +31,15 @@ pack.setMetaAdvancements({
 });
 
 pack.onLoad(() => {
-	
+
 });
 
 pack.onUninstall(() => {
-	
+
 });
 
 pack.ConfigFunction(() => {
-	
+
 });
 
 const interactWithGraveAdvancement = pack.FunctionalAdvancement('interact_with_grave', {
@@ -47,10 +47,12 @@ const interactWithGraveAdvancement = pack.FunctionalAdvancement('interact_with_g
 	conditions: {
 		entity: {
 			type: 'minecraft:armor_stand',
-			nbt: '{Tags:["graves.hitbox"]}'
+			nbt: NBT.stringify({
+				Tags: ['graves.hitbox']
+			})
 		}
 	}
-}, pack_.MCFunction('interact_with_grave', () => {
+}, pack_`interact_with_grave`, () => {
 	const activateGrave = pack_.MCFunction('activate_grave', () => {
 		advancement.revoke('@s').only(interactWithGraveAdvancement);
 		tag('@s').add('graves.subject');
@@ -58,7 +60,7 @@ const interactWithGraveAdvancement = pack.FunctionalAdvancement('interact_with_g
 		execute.as('@e[type=minecraft:armor_stand]');
 	});
 	activateGrave();
-	schedule.function(pack_.MCFunction('activate_graves', () => {
+	schedule.function(pack_`activate_graves`, () => {
 		execute.as(`@a[advancements={${interactWithGraveAdvancement}=true}]`).at('@s').run(activateGrave);
-	}), '1t', 'append');
-}));
+	}, '1t', 'append');
+});

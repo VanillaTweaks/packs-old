@@ -11,16 +11,19 @@ export type VTBasePathOptions = {
 export type VTBasePathProperties = {
 	/**
 	 * Get a child path of the current `BasePath`.
-	 * 
+	 *
 	 * The namespace cannot be provided in a child path.
 	 */
 	child: (...args: Parameters<BasePathInstance['child']>) => VTBasePath,
 	/**
 	 * Adds an Advancement to be used only for the sake of its reward function.
-	 * 
+	 *
 	 * Use this instead of Advancement whenever applicable.
 	 */
-	FunctionalAdvancement: (name: string, criterion: AdvancementJSON['criteria'][0], rewardFunction: MCFunctionInstance) => AdvancementInstance
+	FunctionalAdvancement: (name: string, criterion: AdvancementJSON['criteria'][0], ...args: (
+		[MCFunctionInstance]
+		| Parameters<typeof pack.MCFunction>
+	)) => AdvancementInstance
 };
 
 /** A VT `BasePath`. */
@@ -51,7 +54,7 @@ export type ShortMCFunction = <
  * ```
  * MCFunction(someImplicitBasePath, callback, { onConflict })
  * ```
- * 
+ *
  * Like `ShortMCFunction` but with an extra `onConflict` parameter.
  */
 export type EventMCFunction = <
@@ -67,7 +70,7 @@ type RootVTBasePathProperties = {
 	 * A child of this `BasePath` whose directory is named to discourage users from running functions and function tags created in it.
 	 *
 	 * Every `MCFunction` or `Tag<'functions'>` should always be created under this unless there is intent for it to be run freely by users.
-	 * 
+	 *
 	 * ⚠️ Please use `basePath_` instead of `basePath.internal` wherever possible.
 	 */
 	internal: VTBasePath,
@@ -78,9 +81,9 @@ type RootVTBasePathProperties = {
 	onUninstall: EventMCFunction,
 	/**
 	 * A template tag function which prepends the `BasePath`'s `options.shortName` to the input, separated by a period.
-	 * 
+	 *
 	 * This should always be used instead of writing a `BasePath`'s short name prefix explicitly.
-	 * 
+	 *
 	 * Example:
 	 * ```
 	 * VT.pre`example` === 'vt.example' // true
@@ -100,12 +103,12 @@ export const useVT = (
 	options: VTBasePathOptions = {}
 ): RootVTBasePath => {
 	const originalChildFunction = basePath.child.bind(basePath);
-	
+
 	/** Properties assigned to all `VTBasePath`s. */
 	const vtProperties: VTBasePathProperties = {
 		// `useVT` normally returns a `RootVTBasePath`, but child `BasePath`s should not be `RootVTBasePath`s, so the assertion `as VTBasePath` is necessary.
 		child: (...args) => useVT(originalChildFunction(...args)) as VTBasePath,
-		FunctionalAdvancement: (name, criterion, rewardFunction) => self.Advancement(name, {
+		FunctionalAdvancement: (name, criterion, ...args) => self.Advancement(name, {
 			display: {
 				icon: {
 					item: 'minecraft:air'
@@ -120,13 +123,18 @@ export const useVT = (
 				[`${self.namespace}:${name}`]: criterion
 			},
 			rewards: {
-				function: rewardFunction
+				function: (
+					typeof args[0] === 'function'
+						? args[0]
+						// The below type assertion sucks, but I don't think there's a better way. If there is then please tell me.
+						: pack.internal.MCFunction(...args as unknown as Parameters<typeof pack.MCFunction>)
+				)
 			}
 		})
 	};
-	
+
 	const self: VTBasePath = Object.assign(basePath, vtProperties);
-	
+
 	if (!basePath.directory) {
 		/** Properties assigned to all `RootVTBasePath`s. */
 		const vtRootProperties: RootVTBasePathProperties = {
@@ -153,12 +161,12 @@ export const useVT = (
 				return rootSelf.MCFunction('config', callback);
 			}
 		};
-		
+
 		const rootSelf: RootVTBasePath = Object.assign(self, vtRootProperties);
-		
+
 		return rootSelf;
 	}
-	
+
 	// `self` is not actually a `RootVTBasePath`, but `vtProperties.child` should be the only case where this `return` is executed, in which case it is asserted back `as VTBasePath`.
 	return self as RootVTBasePath;
 };
@@ -170,11 +178,11 @@ const vtProperties = {
 			pack.onLoad(() => {
 				scoreboard.objectives.add(VT.pre`temp`, 'dummy');
 			}, 'prepend');
-			
+
 			VT.onUninstall(() => {
 				scoreboard.objectives.remove(VT.pre`temp`);
 			}, 'append');
-			
+
 			return VT.pre`temp`;
 		},
 		get length() {
@@ -184,7 +192,7 @@ const vtProperties = {
 } as {
 	/**
 	 * When stringified, evaluates to `'vt.temp'`, the name of the VT temp scoreboard objective, and creates that objective if it has not already been created.
-	 * 
+	 *
 	 * For scoreboard objective names, this should always be used instead of `VT.pre` or `'vt.temp'`.
 	 */
 	temp: string
@@ -194,7 +202,7 @@ const vtProperties = {
 export const VT: RootVTBasePath & typeof vtProperties = Object.assign(
 	useVT(
 		BasePath({
-			namespace: 'vanillatweaks',
+			namespace: 'vanillatweaks'
 			// TODO: Uncomment this when it is implemented.
 			// onConflict: {
 			// 	// I don't remember why I set these.
