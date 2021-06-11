@@ -72,7 +72,7 @@ const interactWithGraveAdvancement = pack.FunctionalAdvancement('interact_with_g
 			})
 		}
 	}
-}, pack_`interact_with_grave`, () => {
+}, 'interact_with_grave', () => {
 	activateGrave();
 	schedule.function(pack_`activate_graves`, () => {
 		execute.as(`@a[advancements={${interactWithGraveAdvancement}=true}]`).at('@s').run(activateGrave);
