@@ -12,7 +12,7 @@ export const horizontalBar = () => {
 export const pageHead = (options: {
 	/**
 	 * How many spaces to place before and after the center text.
-	 * 
+	 *
 	 * This should always be set to the maximum possible integer such that, when the `dev` option is set to `true`, the period does not wrap to the next line when using default Minecraft chat settings.
 	 */
 	spaces: number,
@@ -22,7 +22,7 @@ export const pageHead = (options: {
 	subtitle?: string,
 	/**
 	 * When `true`, places a period instead of the last space in the center text.
-	 * 
+	 *
 	 * See the description of the `spaces` option for more information.
 	 * */
 	dev?: boolean
@@ -52,7 +52,7 @@ export const configColors = {
 
 /**
  * Returns a function which runs a `tellraw @s` command for a config line.
- * 
+ *
  * Examples:
  * * ```
  * configLine(...)();
@@ -68,7 +68,7 @@ export const configLine = (
 			label: string,
 			/**
 			 * The command to run if the user clicks the preview button on this line.
-			 * 
+			 *
 			 * Leave this undefined to hide the preview button.
 			 */
 			previewCommand?: string
