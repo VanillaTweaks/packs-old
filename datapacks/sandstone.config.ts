@@ -9,7 +9,10 @@ const config: SandstoneConfig = {
 	namespace: 'vanillatweaks',
 	name: namespace,
 	packUid: namespace,
-	formatVersion: packFormats.default || (packFormats as any)[gameVersion],
+	formatVersion: (
+		packFormats.default
+		|| (packFormats as Record<string, number>)[gameVersion]
+	),
 	description: [
 		'',
 		{ text: `${title} ${version} for MC ${gameVersion}.x`, color: 'gold' },
@@ -28,11 +31,20 @@ const config: SandstoneConfig = {
 		afterAll: (async ({ destination }) => {
 			if (destination && listed) {
 				const vtName = namespace.replace(/_/g, ' ');
+
 				const vtPath = path.join(__dirname, `../../VanillaTweaks/resources/datapacks/${gameVersion}/${vtName}`);
 				await fs.remove(vtPath);
 				await fs.copy(destination, vtPath);
+
 				const metaPath = path.join(__dirname, `../../VanillaTweaks/resources/json/${gameVersion}/dpcategories.json`);
-				await fs.writeFile(metaPath, (await fs.readFile(metaPath, 'utf8')).replace(new RegExp(`((\\n\\t+)"name": "${vtName}",(?:\\2.+,)*\\2"version": )"[^"]+"`), `$1"${version}"`));
+				await fs.writeFile(
+					metaPath,
+					(await fs.readFile(metaPath, 'utf8'))
+						.replace(
+							new RegExp(`((\\n\\t+)"name": "${vtName}",(?:\\2.+,)*\\2"version": )"[^"]+"`),
+							`$1"${version}"`
+						)
+				);
 			}
 		})
 	}
