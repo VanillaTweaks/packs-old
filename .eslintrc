@@ -18,10 +18,12 @@
 	],
 	"rules": {
 		"no-async-promise-executor": "off",
+		"no-cond-assign": "off",
+		"no-control-regex": "off",
+		"no-debugger": "warn",
 		"no-empty": "off",
 		"no-unsafe-optional-chaining": "error",
 		"no-useless-backreference": "warn",
-		"require-atomic-updates": "warn",
 		"curly": "error",
 		"default-param-last": "error",
 		"dot-location": [
@@ -37,6 +39,7 @@
 		"no-case-declarations": "off",
 		"no-constructor-return": "error",
 		"no-else-return": "error",
+		"no-empty-pattern": "warn",
 		"no-extra-bind": "error",
 		"no-extra-label": "warn",
 		"no-floating-decimal": "error",
@@ -44,6 +47,7 @@
 		"no-octal-escape": "error",
 		"no-proto": "error",
 		"no-return-await": "error",
+		"no-self-assign": "off",
 		"no-self-compare": "error",
 		"no-sequences": "error",
 		"no-throw-literal": "error",
@@ -177,7 +181,12 @@
 				"ignoreComments": false
 			}
 		],
-		"no-unneeded-ternary": "error",
+		"no-unneeded-ternary": [
+			"error",
+			{
+				"defaultAssignment": false
+			}
+		],
 		"no-whitespace-before-property": "error",
 		"object-curly-newline": [
 			"error",
@@ -214,11 +223,8 @@
 			"consistent-as-needed"
 		],
 		"quotes": [
-			"error",
-			"single",
-			{
-				"avoidEscape": true
-			}
+			"warn",
+			"single"
 		],
 		"semi": [
 			"warn",
@@ -447,8 +453,6 @@
 				"@typescript-eslint/prefer-function-type": "error",
 				"@typescript-eslint/prefer-literal-enum-member": "error",
 				"@typescript-eslint/prefer-reduce-type-parameter": "error",
-				"@typescript-eslint/prefer-regexp-exec": "error",
-				"@typescript-eslint/prefer-string-starts-ends-with": "error",
 				"@typescript-eslint/prefer-ts-expect-error": "error",
 				"@typescript-eslint/triple-slash-reference": "error",
 				"@typescript-eslint/type-annotation-spacing": [
@@ -541,11 +545,8 @@
 				"@typescript-eslint/no-useless-constructor": "warn",
 				"quotes": "off",
 				"@typescript-eslint/quotes": [
-					"error",
-					"single",
-					{
-						"avoidEscape": true
-					}
+					"warn",
+					"single"
 				],
 				"semi": "off",
 				"@typescript-eslint/semi": [
