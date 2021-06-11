@@ -9,7 +9,7 @@ To compile a pack, run `npm run build` followed by the path of the data pack's d
 Example:
 
 ```sh
-npm run build datapacks/1.16/graves
+npm run build datapacks/1.17/graves
 ```
 
 ## Development
@@ -19,5 +19,5 @@ To actively develop a pack, do the same but with `watch` instead of `build`. Thi
 Example:
 
 ```sh
-npm run watch datapacks/1.16/graves
+npm run watch datapacks/1.17/graves
 ```
