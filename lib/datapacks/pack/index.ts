@@ -10,7 +10,7 @@ import type { AdvancementJSON, JSONTextComponent } from 'sandstone';
 export { packState };
 
 type MetaAdvancementOptions = {
-	/** The number of spaces after the title, so the advancements' descriptions aren't so squished. */
+	/** The number of spaces after the title, so the advancement's description isn't so squished. */
 	titleSpaces?: number,
 	description: JSONTextComponent & ['', ...unknown[]]
 };
