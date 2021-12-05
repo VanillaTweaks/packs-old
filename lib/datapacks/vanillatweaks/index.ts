@@ -69,10 +69,6 @@ type RootVTBasePathProperties = {
 	 * ⚠️ Please use `basePath_` instead of `basePath.internal` wherever possible.
 	 */
 	internal: VTBasePath,
-	/** Adds code to the pack's load function. */
-	onLoad: EventMCFunction,
-	/** Adds code to the pack's uninstall function. */
-	onUninstall: EventMCFunction,
 	/**
 	 * A template tag function which prepends the `BasePath`'s namespace to the input, separated by a period.
 	 *
@@ -84,8 +80,12 @@ type RootVTBasePathProperties = {
 	 * ```
 	 */
 	pre: (template: TemplateStringsArray, ...substitutions: any[]) => string,
+	/** Adds code to the pack's load function. */
+	onLoad: EventMCFunction,
+	/** Adds code to the pack's uninstall function. */
+	onUninstall: EventMCFunction,
 	/** Sets the pack's config function. */
-	ConfigFunction: ShortMCFunction
+	setConfigFunction: ShortMCFunction
 };
 
 /** A VT `BasePath` which was *not* returned from `basePath.child(...)`. Extends `VTBasePath`. */
@@ -93,35 +93,37 @@ export type RootVTBasePath = VTBasePath & RootVTBasePathProperties;
 
 /** This function extends `BasePath`s and should wrap every new instance of one. */
 export const withVT = (basePath: BasePathInstance): RootVTBasePath => {
-	const originalChildFunction = basePath.child.bind(basePath);
+	const createChild = basePath.child.bind(basePath);
 
 	/** Properties assigned to all `VTBasePath`s. */
 	const vtProperties: VTBasePathProperties = {
 		// `withVT` normally returns a `RootVTBasePath`, but child `BasePath`s should not be `RootVTBasePath`s, so the assertion `as VTBasePath` is necessary.
-		child: (...args) => withVT(originalChildFunction(...args)) as VTBasePath,
-		FunctionalAdvancement: (name, criterion, ...args) => self.Advancement(name, {
-			display: {
-				icon: {
-					item: 'minecraft:air'
+		child: (...args) => withVT(createChild(...args)) as VTBasePath,
+		FunctionalAdvancement: (name, criterion, ...args) => (
+			self.Advancement(name, {
+				display: {
+					icon: {
+						item: 'minecraft:air'
+					},
+					title: '',
+					description: '',
+					show_toast: false,
+					announce_to_chat: false,
+					hidden: true
 				},
-				title: '',
-				description: '',
-				show_toast: false,
-				announce_to_chat: false,
-				hidden: true
-			},
-			criteria: {
-				[`${self.namespace}:${name}`]: criterion
-			},
-			rewards: {
-				function: (
-					typeof args[0] === 'function'
-						? args[0]
-						// The below type assertion sucks, but I don't think there's a better way. If there is then please tell me.
-						: pack.internal.MCFunction(...args as unknown as Parameters<typeof pack.MCFunction>)
-				)
-			}
-		})
+				criteria: {
+					[`${self.namespace}:${name}`]: criterion
+				},
+				rewards: {
+					function: (
+						typeof args[0] === 'function'
+							? args[0]
+							// The below type assertion sucks, but I don't think there's a better way. If there is then please tell me.
+							: pack.internal.MCFunction(...args as unknown as Parameters<typeof pack.MCFunction>)
+					)
+				}
+			})
+		)
 	};
 
 	const self: VTBasePath = Object.assign(basePath, vtProperties);
@@ -129,11 +131,19 @@ export const withVT = (basePath: BasePathInstance): RootVTBasePath => {
 	if (!basePath.directory) {
 		/** Properties assigned to all `RootVTBasePath`s. */
 		const vtRootProperties: RootVTBasePathProperties = {
-			internal: self.child({ directory: 'zz/do_not_run_or_the_pack_may_break' }),
-			onLoad: (callback, onConflict = 'append') => rootSelf.internal.MCFunction('load', callback, {
-				runOnLoad: true,
-				onConflict
+			internal: self.child({
+				directory: 'zz/do_not_run_or_the_pack_may_break'
 			}),
+			pre: (template, ...substitutions) => (
+				rootSelf.namespace
+				+ template.map((string, i) => string + (i in substitutions ? substitutions[i] : '')).join('')
+			),
+			onLoad: (callback, onConflict = 'append') => (
+				rootSelf.internal.MCFunction('load', callback, {
+					runOnLoad: true,
+					onConflict
+				})
+			),
 			onUninstall: (callback, onConflict = 'prepend') => {
 				if (rootSelf.namespace === pack.namespace) {
 					packState.hasUninstallFunction = true;
@@ -143,8 +153,7 @@ export const withVT = (basePath: BasePathInstance): RootVTBasePath => {
 					onConflict
 				});
 			},
-			pre: (template, ...substitutions) => rootSelf.namespace + template.map((string, i) => string + (i in substitutions ? substitutions[i] : '')).join(''),
-			ConfigFunction: callback => {
+			setConfigFunction: callback => {
 				if (rootSelf.namespace === pack.namespace) {
 					packState.hasConfigFunction = true;
 				}

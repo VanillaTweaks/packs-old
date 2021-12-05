@@ -36,7 +36,7 @@ pack.onUninstall(() => {
 
 });
 
-pack.ConfigFunction(() => {
+pack.setConfigFunction(() => {
 
 });
 
