@@ -108,10 +108,12 @@ export default function simplifyComponent(component: JSONTextComponent, options:
 
 			if (item instanceof Array) {
 				component.splice(i, 1, ...item);
+
 				modified = true;
 				i -= 2;
 			} else if (typeof item === 'number' || typeof item === 'boolean') {
 				component[i] = item.toString();
+
 				modified = true;
 				i -= 2;
 			} else {
@@ -137,6 +139,7 @@ export default function simplifyComponent(component: JSONTextComponent, options:
 								text: (typeof item === 'object' ? (item as any).text : item) + (nextItem as any).text
 							}
 					);
+
 					modified = true;
 					i -= 2;
 				} else {
@@ -146,6 +149,7 @@ export default function simplifyComponent(component: JSONTextComponent, options:
 							...previousItem as any,
 							text: (previousItem as any).text + (typeof item === 'object' ? (item as any).text : item)
 						});
+
 						modified = true;
 						i -= 3;
 					} else {
@@ -162,6 +166,7 @@ export default function simplifyComponent(component: JSONTextComponent, options:
 
 		if (!options.mustReturnArray && component.length === 1) {
 			component = component[0];
+
 			modified = true;
 		}
 	} else if (typeof component === 'object') {
@@ -183,6 +188,7 @@ export default function simplifyComponent(component: JSONTextComponent, options:
 		const keys = Object.keys(component);
 		if (keys.length === 1 && keys[0] === 'text') {
 			component = (component as { text: string }).text;
+
 			modified = true;
 		}
 	}

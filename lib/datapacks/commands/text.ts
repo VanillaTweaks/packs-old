@@ -28,12 +28,14 @@ export const pageHead = (options: {
 	dev?: boolean
 }) => {
 	horizontalBar();
+
 	const spaces = ' '.repeat(options.spaces);
 	tellraw('@s', [
 		spaces + (options.title || meta.title),
 		{ text: ' / ', color: 'gray' },
 		(options.subtitle || 'Global Settings') + (options.dev ? `${spaces.slice(0, -1)}.` : spaces)
 	]);
+
 	horizontalBar();
 };
 
