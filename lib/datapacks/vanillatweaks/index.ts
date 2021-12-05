@@ -167,13 +167,11 @@ const vtProperties = {
 export const VT: RootVTBasePath & typeof vtProperties = Object.assign(
 	withVT(
 		BasePath({
-			namespace: 'vanillatweaks'
-			// TODO: Uncomment this when it is implemented.
-			// onConflict: {
-			// 	// I don't remember why I set these.
-			// 	mcfunction: 'ignore',
-			// 	tag: 'ignore'
-			// }
+			namespace: 'vanillatweaks',
+			onConflict: {
+				// This is so a library functions that create resources (e.g. `execute...run(...)` creating an `MCFunction`) don't try to create them multiple times when called multiple times.
+				default: 'ignore'
+			}
 		})
 	),
 	vtProperties
