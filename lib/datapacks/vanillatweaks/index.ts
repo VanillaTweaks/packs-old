@@ -11,9 +11,9 @@ export type VTBasePathProperties = {
 	 */
 	child: (...args: Parameters<BasePathInstance['child']>) => VTBasePath,
 	/**
-	 * Adds an Advancement to be used only for the sake of its reward function.
+	 * Adds an `Advancement` to be used only for the sake of its reward function.
 	 *
-	 * Use this instead of Advancement whenever applicable.
+	 * Use this instead of `Advancement` whenever applicable.
 	 */
 	FunctionalAdvancement: (name: string, criterion: AdvancementJSON['criteria'][0], ...args: (
 		[MCFunctionInstance]
@@ -76,11 +76,11 @@ type RootVTBasePathProperties = {
 	/**
 	 * A template tag function which prepends the `BasePath`'s namespace to the input, separated by a period.
 	 *
-	 * This should always be used instead of writing a `BasePath`'s short name prefix explicitly.
+	 * This should always be used instead of writing a `BasePath`'s namespace explicitly.
 	 *
 	 * Example:
 	 * ```
-	 * VT.pre`example` === 'vanillatweaks.example' // true
+	 * VT.pre`example` === 'vanillatweaks.example'
 	 * ```
 	 */
 	pre: (template: TemplateStringsArray, ...substitutions: any[]) => string,
