@@ -19,9 +19,16 @@
 	"rules": {
 		"no-async-promise-executor": "off",
 		"no-cond-assign": "off",
+		"no-constant-condition": [
+			"error",
+			{
+				"checkLoops": false
+			}
+		],
 		"no-control-regex": "off",
 		"no-debugger": "warn",
 		"no-empty": "off",
+		"no-prototype-builtins": "off",
 		"no-unsafe-optional-chaining": "error",
 		"no-useless-backreference": "warn",
 		"curly": "error",
@@ -71,10 +78,6 @@
 		"array-bracket-spacing": [
 			"error",
 			"never"
-		],
-		"array-element-newline": [
-			"error",
-			"consistent"
 		],
 		"brace-style": [
 			"error",
@@ -174,6 +177,17 @@
 		],
 		"no-negated-condition": "error",
 		"no-new-object": "error",
+		"no-restricted-syntax": [
+			"error",
+			{
+				"selector": "ForInStatement",
+				"message": "`for (const key of Object.keys(object))` is faster than `for (key in object)` (though `for (const value of Object.values(object))` is fastest)."
+			},
+			{
+				"selector": "Identifier[name=useCallback]",
+				"message": "Please use `useFunction` instead of `useCallback`."
+			}
+		],
 		"no-trailing-spaces": [
 			"warn",
 			{
@@ -214,7 +228,12 @@
 		],
 		"operator-linebreak": [
 			"error",
-			"before"
+			"before",
+			{
+				"overrides": {
+					"=": "none"
+				}
+			}
 		],
 		"prefer-exponentiation-operator": "error",
 		"prefer-object-spread": "error",
@@ -329,7 +348,6 @@
 		"prefer-numeric-literals": "error",
 		"prefer-rest-params": "error",
 		"prefer-spread": "error",
-		"prefer-template": "error",
 		"require-yield": "warn",
 		"rest-spread-spacing": [
 			"error",
@@ -349,7 +367,8 @@
 	"overrides": [
 		{
 			"files": [
-				"*.ts"
+				"*.ts",
+				"*.tsx"
 			],
 			"rules": {
 				"no-undef": "off",
@@ -368,10 +387,6 @@
 							"{}": false
 						}
 					}
-				],
-				"@typescript-eslint/class-literal-property-style": [
-					"error",
-					"fields"
 				],
 				"@typescript-eslint/consistent-indexed-object-style": [
 					"error",
@@ -452,7 +467,6 @@
 				"@typescript-eslint/prefer-as-const": "error",
 				"@typescript-eslint/prefer-function-type": "error",
 				"@typescript-eslint/prefer-literal-enum-member": "error",
-				"@typescript-eslint/prefer-reduce-type-parameter": "error",
 				"@typescript-eslint/prefer-ts-expect-error": "error",
 				"@typescript-eslint/triple-slash-reference": "error",
 				"@typescript-eslint/type-annotation-spacing": [
