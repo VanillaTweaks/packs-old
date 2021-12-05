@@ -132,7 +132,7 @@ export const withVT = (basePath: BasePathInstance): RootVTBasePath => {
 		return rootSelf;
 	}
 
-	// `self` is not actually a `RootVTBasePath`, but `vtProperties.child` should be the only case where this `return` is executed, in which case it is asserted back `as VTBasePath`.
+	// `self` is not actually a `RootVTBasePath`, but `vtProperties.child` should be the only case where this `return` is executed, in which case it is asserted back `as VTBasePath` outside this function.
 	return self as RootVTBasePath;
 };
 
