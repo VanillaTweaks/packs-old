@@ -1,20 +1,27 @@
 {
 	"compilerOptions": {
-		"declaration": true,
-		"importHelpers": true,
-		"module": "CommonJS",
-		"moduleResolution": "node",
-		"target": "ES2020",
-		"strict": true,
-		"esModuleInterop": true,
-		"resolveJsonModule": true,
-		"allowSyntheticDefaultImports": true,
-		"skipLibCheck": true,
-		"noImplicitAny": true,
+		"target": "esnext",
 		"allowJs": true,
+		"skipLibCheck": true,
+		"strict": true,
 		"forceConsistentCasingInFileNames": true,
 		"noEmit": true,
+		"incremental": true,
+		"esModuleInterop": true,
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
 		"isolatedModules": true,
-		"baseUrl": "."
-	}
+		"baseUrl": ".",
+		"downlevelIteration": true
+	},
+	"include": [
+		"**/*.js",
+		"**/*.ts",
+	],
+	"exclude": [
+		"node_modules",
+		".sandstone",
+		"out"
+	]
 }
