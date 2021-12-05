@@ -24,7 +24,7 @@ export const pageHead = (options: {
 	 * When `true`, places a period instead of the last space in the center text.
 	 *
 	 * See the description of the `spaces` option for more information.
-	 * */
+	 */
 	dev?: boolean
 }) => {
 	horizontalBar();
