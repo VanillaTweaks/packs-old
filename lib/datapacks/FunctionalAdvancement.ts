@@ -1,6 +1,6 @@
 import type { AdvancementJSON, MCFunctionInstance } from 'sandstone';
 import { Advancement } from 'sandstone';
-import { pack } from 'lib/datapacks/pack';
+import { pack_ } from 'lib/datapacks/pack';
 
 /**
  * Creates an `Advancement` to be used only for the sake of its reward function.
@@ -8,12 +8,12 @@ import { pack } from 'lib/datapacks/pack';
  * Use this instead of `Advancement` whenever applicable.
  */
 const FunctionalAdvancement = (
-	/** The namespaced name of this advancement. Shouldn't be on an `internal` base path like `pack_`. */
+	/** The namespaced name of this advancement. Shouldn't be on an internal base path like `pack_`. */
 	name: string,
 	criterion: AdvancementJSON['criteria'][0],
 	...args: (
 		[MCFunctionInstance]
-		| Parameters<typeof pack.MCFunction>
+		| Parameters<typeof pack_.MCFunction>
 	)
 ) => (
 	Advancement(name, {
@@ -34,7 +34,7 @@ const FunctionalAdvancement = (
 			function: (
 				typeof args[0] === 'function'
 					? args[0]
-					: pack.internal.MCFunction(...args as unknown as Parameters<typeof pack.MCFunction>)
+					: pack_.MCFunction(...args as unknown as Parameters<typeof pack_.MCFunction>)
 			)
 		}
 	})
