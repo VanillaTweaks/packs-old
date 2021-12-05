@@ -1,3 +1,5 @@
+// Provides the `BasePath`s for the data pack.
+
 import * as meta from 'lib/meta';
 import { withVT, VT } from 'lib/datapacks/vanillatweaks';
 import type { RootVTBasePath } from 'lib/datapacks/vanillatweaks';
@@ -8,6 +10,7 @@ import type { AdvancementJSON, JSONTextComponent } from 'sandstone';
 export { packState };
 
 type MetaAdvancementOptions = {
+	/** The number of spaces after the title, so the advancements' descriptions aren't so squished. */
 	titleSpaces?: number,
 	description: JSONTextComponent & ['', ...unknown[]]
 };
@@ -117,7 +120,7 @@ const packProperties = {
 				}
 			}
 
-			for (const metaAdvancementKey in metaAdvancementsJSON) {
+			for (const metaAdvancementKey of Object.keys(metaAdvancementsJSON)) {
 				const advancementOptions = options[metaAdvancementKey as keyof typeof metaAdvancementsJSON] as MetaAdvancementOptions | undefined;
 
 				if (advancementOptions) {
