@@ -1,3 +1,5 @@
+// Loads the pack's metadata to be imported from a module.
+
 import path from 'path';
 import fs from 'fs-extra';
 

@@ -2,11 +2,6 @@ import { pack, packState } from 'lib/datapacks/pack';
 import { BasePath, scoreboard } from 'sandstone';
 import type { AdvancementInstance, AdvancementJSON, MCFunctionInstance, BasePathInstance } from 'sandstone';
 
-export type VTBasePathOptions = {
-	/** The string to be used to prefix scoreboard objective names and entity tags, and to identify NBT tags. */
-	shortName?: string
-};
-
 /** The properties of all `VTBasePath`s which are not on `BasePathInstance`. */
 export type VTBasePathProperties = {
 	/**
@@ -74,19 +69,18 @@ type RootVTBasePathProperties = {
 	 * ⚠️ Please use `basePath_` instead of `basePath.internal` wherever possible.
 	 */
 	internal: VTBasePath,
-	options: VTBasePathOptions,
 	/** Adds code to the pack's load function. */
 	onLoad: EventMCFunction,
 	/** Adds code to the pack's uninstall function. */
 	onUninstall: EventMCFunction,
 	/**
-	 * A template tag function which prepends the `BasePath`'s `options.shortName` to the input, separated by a period.
+	 * A template tag function which prepends the `BasePath`'s namespace to the input, separated by a period.
 	 *
 	 * This should always be used instead of writing a `BasePath`'s short name prefix explicitly.
 	 *
 	 * Example:
 	 * ```
-	 * VT.pre`example` === 'vt.example' // true
+	 * VT.pre`example` === 'vanillatweaks.example' // true
 	 * ```
 	 */
 	pre: (template: TemplateStringsArray, ...substitutions: any[]) => string,
@@ -98,16 +92,13 @@ type RootVTBasePathProperties = {
 export type RootVTBasePath = VTBasePath & RootVTBasePathProperties;
 
 /** This function extends `BasePath`s and should wrap every new instance of one. */
-export const useVT = (
-	basePath: BasePathInstance,
-	options: VTBasePathOptions = {}
-): RootVTBasePath => {
+export const withVT = (basePath: BasePathInstance): RootVTBasePath => {
 	const originalChildFunction = basePath.child.bind(basePath);
 
 	/** Properties assigned to all `VTBasePath`s. */
 	const vtProperties: VTBasePathProperties = {
-		// `useVT` normally returns a `RootVTBasePath`, but child `BasePath`s should not be `RootVTBasePath`s, so the assertion `as VTBasePath` is necessary.
-		child: (...args) => useVT(originalChildFunction(...args)) as VTBasePath,
+		// `withVT` normally returns a `RootVTBasePath`, but child `BasePath`s should not be `RootVTBasePath`s, so the assertion `as VTBasePath` is necessary.
+		child: (...args) => withVT(originalChildFunction(...args)) as VTBasePath,
 		FunctionalAdvancement: (name, criterion, ...args) => self.Advancement(name, {
 			display: {
 				icon: {
@@ -138,7 +129,6 @@ export const useVT = (
 	if (!basePath.directory) {
 		/** Properties assigned to all `RootVTBasePath`s. */
 		const vtRootProperties: RootVTBasePathProperties = {
-			options,
 			internal: self.child({ directory: 'zz/do_not_run_or_the_pack_may_break' }),
 			onLoad: (callback, onConflict = 'append') => rootSelf.internal.MCFunction('load', callback, {
 				runOnLoad: true,
@@ -153,7 +143,7 @@ export const useVT = (
 					onConflict
 				});
 			},
-			pre: (template, ...substitutions) => options.shortName + template.map((string, i) => string + (i in substitutions ? substitutions[i] : '')).join(''),
+			pre: (template, ...substitutions) => rootSelf.namespace + template.map((string, i) => string + (i in substitutions ? substitutions[i] : '')).join(''),
 			ConfigFunction: callback => {
 				if (rootSelf.namespace === pack.namespace) {
 					packState.hasConfigFunction = true;
@@ -200,7 +190,7 @@ const vtProperties = {
 
 /** The `BasePath` for the Vanilla Tweaks namespace. */
 export const VT: RootVTBasePath & typeof vtProperties = Object.assign(
-	useVT(
+	withVT(
 		BasePath({
 			namespace: 'vanillatweaks'
 			// TODO: Uncomment this when it is implemented.
@@ -209,10 +199,7 @@ export const VT: RootVTBasePath & typeof vtProperties = Object.assign(
 			// 	mcfunction: 'ignore',
 			// 	tag: 'ignore'
 			// }
-		}),
-		{
-			shortName: 'vt'
-		}
+		})
 	),
 	vtProperties
 );

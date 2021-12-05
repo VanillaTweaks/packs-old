@@ -1,5 +1,5 @@
 import * as meta from 'lib/meta';
-import { useVT, VT } from 'lib/datapacks/vanillatweaks';
+import { withVT, VT } from 'lib/datapacks/vanillatweaks';
 import type { RootVTBasePath } from 'lib/datapacks/vanillatweaks';
 import { packState } from 'lib/datapacks/pack/state';
 import { BasePath, NBT } from 'sandstone';
@@ -146,7 +146,7 @@ const packProperties = {
 
 /** The `BasePath` for the pack namespace. */
 export const pack: RootVTBasePath & typeof meta & typeof packProperties = Object.assign(
-	useVT(BasePath({ namespace: meta.namespace })),
+	withVT(BasePath({ namespace: meta.namespace })),
 	meta,
 	packProperties
 );
