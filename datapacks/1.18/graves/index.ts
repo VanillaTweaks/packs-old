@@ -1,6 +1,7 @@
 import { pack, pack_ } from 'lib/datapacks/pack';
-import { configLine, horizontalBar, pageHead } from 'lib/datapacks/commands/text';
+import { configLine, horizontalBar, pageHead } from 'lib/datapacks/commands/config';
 import { advancement, data, execute, NBT, schedule, tag } from 'sandstone';
+import FunctionalAdvancement from 'lib/datapacks/FunctionalAdvancement';
 
 pack.setMetaAdvancements({
 	root: {
@@ -60,7 +61,7 @@ const activateGrave = pack_.MCFunction('activate_grave', () => {
 	});
 });
 
-const interactWithGraveAdvancement = pack.FunctionalAdvancement('interact_with_grave', {
+const interactWithGraveAdvancement = FunctionalAdvancement('interact_with_grave', {
 	trigger: 'minecraft:player_interacted_with_entity',
 	conditions: {
 		entity: {

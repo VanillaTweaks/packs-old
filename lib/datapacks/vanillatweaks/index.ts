@@ -1,6 +1,6 @@
 import { pack, packState } from 'lib/datapacks/pack';
 import { BasePath, scoreboard } from 'sandstone';
-import type { AdvancementInstance, AdvancementJSON, MCFunctionInstance, BasePathInstance } from 'sandstone';
+import type { MCFunctionInstance, BasePathInstance } from 'sandstone';
 
 /** The properties of all `VTBasePath`s which are not on `BasePathInstance`. */
 export type VTBasePathProperties = {
@@ -9,16 +9,7 @@ export type VTBasePathProperties = {
 	 *
 	 * The namespace cannot be provided in a child path.
 	 */
-	child: (...args: Parameters<BasePathInstance['child']>) => VTBasePath,
-	/**
-	 * Adds an `Advancement` to be used only for the sake of its reward function.
-	 *
-	 * Use this instead of `Advancement` whenever applicable.
-	 */
-	FunctionalAdvancement: (name: string, criterion: AdvancementJSON['criteria'][0], ...args: (
-		[MCFunctionInstance]
-		| Parameters<typeof pack.MCFunction>
-	)) => AdvancementInstance
+	child: (...args: Parameters<BasePathInstance['child']>) => VTBasePath
 };
 
 /** A VT `BasePath`. */
@@ -38,7 +29,7 @@ export type VTBasePath = (
  * MCFunction(someImplicitBasePath, callback)
  * ```
  */
-export type ShortMCFunction = <
+export type MCFunctionWithOnlyCallback = <
 	ReturnValue extends void | Promise<void> = void | Promise<void>
 >(
 	callback: () => ReturnValue
@@ -50,7 +41,7 @@ export type ShortMCFunction = <
  * MCFunction(someImplicitBasePath, callback, { onConflict })
  * ```
  *
- * Like `ShortMCFunction` but with an extra `onConflict` parameter.
+ * Like `MCFunctionWithOnlyCallback` but with an extra `onConflict` parameter.
  */
 export type EventMCFunction = <
 	ReturnValue extends void | Promise<void> = void | Promise<void>
@@ -85,7 +76,7 @@ type RootVTBasePathProperties = {
 	/** Adds code to the pack's uninstall function. */
 	onUninstall: EventMCFunction,
 	/** Sets the pack's config function. */
-	setConfigFunction: ShortMCFunction
+	setConfigFunction: MCFunctionWithOnlyCallback
 };
 
 /** A VT `BasePath` which was *not* returned from `basePath.child(...)`. Extends `VTBasePath`. */
@@ -98,32 +89,7 @@ export const withVT = (basePath: BasePathInstance): RootVTBasePath => {
 	/** Properties assigned to all `VTBasePath`s. */
 	const vtProperties: VTBasePathProperties = {
 		// `withVT` normally returns a `RootVTBasePath`, but child `BasePath`s should not be `RootVTBasePath`s, so the assertion `as VTBasePath` is necessary.
-		child: (...args) => withVT(createChild(...args)) as VTBasePath,
-		FunctionalAdvancement: (name, criterion, ...args) => (
-			self.Advancement(name, {
-				display: {
-					icon: {
-						item: 'minecraft:air'
-					},
-					title: '',
-					description: '',
-					show_toast: false,
-					announce_to_chat: false,
-					hidden: true
-				},
-				criteria: {
-					[`${self.namespace}:${name}`]: criterion
-				},
-				rewards: {
-					function: (
-						typeof args[0] === 'function'
-							? args[0]
-							// The below type assertion sucks, but I don't think there's a better way. If there is then please tell me.
-							: pack.internal.MCFunction(...args as unknown as Parameters<typeof pack.MCFunction>)
-					)
-				}
-			})
-		)
+		child: (...args) => withVT(createChild(...args)) as VTBasePath
 	};
 
 	const self: VTBasePath = Object.assign(basePath, vtProperties);
@@ -190,9 +156,9 @@ const vtProperties = {
 	} as string
 } as {
 	/**
-	 * When stringified, evaluates to `'vt.temp'`, the name of the VT temp scoreboard objective, and creates that objective if it has not already been created.
+	 * When stringified, evaluates to `'vanillatweaks.temp'`, the name of the VT temp scoreboard objective, and creates that objective if it has not already been created.
 	 *
-	 * For scoreboard objective names, this should always be used instead of `VT.pre` or `'vt.temp'`.
+	 * For scoreboard objective names, this should always be used instead of `VT.pre` or `'vanillatweaks.temp'`.
 	 */
 	temp: string
 };
