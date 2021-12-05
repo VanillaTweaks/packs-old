@@ -1,4 +1,4 @@
-import { VT, VT_ } from 'modules/datapacks/vanillatweaks';
+import { VT, VT_ } from 'lib/datapacks/vanillatweaks';
 import { execute, gamerule, schedule } from 'sandstone';
 
 /** Sets the `sendCommandFeedback` game rule to `false` for the rest of the tick. */

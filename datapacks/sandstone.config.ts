@@ -1,9 +1,9 @@
 import type { SandstoneConfig } from 'sandstone';
 import path from 'path';
 import fs from 'fs-extra';
-import { gameVersion, namespace, title, version, listed } from 'modules/meta';
-import { packState } from 'modules/datapacks/pack/state';
-import packFormats from 'modules/datapacks/packFormats.json';
+import { gameVersion, namespace, title, version, listed } from 'lib/meta';
+import { packState } from 'lib/datapacks/pack/state';
+import packFormats from 'lib/datapacks/packFormats.json';
 
 const config: SandstoneConfig = {
 	namespace: 'vanillatweaks',

@@ -1,5 +1,5 @@
-import { pack, pack_ } from 'modules/datapacks/pack';
-import { configLine, horizontalBar, pageHead } from 'modules/datapacks/commands/text';
+import { pack, pack_ } from 'lib/datapacks/pack';
+import { configLine, horizontalBar, pageHead } from 'lib/datapacks/commands/text';
 import { advancement, data, execute, NBT, schedule, tag } from 'sandstone';
 
 pack.options.shortName = 'graves';

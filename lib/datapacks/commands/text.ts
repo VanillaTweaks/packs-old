@@ -1,5 +1,5 @@
-import * as meta from 'modules/meta';
-import { optimizeComponent } from 'modules/datapacks/textComponents';
+import * as meta from 'lib/meta';
+import { optimizeComponent } from 'lib/datapacks/textComponents';
 import { tellraw } from 'sandstone';
 import type { JSONTextComponent } from 'sandstone';
 

@@ -1,7 +1,7 @@
-import * as meta from 'modules/meta';
-import { useVT, VT } from 'modules/datapacks/vanillatweaks';
-import type { RootVTBasePath } from 'modules/datapacks/vanillatweaks';
-import { packState } from 'modules/datapacks/pack/state';
+import * as meta from 'lib/meta';
+import { useVT, VT } from 'lib/datapacks/vanillatweaks';
+import type { RootVTBasePath } from 'lib/datapacks/vanillatweaks';
+import { packState } from 'lib/datapacks/pack/state';
 import { BasePath, NBT } from 'sandstone';
 import type { AdvancementJSON, JSONTextComponent } from 'sandstone';
 

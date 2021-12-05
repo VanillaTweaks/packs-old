@@ -1,4 +1,4 @@
-import { pack, packState } from 'modules/datapacks/pack';
+import { pack, packState } from 'lib/datapacks/pack';
 import { BasePath, scoreboard } from 'sandstone';
 import type { AdvancementInstance, AdvancementJSON, MCFunctionInstance, BasePathInstance } from 'sandstone';
 
