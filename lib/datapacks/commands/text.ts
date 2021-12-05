@@ -1,5 +1,5 @@
 import * as meta from 'lib/meta';
-import { optimizeComponent } from 'lib/datapacks/textComponents';
+import simplifyComponent from 'lib/datapacks/textComponents/simplifyComponent';
 import { tellraw } from 'sandstone';
 import type { JSONTextComponent } from 'sandstone';
 
@@ -37,13 +37,14 @@ export const pageHead = (options: {
 	horizontalBar();
 };
 
-export const configSymbols = {
+const configSymbols = {
 	disabled: '❌',
 	enabled: '✔',
 	input: '✎',
 	preview: 'ℹ'
 } as const;
-export const configColors = {
+
+const configColors = {
 	disabled: 'red',
 	enabled: 'green',
 	input: 'aqua',
@@ -105,6 +106,7 @@ export const configLine = (
 	)
 ) => {
 	const color = configColors[options.type];
+
 	const component: JSONTextComponent & {
 		hoverEvent?: {
 			contents: JSONTextComponent[]
@@ -117,13 +119,13 @@ export const configLine = (
 			' '
 		]
 	};
+
 	if (options.suggestCommand || options.runCommand) {
 		component.hoverEvent = {
 			action: 'show_text',
-			contents: [
-				''
-			]
+			contents: ['']
 		};
+
 		if (options.type === 'disabled') {
 			component.hoverEvent.contents.push(
 				{ text: 'Click to enable ', color: configColors.enabled },
@@ -137,10 +139,12 @@ export const configLine = (
 				{ text: '.', color: configColors.disabled }
 			);
 		}
+
 		if (options.description) {
 			if (component.hoverEvent.contents.length > 1) {
 				component.hoverEvent.contents.push('\n');
 			}
+
 			if (typeof options.description === 'string') {
 				component.hoverEvent.contents.push(
 					{ text: options.description, color: 'gray' }
@@ -149,17 +153,20 @@ export const configLine = (
 				component.hoverEvent.contents.push(options.description);
 			}
 		}
+
 		if (options.accepts) {
 			component.hoverEvent.contents.push(
 				{ text: `\nAccepts: ${options.accepts}`, color: 'dark_gray' }
 			);
 		}
+
 		if (options.default) {
 			component.hoverEvent.contents.push(
 				{ text: `\nDefault: ${options.default}`, color: 'dark_gray' }
 			);
 		}
 	}
+
 	if (options.previewCommand) {
 		component.extra.push(
 			{
@@ -182,6 +189,7 @@ export const configLine = (
 			' '
 		);
 	}
+
 	if (options.suggestCommand) {
 		component.clickEvent = {
 			action: 'suggest_command',
@@ -193,25 +201,23 @@ export const configLine = (
 			value: `/${options.runCommand}`
 		};
 	}
-	component.extra.push(
-		options.label
-	);
+
+	component.extra.push(options.label);
+
 	if (options.current) {
-		component.extra.push(
-			{
-				text: ' (Current: ',
-				color: 'gray',
-				extra: [
-					options.current.value,
-					`${options.current.unit || ''})`
-				]
-			}
-		);
+		component.extra.push({
+			text: ' (Current: ',
+			color: 'gray',
+			extra: [
+				options.current.value,
+				`${options.current.unit || ''})`
+			]
+		});
 	}
 	return () => {
 		tellraw('@s', [
 			'',
-			optimizeComponent(component)
+			simplifyComponent(component)
 		]);
 	};
 };

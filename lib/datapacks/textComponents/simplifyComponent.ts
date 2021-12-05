@@ -1,6 +1,6 @@
 import type { JSONTextComponent } from 'sandstone';
 
-export const specialFormattingKeys = [
+const specialFormattingKeys = [
 	'font',
 	'bold',
 	'italic',
@@ -12,7 +12,7 @@ export const specialFormattingKeys = [
 	'clickEvent'
 ] as const;
 
-export const hasNoSpecialFormatting = (component: JSONTextComponent): boolean => {
+const hasNoSpecialFormatting = (component: JSONTextComponent): boolean => {
 	if (typeof component === 'object') {
 		if ('text' in component) {
 			for (const key of specialFormattingKeys) {
@@ -31,7 +31,7 @@ const lineBreaks = /^\n*$/;
 const whitespace = /^\s*$/;
 
 /** Checks whether the `source` JSON text component can be merged into the `target` JSON text component, given neither are arrays. */
-export const canMergeComponents = (source: JSONTextComponent, target: JSONTextComponent, toLeft = false): boolean => {
+const canMergeComponents = (source: JSONTextComponent, target: JSONTextComponent, toLeft = false): boolean => {
 	if (source instanceof Array || target instanceof Array || typeof target === 'number' || typeof target === 'boolean') {
 		return false;
 	}
@@ -80,19 +80,19 @@ export const canMergeComponents = (source: JSONTextComponent, target: JSONTextCo
 };
 
 /** Concatenates line breaks and spaces into their siblings, spreads unnecessary arrays, and merges sibling components which have equivalent properties. */
-export function optimizeComponent(component: JSONTextComponent, options?: {
+export default function simplifyComponent(component: JSONTextComponent, options?: {
 	mustReturnArray?: false,
 	modifiedCallback?: () => void
 }): JSONTextComponent;
 
-export function optimizeComponent(component: JSONTextComponent, options: {
+export default function simplifyComponent(component: JSONTextComponent, options: {
 	mustReturnArray: true,
 	modifiedCallback?: () => void
 }): JSONTextComponent[];
 
 // This ESLint comment is necessary because the rule wants me to use an arrow function, which does not allow for the overloading used here.
 // eslint-disable-next-line func-style
-export function optimizeComponent(component: JSONTextComponent, options: {
+export default function simplifyComponent(component: JSONTextComponent, options: {
 	mustReturnArray?: boolean,
 	modifiedCallback?: () => void
 } = {}): JSONTextComponent {
@@ -149,7 +149,7 @@ export function optimizeComponent(component: JSONTextComponent, options: {
 						modified = true;
 						i -= 3;
 					} else {
-						component[i] = optimizeComponent(item, {
+						component[i] = simplifyComponent(item, {
 							modifiedCallback: () => {
 								modified = true;
 								i -= 2;
@@ -167,12 +167,12 @@ export function optimizeComponent(component: JSONTextComponent, options: {
 	} else if (typeof component === 'object') {
 		if ('with' in component && component.with) {
 			for (const item of component.with) {
-				optimizeComponent(item);
+				simplifyComponent(item);
 			}
 		}
 
 		if ('extra' in component && component.extra) {
-			component.extra = optimizeComponent(component.extra, {
+			component.extra = simplifyComponent(component.extra, {
 				mustReturnArray: true,
 				modifiedCallback: () => {
 					modified = true;
