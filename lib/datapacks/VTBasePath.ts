@@ -8,18 +8,7 @@ type ExclusiveVTBasePathInstanceProperties = {
 	 *
 	 * The namespace cannot be provided in a child path.
 	 */
-	child: (...args: Parameters<BasePathInstance['child']>) => VTBasePathInstance,
-	/**
-	 * A template tag function which prepends the `BasePath`'s namespace to the input, separated by a period.
-	 *
-	 * This should always be used instead of writing a `BasePath`'s namespace explicitly.
-	 *
-	 * Example:
-	 * ```
-	 * VT.pre`example` === 'vanillatweaks.example'
-	 * ```
-	 */
-	pre: (template: TemplateStringsArray, ...substitutions: any[]) => string
+	child: (...args: Parameters<BasePathInstance['child']>) => VTBasePathInstance
 };
 
 /** A `BasePathInstace` with some extra properties. */
@@ -39,11 +28,7 @@ const withVT = (basePath: BasePathInstance): VTBasePathInstance => {
 
 	/** Properties assigned to all `VTBasePathInstance`s. */
 	const vtProperties: ExclusiveVTBasePathInstanceProperties = {
-		child: (...args) => withVT(basePathChild(...args)),
-		pre: (template, ...substitutions) => (
-			vtBasePath.namespace
-			+ template.map((string, i) => string + (i in substitutions ? substitutions[i] : '')).join('')
-		)
+		child: (...args) => withVT(basePathChild(...args))
 	};
 
 	/** The `VTBasePathInstance` returned by this function. */

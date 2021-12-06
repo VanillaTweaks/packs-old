@@ -11,8 +11,8 @@ lanternLoad.Tag('functions', '_private/load', [
 	lanternLoad.Tag('functions', '_private/init', [
 		lanternLoad.MCFunction('_private/init', () => {
 			// Reset scoreboards so packs can set values accurate for current load.
-			scoreboard.objectives.add('load.status', 'dummy');
-			scoreboard.players.reset('*', 'load.status');
+			scoreboard.objectives.add(lanternLoad`.status`, 'dummy');
+			scoreboard.players.reset('*', lanternLoad`.status`);
 		})
 	]),
 	{ id: lanternLoad`pre_load`, required: false },
