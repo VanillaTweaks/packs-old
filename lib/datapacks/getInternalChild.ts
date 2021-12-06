@@ -1,4 +1,4 @@
-import type { RootVTBasePath } from 'lib/datapacks/VTBasePath';
+import type { RootVTBasePath } from 'lib/datapacks/withVT';
 
 /**
  * Returns a child of the specified `BasePath` whose directory is named to discourage users from running functions and function tags created in it.

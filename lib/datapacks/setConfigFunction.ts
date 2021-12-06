@@ -1,6 +1,6 @@
 import pack from 'lib/datapacks/pack';
 import state from 'lib/datapacks/state';
-import type { RootVTBasePath } from 'lib/datapacks/VTBasePath';
+import type { RootVTBasePath } from 'lib/datapacks/withVT';
 
 /** Sets a `BasePath`'s config function. */
 const setConfigFunction = <

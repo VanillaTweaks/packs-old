@@ -3,8 +3,8 @@
 import * as meta from 'lib/meta';
 import { BasePath } from 'sandstone';
 import getInternalChild from 'lib/datapacks/getInternalChild';
-import type { RootVTBasePath } from 'lib/datapacks/VTBasePath';
-import { withVT } from 'lib/datapacks/VTBasePath';
+import type { RootVTBasePath } from 'lib/datapacks/withVT';
+import withVT from 'lib/datapacks/withVT';
 
 /** The `BasePath` for the pack namespace. */
 const pack: RootVTBasePath & typeof meta = Object.assign(

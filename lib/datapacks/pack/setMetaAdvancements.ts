@@ -1,4 +1,4 @@
-import { VT } from 'lib/datapacks/vanillatweaks';
+import VT from 'lib/datapacks/VT';
 import state from 'lib/datapacks/state';
 import { NBT } from 'sandstone';
 import type { AdvancementJSON, JSONTextComponent } from 'sandstone';

@@ -1,23 +1,4 @@
-import pack from 'lib/datapacks/pack';
-import state from 'lib/datapacks/state';
-import type { MCFunctionInstance, BasePathInstance } from 'sandstone';
-import getInternalChild from 'lib/datapacks/getInternalChild';
-import { VT } from 'lib/datapacks/vanillatweaks';
-
-/**
- * Any function `eventMCFunction(callback, onConflict)` which acts like:
- * ```
- * MCFunction(someImplicitBasePath, callback, { onConflict })
- * ```
- *
- * Like `MCFunctionWithOnlyCallback` but with an extra `onConflict` parameter.
- */
-type EventMCFunction = <
-	ReturnValue extends void | Promise<void> = void | Promise<void>
->(
-	callback: () => ReturnValue,
-	onConflict?: 'append' | 'prepend'
-) => MCFunctionInstance<ReturnValue>;
+import type { BasePathInstance } from 'sandstone';
 
 /** The properties of all `VTBasePath`s which are not on `BasePathInstance`. */
 type ExclusiveVTBasePathProperties = {
@@ -52,18 +33,14 @@ type ExclusiveRootVTBasePathProperties = {
 	 * VT.pre`example` === 'vanillatweaks.example'
 	 * ```
 	 */
-	pre: (template: TemplateStringsArray, ...substitutions: any[]) => string,
-	/** Adds code to the pack's load function. */
-	onLoad: EventMCFunction,
-	/** Adds code to the pack's uninstall function. */
-	onUninstall: EventMCFunction
+	pre: (template: TemplateStringsArray, ...substitutions: any[]) => string
 };
 
 /** A VT `BasePath` which was *not* returned from `basePath.child(...)`. Extends `VTBasePath`. */
 export type RootVTBasePath = VTBasePath & ExclusiveRootVTBasePathProperties;
 
 /** This function extends `BasePath`s and should wrap every new instance of one. */
-export const withVT = (basePath: BasePathInstance): RootVTBasePath => {
+const withVT = (basePath: BasePathInstance): RootVTBasePath => {
 	const createChild = basePath.child.bind(basePath);
 
 	/** Properties assigned to all `VTBasePath`s. */
@@ -80,22 +57,7 @@ export const withVT = (basePath: BasePathInstance): RootVTBasePath => {
 			pre: (template, ...substitutions) => (
 				rootSelf.namespace
 				+ template.map((string, i) => string + (i in substitutions ? substitutions[i] : '')).join('')
-			),
-			onLoad: (callback, onConflict = 'append') => (
-				getInternalChild(rootSelf).MCFunction('load', callback, {
-					runOnLoad: true,
-					onConflict
-				})
-			),
-			onUninstall: (callback, onConflict = 'prepend') => {
-				if (rootSelf.namespace === pack.namespace) {
-					state.hasUninstallFunction = true;
-				}
-				return rootSelf.MCFunction('uninstall', callback, {
-					tags: [VT.Tag('functions', 'uninstall')],
-					onConflict
-				});
-			}
+			)
 		};
 
 		const rootSelf: RootVTBasePath = Object.assign(self, vtRootProperties);
@@ -106,3 +68,5 @@ export const withVT = (basePath: BasePathInstance): RootVTBasePath => {
 	// `self` is not actually a `RootVTBasePath`, but `vtProperties.child` should be the only case where this `return` is executed, in which case it is asserted back `as VTBasePath` outside this function.
 	return self as RootVTBasePath;
 };
+
+export default withVT;
