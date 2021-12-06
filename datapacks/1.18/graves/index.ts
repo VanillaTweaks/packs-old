@@ -4,6 +4,8 @@ import { advancement, data, execute, NBT, schedule, tag } from 'sandstone';
 import FunctionalAdvancement from 'lib/datapacks/FunctionalAdvancement';
 import setMetaAdvancements from 'lib/datapacks/pack/setMetaAdvancements';
 import setConfigFunction from 'lib/datapacks/setConfigFunction';
+import onLoad from 'lib/datapacks/onLoad';
+import onUninstall from 'lib/datapacks/onUninstall';
 
 setMetaAdvancements({
 	root: {
@@ -31,11 +33,11 @@ setMetaAdvancements({
 	}
 });
 
-pack.onLoad(() => {
+onLoad(pack, () => {
 
 });
 
-pack.onUninstall(() => {
+onUninstall(pack, () => {
 
 });
 
