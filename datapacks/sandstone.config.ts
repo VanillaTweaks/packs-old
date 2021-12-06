@@ -2,7 +2,7 @@ import type { SandstoneConfig } from 'sandstone';
 import path from 'path';
 import fs from 'fs-extra';
 import { gameVersion, namespace, title, version, listed } from 'lib/meta';
-import { packState } from 'lib/datapacks/pack/state';
+import state from 'lib/datapacks/state';
 import packFormats from 'lib/datapacks/packFormats.json';
 
 const config: SandstoneConfig = {
@@ -24,7 +24,7 @@ const config: SandstoneConfig = {
 	},
 	scripts: {
 		beforeSave: () => {
-			for (const finishFunction of packState.finishFunctions) {
+			for (const finishFunction of state.finishFunctions) {
 				finishFunction();
 			}
 		},
