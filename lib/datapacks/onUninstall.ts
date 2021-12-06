@@ -4,18 +4,16 @@ import state from 'lib/datapacks/state';
 import VT from 'lib/datapacks/VT';
 
 /** Adds code to a `BasePath`'s uninstall function. */
-const onUninstall = <
-	ReturnValue extends void | Promise<void> = void | Promise<void>
->(
+const onUninstall = (
 	basePath: VTBasePathInstance,
-	callback: () => ReturnValue,
+	callback: () => void,
 	onConflict: 'append' | 'prepend' = 'prepend'
 ) => {
 	if (basePath.namespace === pack.namespace) {
 		state.hasUninstallFunction = true;
 	}
 
-	return basePath.MCFunction('uninstall', callback, {
+	basePath.MCFunction('uninstall', callback, {
 		tags: [VT.Tag('functions', 'uninstall')],
 		onConflict
 	});
