@@ -3,7 +3,7 @@
 import path from 'path';
 import fs from 'fs-extra';
 
-export const packDirectory = path.join(
+const packDirectory = path.join(
 	process.cwd(),
 	process.argv[process.argv.length - 1]
 );
