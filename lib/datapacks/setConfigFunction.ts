@@ -1,12 +1,12 @@
 import pack from 'lib/datapacks/pack';
 import state from 'lib/datapacks/state';
-import type { RootVTBasePath } from 'lib/datapacks/withVT';
+import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
 
 /** Sets a `BasePath`'s config function. */
 const setConfigFunction = <
 	ReturnValue extends void | Promise<void> = void | Promise<void>
 >(
-	basePath: RootVTBasePath,
+	basePath: VTBasePathInstance,
 	callback: () => ReturnValue
 ) => {
 	if (basePath.namespace === pack.namespace) {

@@ -1,11 +1,9 @@
 // A faithful implementation of https://github.com/LanternMC/load for Vanilla Tweaks.
 
-import { BasePath, scoreboard } from 'sandstone';
-import withVT from 'lib/datapacks/withVT';
+import { scoreboard } from 'sandstone';
+import VTBasePath from 'lib/datapacks/VTBasePath';
 
-const lanternLoad = withVT(
-	BasePath({ namespace: 'load' })
-);
+const lanternLoad = VTBasePath({ namespace: 'load' });
 
 export const loadTag = lanternLoad.Tag('functions', 'load');
 

@@ -1,4 +1,4 @@
-import type { RootVTBasePath } from 'lib/datapacks/withVT';
+import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
 import pack from 'lib/datapacks/pack';
 import state from 'lib/datapacks/state';
 import VT from 'lib/datapacks/VT';
@@ -7,7 +7,7 @@ import VT from 'lib/datapacks/VT';
 const onUninstall = <
 	ReturnValue extends void | Promise<void> = void | Promise<void>
 >(
-	basePath: RootVTBasePath,
+	basePath: VTBasePathInstance,
 	callback: () => ReturnValue,
 	onConflict: 'append' | 'prepend' = 'prepend'
 ) => {

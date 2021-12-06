@@ -1,11 +1,11 @@
-import type { RootVTBasePath } from 'lib/datapacks/withVT';
+import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
 import getInternalChild from 'lib/datapacks/getInternalChild';
 
 /** Adds code to a `BasePath`'s load function. */
 const onLoad = <
 	ReturnValue extends void | Promise<void> = void | Promise<void>
 >(
-	basePath: RootVTBasePath,
+	basePath: VTBasePathInstance,
 	callback: () => ReturnValue,
 	onConflict: 'append' | 'prepend' = 'append'
 ) => {

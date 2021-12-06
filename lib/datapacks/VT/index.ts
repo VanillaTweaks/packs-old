@@ -1,17 +1,14 @@
-import { BasePath } from 'sandstone';
 import getInternalChild from 'lib/datapacks/getInternalChild';
-import withVT from 'lib/datapacks/withVT';
+import VTBasePath from 'lib/datapacks/VTBasePath';
 
-/** The `BasePath` for the Vanilla Tweaks namespace. */
-const VT = withVT(
-	BasePath({
-		namespace: 'vanillatweaks',
-		onConflict: {
-			// This is so a library functions that create resources (e.g. `execute...run(...)` creating an `MCFunction`) don't try to create them multiple times when called multiple times.
-			default: 'ignore'
-		}
-	})
-);
+/** The `BasePath` for the `vanillatweaks` namespace. */
+const VT = VTBasePath({
+	namespace: 'vanillatweaks',
+	onConflict: {
+		// This is so a library functions that create resources (e.g. `execute...run(...)` creating an `MCFunction`) don't try to create them multiple times when called multiple times.
+		default: 'ignore'
+	}
+});
 
 export default VT;
 
