@@ -5,18 +5,6 @@ import getInternalChild from 'lib/datapacks/getInternalChild';
 import { VT } from 'lib/datapacks/vanillatweaks';
 
 /**
- * Any function `shortMCFunction(callback)` which acts like:
- * ```
- * MCFunction(someImplicitBasePath, callback)
- * ```
- */
-type MCFunctionWithOnlyCallback = <
-	ReturnValue extends void | Promise<void> = void | Promise<void>
->(
-	callback: () => ReturnValue
-) => MCFunctionInstance<ReturnValue>;
-
-/**
  * Any function `eventMCFunction(callback, onConflict)` which acts like:
  * ```
  * MCFunction(someImplicitBasePath, callback, { onConflict })
@@ -68,9 +56,7 @@ type ExclusiveRootVTBasePathProperties = {
 	/** Adds code to the pack's load function. */
 	onLoad: EventMCFunction,
 	/** Adds code to the pack's uninstall function. */
-	onUninstall: EventMCFunction,
-	/** Sets the pack's config function. */
-	setConfigFunction: MCFunctionWithOnlyCallback
+	onUninstall: EventMCFunction
 };
 
 /** A VT `BasePath` which was *not* returned from `basePath.child(...)`. Extends `VTBasePath`. */
@@ -109,12 +95,6 @@ export const withVT = (basePath: BasePathInstance): RootVTBasePath => {
 					tags: [VT.Tag('functions', 'uninstall')],
 					onConflict
 				});
-			},
-			setConfigFunction: callback => {
-				if (rootSelf.namespace === pack.namespace) {
-					state.hasConfigFunction = true;
-				}
-				return rootSelf.MCFunction('config', callback);
 			}
 		};
 

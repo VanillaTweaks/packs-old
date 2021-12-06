@@ -3,6 +3,7 @@ import { configLine, horizontalBar, pageHead } from 'lib/datapacks/commands/conf
 import { advancement, data, execute, NBT, schedule, tag } from 'sandstone';
 import FunctionalAdvancement from 'lib/datapacks/FunctionalAdvancement';
 import setMetaAdvancements from 'lib/datapacks/pack/setMetaAdvancements';
+import setConfigFunction from 'lib/datapacks/setConfigFunction';
 
 setMetaAdvancements({
 	root: {
@@ -38,7 +39,7 @@ pack.onUninstall(() => {
 
 });
 
-pack.setConfigFunction(() => {
+setConfigFunction(() => {
 
 });
 
