@@ -32,11 +32,11 @@ const config: SandstoneConfig = {
 			if (destination && listed) {
 				const vtName = namespace.replace(/_/g, ' ');
 
-				const vtPath = path.join(__dirname, `../../VanillaTweaks/resources/datapacks/${gameVersion}/${vtName}`);
+				const vtPath = path.join(__dirname, `../../resources/datapacks/${gameVersion}/${vtName}`);
 				await fs.remove(vtPath);
 				await fs.copy(destination, vtPath);
 
-				const metaPath = path.join(__dirname, `../../VanillaTweaks/resources/json/${gameVersion}/dpcategories.json`);
+				const metaPath = path.join(__dirname, `../../resources/json/${gameVersion}/dpcategories.json`);
 				await fs.writeFile(
 					metaPath,
 					(await fs.readFile(metaPath, 'utf8'))
