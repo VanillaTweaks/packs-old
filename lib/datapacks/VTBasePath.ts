@@ -33,7 +33,7 @@ export type VTBasePathInstance = (
 		: never
 );
 
-/** Extends `BasePath`s into `VTBasePathInstance`s. */
+/** Extends a `BasePath` into a `VTBasePathInstance`. */
 const withVT = (basePath: BasePathInstance): VTBasePathInstance => {
 	const basePathChild = basePath.child.bind(basePath);
 
@@ -53,7 +53,7 @@ const withVT = (basePath: BasePathInstance): VTBasePathInstance => {
 };
 
 /** Creates a `BasePathInstance` with some extra properties. Should always be used instead of `BasePath`. */
-const VTBasePath = (...args: Parameters<typeof BasePath>) => (
+const VTBasePath = (...args: Parameters<typeof BasePath>): VTBasePathInstance => (
 	withVT(BasePath(...args))
 );
 
