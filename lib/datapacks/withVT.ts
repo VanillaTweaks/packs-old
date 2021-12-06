@@ -36,7 +36,7 @@ type ExclusiveRootVTBasePathProperties = {
 	pre: (template: TemplateStringsArray, ...substitutions: any[]) => string
 };
 
-/** A VT `BasePath` which was *not* returned from `basePath.child(...)`. Extends `VTBasePath`. */
+/** A `VTBasePath` not returned from `basePath.child(...)`. */
 export type RootVTBasePath = VTBasePath & ExclusiveRootVTBasePathProperties;
 
 /** This function extends `BasePath`s and should wrap every new instance of one. */
