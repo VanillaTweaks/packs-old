@@ -15,9 +15,9 @@ lanternLoad.Tag('functions', '_private/load', [
 			scoreboard.players.reset('*', lanternLoad`.status`);
 		})
 	]),
-	{ id: lanternLoad`pre_load`, required: false },
+	{ id: lanternLoad`#pre_load`, required: false },
 	{ id: loadTag, required: false },
-	{ id: lanternLoad`post_load`, required: false }
+	{ id: lanternLoad`#post_load`, required: false }
 ], {
 	runOnLoad: true
 });

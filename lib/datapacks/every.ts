@@ -9,7 +9,7 @@ const every = (
 	basePath.MCFunction(
 		duration === '1t' ? 'tick' : duration,
 		callback,
-		{ runEach: duration }
+		{ runEvery: duration }
 	);
 };
 
