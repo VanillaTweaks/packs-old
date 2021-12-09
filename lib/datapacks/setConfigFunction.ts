@@ -1,6 +1,7 @@
 import pack from 'lib/datapacks/pack';
 import state from 'lib/datapacks/state';
 import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
+import { MCFunction } from 'sandstone';
 
 /** Sets a `BasePath`'s config function. */
 const setConfigFunction = <
@@ -13,7 +14,7 @@ const setConfigFunction = <
 		state.hasConfigFunction = true;
 	}
 
-	return basePath.MCFunction('config', callback);
+	return MCFunction(basePath`config`, callback);
 };
 
 export default setConfigFunction;

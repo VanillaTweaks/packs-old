@@ -2,6 +2,7 @@ import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
 import pack from 'lib/datapacks/pack';
 import state from 'lib/datapacks/state';
 import VT from 'lib/datapacks/VT';
+import { MCFunction, Tag } from 'sandstone';
 
 /** Adds code to a `BasePath`'s uninstall function. */
 const onUninstall = (
@@ -13,8 +14,10 @@ const onUninstall = (
 		state.hasUninstallFunction = true;
 	}
 
-	basePath.MCFunction('uninstall', callback, {
-		tags: [VT.Tag('functions', 'uninstall')],
+	MCFunction(basePath`uninstall`, callback, {
+		tags: [
+			Tag('functions', VT`uninstall`)
+		],
 		onConflict
 	});
 };

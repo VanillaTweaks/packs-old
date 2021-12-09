@@ -1,6 +1,6 @@
 import pack, { pack_ } from 'lib/datapacks/pack';
 import { configLine, horizontalBar, pageHead } from 'lib/datapacks/commands/config';
-import { advancement, data, execute, NBT, schedule, tag } from 'sandstone';
+import { advancement, data, execute, MCFunction, NBT, schedule, tag } from 'sandstone';
 import FunctionalAdvancement from 'lib/datapacks/FunctionalAdvancement';
 import setMetaAdvancements from 'lib/datapacks/pack/setMetaAdvancements';
 import setConfigFunction from 'lib/datapacks/setConfigFunction';
@@ -45,7 +45,7 @@ setConfigFunction(pack, () => {
 
 });
 
-const activateGrave = pack_.MCFunction('activate_grave', () => {
+const activateGrave = MCFunction(pack_`activate_grave`, () => {
 	advancement.revoke('@s').only(interactWithGraveAdvancement);
 	tag('@s').add('graves.subject');
 
