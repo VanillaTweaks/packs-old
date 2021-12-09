@@ -1,6 +1,6 @@
 import VT from 'lib/datapacks/VT';
 import state from 'lib/datapacks/state';
-import { NBT } from 'sandstone';
+import { Advancement, NBT } from 'sandstone';
 import type { AdvancementJSON, JSONTextComponent } from 'sandstone';
 import pack from 'lib/datapacks/pack';
 
@@ -43,7 +43,7 @@ const setMetaAdvancements = (options: {
 }) => {
 	let advancementIndex = 1;
 
-	let lastAdvancement = pack.Advancement(`meta/${advancementIndex++}`, {
+	let lastAdvancement = Advancement(pack`meta/${advancementIndex++}`, {
 		display: {
 			icon: options.root.icon,
 			title: pack.title + ' '.repeat(options.root.titleSpaces || 0),
@@ -135,7 +135,7 @@ const setMetaAdvancements = (options: {
 			if (advancementOptions) {
 				const metaAdvancementType = metaAdvancementsJSON[metaAdvancementKey as keyof typeof metaAdvancementsJSON];
 
-				lastAdvancement = pack.Advancement(`meta/${advancementIndex++}`, {
+				lastAdvancement = Advancement(pack`meta/${advancementIndex++}`, {
 					display: {
 						icon: metaAdvancementType.icon,
 						title: metaAdvancementType.title + ' '.repeat(advancementOptions.titleSpaces || 0),
