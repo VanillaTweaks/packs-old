@@ -19,7 +19,7 @@ const checkMaxCommandChainLength = () => {
 		}),
 		MCFunction(maxCommandChainLength`check`, () => {
 			execute
-				.if.score('#maxCommandChainLength', VT`.temp`, 'matches', [, DEFAULT_MAX_COMMAND_CHAIN_LENGTH])
+				.if.score('#maxCommandChainLength', VT`.temp`, 'matches', [, DEFAULT_MAX_COMMAND_CHAIN_LENGTH - 1])
 				.run(Tag('functions', maxCommandChainLength`fix`, [
 					MCFunction(maxCommandChainLength`fix`, () => {
 						gamerule('maxCommandChainLength', DEFAULT_MAX_COMMAND_CHAIN_LENGTH);
