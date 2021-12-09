@@ -1,5 +1,4 @@
 import pack, { pack_ } from 'lib/datapacks/pack';
-import { configLine, horizontalBar, pageHead } from 'lib/datapacks/commands/config';
 import { advancement, data, execute, MCFunction, NBT, schedule, tag } from 'sandstone';
 import FunctionalAdvancement from 'lib/datapacks/FunctionalAdvancement';
 import setMetaAdvancements from 'lib/datapacks/pack/setMetaAdvancements';
