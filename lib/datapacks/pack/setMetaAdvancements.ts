@@ -43,7 +43,8 @@ const setMetaAdvancements = (options: {
 }) => {
 	let advancementIndex = 1;
 
-	let lastAdvancement = Advancement(pack`meta/${advancementIndex++}`, {
+	// TODO: Use `pack` as a template tag.
+	let lastAdvancement = pack.Advancement(`meta/${advancementIndex++}`, {
 		display: {
 			icon: options.root.icon,
 			title: pack.title + ' '.repeat(options.root.titleSpaces || 0),
@@ -56,11 +57,13 @@ const setMetaAdvancements = (options: {
 				icon: {
 					item: 'minecraft:player_head',
 					nbt: NBT.stringify({
-						SkullOwner: NBT.intArray([0, 0, 0, 0]),
-						Properties: {
-							textures: [{
-								Value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTg1YzMzNWM1MjVjZGFkY2Q4MmU4MDA4MzU1N2M2OTYzMGRmYjlhMWVkZjU5OTc0YzdmNjU4ZGI1MWEwYTFkOSJ9fX0='
-							}]
+						SkullOwner: {
+							Id: NBT.intArray([-1422064857, -1009957322, -2144021055, 1028438231]),
+							Properties: {
+								textures: [{
+									Value: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWQ2OWYzZGRlMzRmMmE0NzhkZDMxNjk5ODAzMmNkM2E0MTBkZDdmOThhYzU0OTRhZTUwYjBmNmY1ZmI5OGQyOCJ9fX0='
+								}]
+							}
 						}
 					})
 				},
@@ -135,7 +138,8 @@ const setMetaAdvancements = (options: {
 			if (advancementOptions) {
 				const metaAdvancementType = metaAdvancementsJSON[metaAdvancementKey as keyof typeof metaAdvancementsJSON];
 
-				lastAdvancement = Advancement(pack`meta/${advancementIndex++}`, {
+				// TODO: Use `pack` as a template tag.
+				lastAdvancement = pack.Advancement(`meta/${advancementIndex++}`, {
 					display: {
 						icon: metaAdvancementType.icon,
 						title: metaAdvancementType.title + ' '.repeat(advancementOptions.titleSpaces || 0),

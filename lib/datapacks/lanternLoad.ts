@@ -2,22 +2,28 @@
 
 import { MCFunction, scoreboard, Tag } from 'sandstone';
 import VTBasePath from 'lib/datapacks/VTBasePath';
+import checkMaxCommandChainLength from 'lib/datapacks/VT/checkMaxCommandChainLength';
 
 const lanternLoad = VTBasePath({ namespace: 'load' });
+
+export const preLoadTag = Tag('functions', lanternLoad`pre_load`, [
+	checkMaxCommandChainLength
+]);
 
 export const loadTag = Tag('functions', lanternLoad`load`);
 
 Tag('functions', lanternLoad`_private/load`, [
 	Tag('functions', lanternLoad`_private/init`, [
 		MCFunction(lanternLoad`_private/init`, () => {
-			// Reset scoreboards so packs can set values accurate for current load.
-			scoreboard.objectives.add(lanternLoad`.status`, 'dummy');
-			scoreboard.players.reset('*', lanternLoad`.status`);
+			// TODO: Replace both instances of `'load.status'` below with `` lanternLoad`.status` ``.
+			scoreboard.objectives.add('load.status', 'dummy');
+			scoreboard.players.reset('*', 'load.status');
 		})
 	]),
-	{ id: lanternLoad`#pre_load`, required: false },
+	{ id: preLoadTag, required: false },
 	{ id: loadTag, required: false },
-	{ id: lanternLoad`#post_load`, required: false }
+	// TODO: Remove `'#' + ` and change `post_load` to `#post_load`.
+	{ id: '#' + lanternLoad`post_load`, required: false }
 ], {
 	runOnLoad: true
 });
