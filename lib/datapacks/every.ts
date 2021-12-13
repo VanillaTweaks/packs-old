@@ -3,7 +3,7 @@ import { schedule } from 'sandstone';
 import getInternalChild from 'lib/datapacks/getInternalChild';
 import onLoad from 'lib/datapacks/onLoad';
 
-/** Runs a function on load and then on a periodical schedule. */
+/** Runs a function one tick after the pack loads and then on a periodical schedule. */
 const every = (
 	/** The `BasePath` not returned from `getInternalChild` to put the scheduled function under. */
 	basePath: VTBasePathInstance,
