@@ -35,7 +35,7 @@ onLoad(pack, () => {
 
 });
 
-every(pack, '1t', () => {
+every('1t', pack, () => {
 
 });
 

@@ -5,9 +5,9 @@ import onLoad from 'lib/datapacks/onLoad';
 
 /** Runs a function one tick after the pack loads and then on a periodical schedule. */
 const every = (
+	duration: string,
 	/** The `BasePath` not returned from `getInternalChild` to put the scheduled function under. */
 	basePath: VTBasePathInstance,
-	duration: string,
 	callback: () => void
 ) => {
 	const functionName = duration === '1t' ? 'tick' : duration;
