@@ -13,17 +13,13 @@ setMetaAdvancements({
 		titleSpaces: 9,
 		description: [
 			'',
-			{ text: 'When you die, your items and/or XP will be stored safely in a grave instead of dropped.', color: 'gold' }
+			{ text: 'Lets you customize armor stands, their poses, and all of their properties in survival or creative mode.', color: 'gold' }
 		]
 	},
 	usage: {
 		titleSpaces: 10,
 		description: [
-			'',
-			{ text: 'Right-click', color: 'yellow' },
-			{ text: ' your grave with an empty hand to retrieve its contents.', color: 'gold' },
-			{ text: '\n\nHold crouch', color: 'yellow' },
-			{ text: ' while you right-click to make it so only you can pick up the items.', color: 'gold' }
+			''
 		]
 	},
 	opUsage: {
