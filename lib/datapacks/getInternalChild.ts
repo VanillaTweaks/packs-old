@@ -8,9 +8,15 @@ import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
  * ⚠️ Please use `basePath_` instead of `getInternalChild(basePath)` wherever possible. Ideally, this function should only ever be called once per `BasePath`.
  */
 const getInternalChild = (basePath: VTBasePathInstance) => (
-	basePath.child({
-		directory: 'zz/do_not_run_or_the_pack_may_break'
-	})
+	Object.assign<Omit<VTBasePathInstance, 'child'>, {
+		/** ⚠️ Use `getInternalChild(basePath.child(...))` instead of `getInternalChild(basePath).child(...)`. */
+		child: undefined
+	}>(
+		basePath.child({
+			directory: 'zz/do_not_run_or_the_pack_may_break'
+		}),
+		{ child: undefined }
+	)
 );
 
 export default getInternalChild;
