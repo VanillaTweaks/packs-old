@@ -18,6 +18,9 @@ const config: SandstoneConfig = {
 		{ text: `${title} ${version} for MC ${gameVersion}.x`, color: 'gold' },
 		{ text: '\nvanillatweaks.net', color: 'yellow' }
 	],
+	onConflict: {
+		default: 'ignore'
+	},
 	saveOptions: {
 		indentation: '',
 		world: gameVersion.replace(/\./g, '_')
