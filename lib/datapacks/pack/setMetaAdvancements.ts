@@ -1,4 +1,4 @@
-import VT from 'lib/datapacks/VT';
+import vt from 'lib/datapacks/vt';
 import state from 'lib/datapacks/state';
 import { Advancement, NBT } from 'sandstone';
 import type { AdvancementJSON, JSONTextComponent } from 'sandstone';
@@ -52,7 +52,7 @@ const setMetaAdvancements = (options: {
 			show_toast: false,
 			announce_to_chat: false
 		},
-		parent: VT.Advancement('meta/0', {
+		parent: vt.Advancement('meta/0', {
 			display: {
 				icon: {
 					item: 'minecraft:player_head',

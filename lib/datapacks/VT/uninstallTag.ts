@@ -1,12 +1,12 @@
 import { Tag, MCFunction, functionCmd } from 'sandstone';
-import VT, { VT_ } from 'lib/datapacks/VT';
+import vt, { vt_ } from 'lib/datapacks/vt';
 
-/** The `` VT_`uninstall` `` function tag, which is called from the `` VT`uninstall` `` function. */
-const uninstallTag = Tag('functions', VT_`uninstall`);
+/** The `` vt_`uninstall` `` function tag, which is called from the `` vt`uninstall` `` function. */
+const uninstallTag = Tag('functions', vt_`uninstall`);
 
 export default uninstallTag;
 
-MCFunction(VT`uninstall`, () => {
+MCFunction(vt`uninstall`, () => {
 	// TODO: Use `uninstallTag()` instead.
 	functionCmd(uninstallTag);
 });

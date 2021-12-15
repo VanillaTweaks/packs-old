@@ -2,13 +2,13 @@ import getInternalChild from 'lib/datapacks/getInternalChild';
 import VTBasePath from 'lib/datapacks/VTBasePath';
 
 /** The `BasePath` for the `vanillatweaks` namespace. */
-const VT = VTBasePath({ namespace: 'vanillatweaks' });
+const vt = VTBasePath({ namespace: 'vanillatweaks' });
 
-export default VT;
+export default vt;
 
 /**
- * A child `BasePath` of `VT` whose directory is named to discourage users from running functions and function tags created in it.
+ * A child `BasePath` of `vt` whose directory is named to discourage users from running functions and function tags created in it.
  *
- * Every `MCFunction` or `Tag<'functions'>` should always be created under this instead of `VT` unless there is intent for it to be run freely by users.
+ * Every `MCFunction` or `Tag<'functions'>` should always be created under this instead of `vt` unless there is intent for it to be run freely by users.
  */
-export const VT_ = getInternalChild(VT);
+export const vt_ = getInternalChild(vt);
