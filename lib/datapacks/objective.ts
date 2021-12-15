@@ -1,10 +1,10 @@
 import onLoad from 'lib/datapacks/onLoad';
 import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
-import { scoreboard } from 'sandstone';
+import { Objective, scoreboard } from 'sandstone';
 import onUninstall from 'lib/datapacks/onUninstall';
 
 /**
- * Creates a namespaced scoreboard objective, adds the necessary `scoreboard` commands to the load and uninstall functions, and returns the namespaced name of the objective.
+ * Creates a namespaced scoreboard objective, adds the necessary `scoreboard` commands to the load and uninstall functions, and returns an `Objective` instance.
  *
  * ⚠️ Not for objectives with the `trigger` criterion. Use `onTrigger` for that instead.
  */
@@ -14,17 +14,20 @@ const objective = (
 	[objectiveName, criterion, displayName]: Parameters<typeof scoreboard['objectives']['add']>
 ) => {
 	// TODO: Set this to `` basePath`.${objectiveName}` `` instead.
-	const namespacedObjectiveName = basePath.getResourceName(objectiveName).replace(/[:/]/g, '.');
+	const objectiveInstance = Objective.get(
+		basePath.getResourceName(objectiveName).replace(/[:/]/g, '.')
+	);
 
 	onLoad(basePath, () => {
-		scoreboard.objectives.add(namespacedObjectiveName, criterion, displayName);
+		// TODO: Replace all `objectiveInstance.name` with `objectiveInstance`.
+		scoreboard.objectives.add(objectiveInstance.name, criterion, displayName);
 	});
 
 	onUninstall(basePath, () => {
-		scoreboard.objectives.remove(namespacedObjectiveName);
+		scoreboard.objectives.remove(objectiveInstance.name);
 	});
 
-	return namespacedObjectiveName;
+	return objectiveInstance;
 };
 
 export default objective;
