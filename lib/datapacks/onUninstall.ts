@@ -1,10 +1,8 @@
 import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
 import pack from 'lib/datapacks/pack';
 import state from 'lib/datapacks/state';
-import VT, { VT_ } from 'lib/datapacks/VT';
-import { functionCmd, MCFunction, Tag } from 'sandstone';
-
-export const uninstallTag = Tag('functions', VT_`uninstall`);
+import { MCFunction } from 'sandstone';
+import uninstallTag from 'lib/datapacks/VT/uninstallTag';
 
 /** Adds code to a `BasePath`'s uninstall function. */
 const onUninstall = (
@@ -26,8 +24,3 @@ const onUninstall = (
 };
 
 export default onUninstall;
-
-MCFunction(VT`uninstall`, () => {
-	// TODO: Use `uninstallTag()` instead.
-	functionCmd(uninstallTag);
-});
