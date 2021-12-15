@@ -10,8 +10,8 @@ const config: SandstoneConfig = {
 	name: namespace,
 	packUid: namespace,
 	formatVersion: (
-		packFormats.default
-		|| (packFormats as Record<string, number>)[gameVersion]
+		(packFormats as Partial<Record<string, number>>)[gameVersion]
+		?? packFormats.default
 	),
 	description: [
 		'',
