@@ -6,5 +6,6 @@
 	"typescript.preferences.quoteStyle": "single",
 	"search.exclude": {
 		"**/out": true
-	}
+	},
+	"editor.wordSeparators": "`~!@#%^&*()-=+[{]}\\|;:'\",.<>/?"
 }
