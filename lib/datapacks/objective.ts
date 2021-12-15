@@ -13,8 +13,8 @@ const objective = (
 	basePath: VTBasePathInstance,
 	[objectiveName, criterion, displayName]: Parameters<typeof scoreboard['objectives']['add']>
 ) => {
-	// TODO: Set this to `` basePath`.${objectiveName}` `` instead.
 	const objectiveInstance = Objective.get(
+		// TODO: Use `` basePath`.${objectiveName}` `` here instead.
 		basePath.getResourceName(objectiveName).replace(/[:/]/g, '.')
 	);
 
