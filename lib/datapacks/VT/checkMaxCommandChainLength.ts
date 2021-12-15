@@ -9,7 +9,7 @@ const maxCommandChainLength_ = getInternalChild(
 	VT.child({ directory: 'max_command_chain_length' })
 );
 
-const maxCommandChainLengthScore = temp('#maxCommandChainLength');
+const $maxCommandChainLength = temp('#maxCommandChainLength');
 
 // TODO: Replace all instances of `'vt.temp'` in the project with ``VT`.temp```.
 
@@ -21,20 +21,20 @@ const checkMaxCommandChainLength = Tag('functions', maxCommandChainLength_`check
 	}),
 	MCFunction(maxCommandChainLength_`get`, () => {
 		execute
-			.store.result.score(maxCommandChainLengthScore)
+			.store.result.score($maxCommandChainLength)
 			.run.gamerule('maxCommandChainLength');
 	}),
 	MCFunction(maxCommandChainLength_`fix`, () => {
 		execute
-			// TODO: Replace all `lowerThan` with `lessThan`.
-			.if(maxCommandChainLengthScore.lowerThan(DEFAULT_MAX_COMMAND_CHAIN_LENGTH))
+			// Replace all `[, DEFAULT_MAX_COMMAND_CHAIN_LENGTH - 1]` with `` `..${DEFAULT_MAX_COMMAND_CHAIN_LENGTH - 1}` ``.
+			.if($maxCommandChainLength.matches([, DEFAULT_MAX_COMMAND_CHAIN_LENGTH - 1]))
 			.run.gamerule('maxCommandChainLength', DEFAULT_MAX_COMMAND_CHAIN_LENGTH);
 	}),
 	// The reason `fix` and `warn` are separate despite having the same `execute` condition is that the `function` command counts toward the `maxCommandChainLength`, so running it here is useless if the `maxCommandChainLength` is 1.
 	// The reason both `execute` commands can't be merged into one function is that changing the `maxCommandChainLength` has no effect for the rest of the function in which it was changed.
 	MCFunction(maxCommandChainLength_`warn`, () => {
 		execute
-			.if(maxCommandChainLengthScore.lowerThan(DEFAULT_MAX_COMMAND_CHAIN_LENGTH))
+			.if($maxCommandChainLength.matches([, DEFAULT_MAX_COMMAND_CHAIN_LENGTH - 1]))
 			.run.tellraw('@a', [
 				{ text: `Do not set the "maxCommandChainLength" game rule below its default value of ${DEFAULT_MAX_COMMAND_CHAIN_LENGTH}. Setting it too low often breaks data packs. It has automatically been reset to the default value accordingly.`, color: 'red' }
 			]);
