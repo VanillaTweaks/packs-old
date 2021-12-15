@@ -4,7 +4,7 @@ import state from 'lib/datapacks/state';
 import { MCFunction } from 'sandstone';
 import uninstallTag from 'lib/datapacks/vt/uninstallTag';
 
-/** Adds code to a `BasePath`'s uninstall function. */
+/** Adds to a `BasePath`'s uninstall function. */
 const onUninstall = (
 	basePath: VTBasePathInstance,
 	callback: () => void

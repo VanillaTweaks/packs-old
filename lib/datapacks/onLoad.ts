@@ -3,7 +3,7 @@ import getInternalChild from 'lib/datapacks/getInternalChild';
 import { loadTag } from 'lib/datapacks/lanternLoad';
 import { MCFunction } from 'sandstone';
 
-/** Adds code to a `BasePath`'s load function. */
+/** Adds to a `BasePath`'s load function. */
 const onLoad = <
 	ReturnValue extends void | Promise<void> = void | Promise<void>
 >(
