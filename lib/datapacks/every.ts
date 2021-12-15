@@ -13,7 +13,10 @@ const every = (
 	basePath: VTBasePathInstance,
 	callback: () => void
 ) => {
-	const functionName = getInternalChild(basePath).getResourceName(
+	const _basePath = getInternalChild(basePath);
+
+	// TODO: Set this to `` _basePath`${duration === '1t' ? 'tick' : duration}` `` instead.
+	const functionName = _basePath.getResourceName(
 		duration === '1t' ? 'tick' : duration
 	);
 

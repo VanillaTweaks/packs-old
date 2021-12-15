@@ -1,6 +1,6 @@
 import VT from 'lib/datapacks/VT';
 import { execute, MCFunction, schedule, Tag } from 'sandstone';
-import getInternalChild from '../getInternalChild';
+import getInternalChild from 'lib/datapacks/getInternalChild';
 
 const DEFAULT_MAX_COMMAND_CHAIN_LENGTH = 65536;
 
@@ -13,7 +13,7 @@ const maxCommandChainLength_ = getInternalChild(
 /** Checks the `maxCommandChainLength` game rule every tick to ensure it isn't set below the default. If it is, restores the default and warns the player about setting it lower. */
 const checkMaxCommandChainLength = Tag('functions', maxCommandChainLength_`check`, [
 	// Run only one command per function in case the `maxCommandChainLength` is 1.
-	// TODO: Ensure the `` VT`temp` `` objective is added before this.
+	// TODO: Ensure the `` VT`.temp` `` objective is added before this.
 	MCFunction(maxCommandChainLength_`schedule`, () => {
 		schedule.function(checkMaxCommandChainLength, '1t');
 	}),
