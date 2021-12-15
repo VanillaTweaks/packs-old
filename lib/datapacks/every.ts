@@ -1,7 +1,10 @@
 import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
-import { schedule } from 'sandstone';
+import { MCFunction, schedule } from 'sandstone';
 import getInternalChild from 'lib/datapacks/getInternalChild';
 import onLoad from 'lib/datapacks/onLoad';
+
+/** A mapping from the namespaced name of each function which has been created by `every` to `true`. */
+const existingFunctions: Partial<Record<string, true>> = {};
 
 /** Runs a function one tick after the pack loads and then on a periodical schedule. */
 const every = (
@@ -10,18 +13,28 @@ const every = (
 	basePath: VTBasePathInstance,
 	callback: () => void
 ) => {
-	const functionName = duration === '1t' ? 'tick' : duration;
+	const functionName = getInternalChild(basePath).getResourceName(
+		duration === '1t' ? 'tick' : duration
+	);
 
-	const scheduledFunction = getInternalChild(basePath).MCFunction(functionName, () => {
-		schedule.function(scheduledFunction, duration);
+	/** Whether the function was already created by a previous `every` call. */
+	const functionAlreadyExists = existingFunctions[functionName];
+
+	const scheduledFunction = MCFunction(functionName, () => {
+		// Ensure this function doesn't already exist to avoid adding the `schedule` command to it multiple times.
+		if (!functionAlreadyExists) {
+			schedule.function(scheduledFunction, duration);
+		}
 
 		callback();
-	});
+	}, { onConflict: 'append' });
 
-	onLoad(basePath, () => {
-		// This is scheduled one tick ahead so that scheduled functions always run after `#load:_private/load` is fully complete.
-		schedule.function(scheduledFunction, '1t');
-	});
+	if (!functionAlreadyExists) {
+		onLoad(basePath, () => {
+			// This is scheduled one tick ahead so that scheduled functions always run after `#load:_private/load` is fully complete.
+			schedule.function(scheduledFunction, '1t');
+		});
+	}
 };
 
 export default every;
