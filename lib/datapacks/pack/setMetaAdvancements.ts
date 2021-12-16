@@ -38,7 +38,7 @@ const setMetaAdvancements = (options: {
 		icon: AdvancementIcon
 	},
 	usage?: MetaAdvancementOptions,
-	// `MetaAdvancementOptions` is `Partial`ed to make `description` optional, since `opUsage` meta advancements often have a description by default.
+	// `MetaAdvancementOptions` is `Partial` to make `description` optional, since `opUsage` meta advancements often have a description by default.
 	opUsage?: Partial<MetaAdvancementOptions>
 }) => {
 	let advancementIndex = 1;
@@ -52,7 +52,7 @@ const setMetaAdvancements = (options: {
 			show_toast: false,
 			announce_to_chat: false
 		},
-		parent: vt.Advancement('meta/0', {
+		parent: Advancement(vt`meta/0`, {
 			display: {
 				icon: {
 					item: 'minecraft:player_head',
@@ -93,7 +93,7 @@ const setMetaAdvancements = (options: {
 
 	state.finishFunctions.push(() => {
 		if (state.hasUninstallFunction || state.hasConfigFunction) {
-			// Automatically update `opUsage` meta advancement.
+			// Automatically update the `opUsage` meta advancement.
 
 			if (!options.opUsage) {
 				options.opUsage = {};
@@ -114,7 +114,7 @@ const setMetaAdvancements = (options: {
 						),
 						color: 'yellow'
 					},
-					{ text: '\nConfigure the data pack', color: 'gold' }
+					{ text: '\nConfigure the data pack.', color: 'gold' }
 				);
 			}
 
@@ -127,16 +127,16 @@ const setMetaAdvancements = (options: {
 						),
 						color: 'yellow'
 					},
-					{ text: '\nUninstall the data pack', color: 'gold' }
+					{ text: '\nUninstall the data pack.', color: 'gold' }
 				);
 			}
 		}
 
-		for (const metaAdvancementKey of Object.keys(metaAdvancementsJSON)) {
-			const advancementOptions = options[metaAdvancementKey as keyof typeof metaAdvancementsJSON] as MetaAdvancementOptions | undefined;
+		for (const metaAdvancementKey of Object.keys(metaAdvancementsJSON) as Array<keyof typeof metaAdvancementsJSON>) {
+			const advancementOptions = options[metaAdvancementKey] as MetaAdvancementOptions | undefined;
 
 			if (advancementOptions) {
-				const metaAdvancementType = metaAdvancementsJSON[metaAdvancementKey as keyof typeof metaAdvancementsJSON];
+				const metaAdvancementType = metaAdvancementsJSON[metaAdvancementKey];
 
 				// TODO: Use `pack` as a template tag.
 				lastAdvancement = pack.Advancement(`meta/${advancementIndex++}`, {
