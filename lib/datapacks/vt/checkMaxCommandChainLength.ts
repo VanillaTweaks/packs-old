@@ -9,7 +9,7 @@ const maxCommandChainLength_ = getInternalChild(
 	vt.child({ directory: 'max_command_chain_length' })
 );
 
-const $maxCommandChainLength = temp('#maxCommandChainLength');
+const $maxCommandChainLength = temp('$maxCommandChainLength');
 
 /** Checks the `maxCommandChainLength` game rule every tick to ensure it isn't set below the default. If it is, restores the default and warns the player about setting it lower. */
 const checkMaxCommandChainLength = Tag('functions', maxCommandChainLength_`check`, [
