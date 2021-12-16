@@ -8,7 +8,7 @@ import getInternalChild from 'lib/datapacks/getInternalChild';
 
 /** Creates a scoreboard objective with the `trigger` criterion, adds the necessary `scoreboard` commands to the load and uninstall functions, and runs a function as any player who sets the trigger to 1 or greater. */
 const onTrigger = (
-	/** The `BasePath` not returned from `getInternalChild` to be used as a prefix to the objective name, and to add to the load and uninstall functions of. */
+	/** The `BasePath` to be used as a prefix to the objective name, and to add to the load and uninstall functions of. */
 	basePath: VTBasePathInstance,
 	/** The name of the scoreboard objective to create. Must contain only lowercase letters. */
 	objectiveName: string,

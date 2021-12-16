@@ -7,7 +7,7 @@ import { MCFunction } from 'sandstone';
 const onLoad = <
 	ReturnValue extends void | Promise<void> = void | Promise<void>
 >(
-	/** The `BasePath` not returned from `getInternalChild` to put the load function under. */
+	/** The `BasePath` to put the load function under. */
 	basePath: VTBasePathInstance,
 	callback: () => ReturnValue
 ) => {

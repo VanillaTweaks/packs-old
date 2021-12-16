@@ -9,7 +9,7 @@ const existingFunctions: Partial<Record<string, true>> = {};
 /** Runs a function one tick after the pack loads and then on a periodical schedule. */
 const every = (
 	duration: string,
-	/** The `BasePath` not returned from `getInternalChild` to put the scheduled function under. */
+	/** The `BasePath` to put the scheduled function under. */
 	basePath: VTBasePathInstance,
 	callback: () => void
 ) => {

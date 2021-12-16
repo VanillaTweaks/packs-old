@@ -9,7 +9,7 @@ import onUninstall from 'lib/datapacks/onUninstall';
  * ⚠️ Not for objectives with the `trigger` criterion. Use `onTrigger` for that instead.
  */
 const objective = (
-	/** The `BasePath` not returned from `getInternalChild` to be used as a prefix to the objective name, and to add to the load and uninstall functions of. */
+	/** The `BasePath` to be used as a prefix to the objective name, and to add to the load and uninstall functions of. */
 	basePath: VTBasePathInstance,
 	[objectiveName, criterion, displayName]: Parameters<typeof scoreboard['objectives']['add']>
 ) => {
