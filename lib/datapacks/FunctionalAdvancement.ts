@@ -1,6 +1,7 @@
-import type { AdvancementJSON, MCFunctionInstance } from 'sandstone';
-import { Advancement } from 'sandstone';
-import { pack_ } from 'lib/datapacks/pack';
+import type { AdvancementJSON } from 'sandstone';
+import { Advancement, MCFunction } from 'sandstone';
+import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
+import getInternalChild from 'lib/datapacks/getInternalChild';
 
 /**
  * Creates an `Advancement` to be used only for the sake of its reward function.
@@ -8,26 +9,27 @@ import { pack_ } from 'lib/datapacks/pack';
  * Use this instead of `Advancement` whenever applicable.
  */
 const FunctionalAdvancement = (
-	/** The namespaced name of this advancement. Shouldn't be on a `BasePath` returned from `getInternalChild`. */
+	/** The `BasePath` to create the advancement and the reward function under. */
+	basePath: VTBasePathInstance,
+	/** The name of the advancement and the reward function. */
 	name: string,
 	criterion: AdvancementJSON['criteria'][0],
-	...args: (
-		[MCFunctionInstance]
-		| Parameters<typeof pack_.MCFunction>
-	)
-) => (
-	Advancement(name, {
+	/** What to run inside the reward function. */
+	callback: () => void
+) => {
+	const basePath_ = getInternalChild(basePath);
+
+	// TODO: Replace all `.getResourceName(name)` with `` `${name}` ``.
+	return Advancement(basePath.getResourceName(name), {
 		criteria: {
 			[name]: criterion
 		},
 		rewards: {
 			function: (
-				typeof args[0] === 'function'
-					? args[0]
-					: pack_.MCFunction(...args as unknown as Parameters<typeof pack_.MCFunction>)
+				MCFunction(basePath_.getResourceName(name), callback)
 			)
 		}
-	})
-);
+	});
+};
 
 export default FunctionalAdvancement;
