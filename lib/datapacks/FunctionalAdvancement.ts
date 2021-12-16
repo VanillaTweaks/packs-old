@@ -8,7 +8,7 @@ import { pack_ } from 'lib/datapacks/pack';
  * Use this instead of `Advancement` whenever applicable.
  */
 const FunctionalAdvancement = (
-	/** The namespaced name of this advancement. Shouldn't be on an internal base path like `pack_`. */
+	/** The namespaced name of this advancement. Shouldn't be on a `BasePath` returned from `getInternalChild`. */
 	name: string,
 	criterion: AdvancementJSON['criteria'][0],
 	...args: (
@@ -17,16 +17,6 @@ const FunctionalAdvancement = (
 	)
 ) => (
 	Advancement(name, {
-		display: {
-			icon: {
-				item: 'minecraft:air'
-			},
-			title: '',
-			description: '',
-			show_toast: false,
-			announce_to_chat: false,
-			hidden: true
-		},
 		criteria: {
 			[name]: criterion
 		},
