@@ -1,11 +1,11 @@
 import vt from 'lib/datapacks/vt';
 import { execute, MCFunction, schedule, Tag } from 'sandstone';
-import getInternalChild from 'lib/datapacks/getInternalChild';
+import internalBasePath from 'lib/datapacks/internalBasePath';
 import temp from 'lib/datapacks/vt/temp';
 
 const DEFAULT_MAX_COMMAND_CHAIN_LENGTH = 65536;
 
-const maxCommandChainLength_ = getInternalChild(
+const maxCommandChainLength_ = internalBasePath(
 	vt.child({ directory: 'max_command_chain_length' })
 );
 

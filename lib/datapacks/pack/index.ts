@@ -1,7 +1,7 @@
 // Provides the `BasePath`s for the data pack.
 
 import * as meta from 'lib/meta';
-import getInternalChild from 'lib/datapacks/getInternalChild';
+import internalBasePath from 'lib/datapacks/internalBasePath';
 import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
 import VTBasePath from 'lib/datapacks/VTBasePath';
 
@@ -18,4 +18,4 @@ export default pack;
  *
  * Every `MCFunction` or `Tag<'functions'>` should always be created under this instead of `pack` unless there is intent for it to be run freely by users.
  */
-export const pack_ = getInternalChild(pack);
+export const pack_ = internalBasePath(pack);

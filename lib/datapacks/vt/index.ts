@@ -1,4 +1,4 @@
-import getInternalChild from 'lib/datapacks/getInternalChild';
+import internalBasePath from 'lib/datapacks/internalBasePath';
 import VTBasePath from 'lib/datapacks/VTBasePath';
 
 /** The `BasePath` for the `vanillatweaks` namespace. */
@@ -11,4 +11,4 @@ export default vt;
  *
  * Every `MCFunction` or `Tag<'functions'>` should always be created under this instead of `vt` unless there is intent for it to be run freely by users.
  */
-export const vt_ = getInternalChild(vt);
+export const vt_ = internalBasePath(vt);

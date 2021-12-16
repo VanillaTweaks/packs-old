@@ -1,7 +1,7 @@
 import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
 import type { TimeArgument } from 'sandstone';
 import { MCFunction, schedule } from 'sandstone';
-import getInternalChild from 'lib/datapacks/getInternalChild';
+import internalBasePath from 'lib/datapacks/internalBasePath';
 import onLoad from 'lib/datapacks/onLoad';
 
 /** A mapping from the namespaced name of each function which has been created by `every` to `true`. */
@@ -14,7 +14,7 @@ const every = (
 	basePath: VTBasePathInstance,
 	callback: () => void
 ) => {
-	const _basePath = getInternalChild(basePath);
+	const _basePath = internalBasePath(basePath);
 
 	// TODO: Set this to `` _basePath`${duration === '1t' ? 'tick' : duration}` `` instead.
 	const functionName = _basePath.getResourceName(

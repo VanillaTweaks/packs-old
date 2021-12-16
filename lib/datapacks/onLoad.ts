@@ -1,5 +1,5 @@
 import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
-import getInternalChild from 'lib/datapacks/getInternalChild';
+import internalBasePath from 'lib/datapacks/internalBasePath';
 import { loadTag } from 'lib/datapacks/lanternLoad';
 import { MCFunction } from 'sandstone';
 
@@ -11,7 +11,7 @@ const onLoad = <
 	basePath: VTBasePathInstance,
 	callback: () => ReturnValue
 ) => {
-	const basePath_ = getInternalChild(basePath);
+	const basePath_ = internalBasePath(basePath);
 
 	const loadFunction = MCFunction(basePath_`load`, callback, {
 		onConflict: 'append'

@@ -4,7 +4,7 @@ import type { JSONTextComponent } from 'sandstone';
 import { execute, scoreboard } from 'sandstone';
 import onUninstall from 'lib/datapacks/onUninstall';
 import every from 'lib/datapacks/every';
-import getInternalChild from 'lib/datapacks/getInternalChild';
+import internalBasePath from 'lib/datapacks/internalBasePath';
 
 /** Creates a scoreboard objective with the `trigger` criterion, adds the necessary `scoreboard` commands to the load and uninstall functions, and runs a function as any player who sets the trigger to 1 or greater. */
 const onTrigger = (
@@ -26,7 +26,7 @@ const onTrigger = (
 		throw new TypeError('The `objectiveName` argument of `onTrigger` must contain only lowercase letters.');
 	}
 
-	const basePath_ = getInternalChild(basePath);
+	const basePath_ = internalBasePath(basePath);
 
 	onLoad(basePath, () => {
 		scoreboard.objectives.add(objectiveName, 'trigger', displayName);
