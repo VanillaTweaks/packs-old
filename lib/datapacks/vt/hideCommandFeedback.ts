@@ -2,7 +2,7 @@ import { vt_ } from 'lib/datapacks/vt';
 import { execute, gamerule, schedule } from 'sandstone';
 import temp from 'lib/datapacks/vt/temp';
 
-const $sendCommandFeedback = temp('#sendCommandFeedback');
+const $sendCommandFeedback = temp('$sendCommandFeedback');
 
 /** Sets the `sendCommandFeedback` game rule to `false` for the rest of the tick. */
 const hideCommandFeedback = () => {
