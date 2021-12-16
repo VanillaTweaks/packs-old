@@ -1,4 +1,5 @@
 import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
+import type { TimeArgument } from 'sandstone';
 import { MCFunction, schedule } from 'sandstone';
 import getInternalChild from 'lib/datapacks/getInternalChild';
 import onLoad from 'lib/datapacks/onLoad';
@@ -8,7 +9,7 @@ const existingFunctions: Partial<Record<string, true>> = {};
 
 /** Runs a function one tick after the pack loads and then on a periodical schedule. */
 const every = (
-	duration: string,
+	duration: Exclude<TimeArgument, number>,
 	/** The `BasePath` to put the scheduled function under. */
 	basePath: VTBasePathInstance,
 	callback: () => void
