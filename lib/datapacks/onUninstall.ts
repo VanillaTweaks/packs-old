@@ -3,17 +3,27 @@ import pack from 'lib/datapacks/pack';
 import state from 'lib/datapacks/state';
 import { MCFunction } from 'sandstone';
 import uninstallTag from 'lib/datapacks/vt/uninstallTag';
+import internalBasePath from 'lib/datapacks/internalBasePath';
 
 /** Adds to a `BasePath`'s uninstall function. */
 const onUninstall = (
 	basePath: VTBasePathInstance,
 	callback: () => void
 ) => {
+	let uninstallFunctionName;
+
 	if (basePath.namespace === pack.namespace) {
 		state.hasUninstallFunction = true;
+
+		uninstallFunctionName = basePath`uninstall`;
+	} else {
+		const basePath_ = internalBasePath(basePath);
+
+		// If this uninstall function is for a `BasePath` other than `pack`, then it should not be publicly accessible, because that would allow people to run it despite other packs still depending on the `BasePath` being fully installed and running.
+		uninstallFunctionName = basePath_`uninstall`;
 	}
 
-	const uninstallFunction = MCFunction(basePath`uninstall`, callback, {
+	const uninstallFunction = MCFunction(uninstallFunctionName, callback, {
 		onConflict: 'append'
 	});
 
