@@ -29,6 +29,8 @@ every('1t', playerLoadOrJoin, () => {
 	execute
 		.store.result.score(counter('@a'))
 		.run.scoreboard.players.add($globalCounter.target, $globalCounter.objective, 1);
+
+	// The reason we use counters instead of the `minecraft.custom:minecraft.leave_game` criterion is because that criterion doesn't always detect server crashes.
 });
 
 /** Runs a function as any player who joins the game, or as all players on load. */
