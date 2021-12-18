@@ -4,6 +4,7 @@ import setConfigFunction from 'lib/datapacks/setConfigFunction';
 import onUninstall from 'lib/datapacks/onUninstall';
 import onLoad from 'lib/datapacks/onLoad';
 import every from 'lib/datapacks/every';
+import book from './book';
 
 setMetaAdvancements({
 	root: {
