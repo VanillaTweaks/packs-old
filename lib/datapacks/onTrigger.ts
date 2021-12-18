@@ -10,7 +10,7 @@ import internalBasePath from 'lib/datapacks/internalBasePath';
 const onTrigger = (
 	/** The `BasePath` to be used as a prefix to the objective name, and to add to the load and uninstall functions of. */
 	basePath: VTBasePathInstance,
-	/** The name of the scoreboard objective to create. Must contain only lowercase letters. */
+	/** The name of the scoreboard objective to create. Must contain only lowercase letters and underscores. */
 	objectiveName: string,
 	/** The display name of the scoreboard objective to create. */
 	displayName: JSONTextComponent,
@@ -21,9 +21,9 @@ const onTrigger = (
 	 */
 	callback: () => void
 ) => {
-	if (/[^a-z]/.test(objectiveName)) {
-		// The reason the objective name shouldn't contain anything but lowercase letters is to make it more convenient for players to enter, and to make it consistent with command names.
-		throw new TypeError('The `objectiveName` argument of `onTrigger` must contain only lowercase letters.');
+	if (/[^a-z_]/.test(objectiveName)) {
+		// The reason the objective name shouldn't contain anything but lowercase letters and underscores is to make it easier for players to remember.
+		throw new TypeError('The `objectiveName` argument of `onTrigger` must contain only lowercase letters and underscores.');
 	}
 
 	const basePath_ = internalBasePath(basePath);
