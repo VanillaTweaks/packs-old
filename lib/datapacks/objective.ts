@@ -4,7 +4,7 @@ import { Objective, scoreboard } from 'sandstone';
 import onUninstall from 'lib/datapacks/onUninstall';
 
 /**
- * Creates a namespaced scoreboard objective, adds the necessary `scoreboard` commands to the load and uninstall functions, and returns an `Objective` instance.
+ * Creates a scoreboard objective, adds the necessary `scoreboard` commands to the load and uninstall functions, and returns an `Objective` instance.
  *
  * ⚠️ Not for objectives with the `trigger` criterion. Use `onTrigger` for that instead.
  */
@@ -13,11 +13,17 @@ const objective = (
 	basePath: VTBasePathInstance,
 	objectiveName: string,
 	criterion: Parameters<typeof scoreboard['objectives']['add']>[1] = 'dummy',
-	displayName?: Parameters<typeof scoreboard['objectives']['add']>[2]
+	displayName?: Parameters<typeof scoreboard['objectives']['add']>[2],
+	{ namespaced = true }: {
+		/** Whether to prepend the namespace to the objective name. Defaults to `true`. */
+		namespaced?: boolean
+	} = {}
 ) => {
 	const objectiveInstance = Objective.get(
-		// TODO: Use `` basePath`.${objectiveName}` `` here instead.
-		basePath.getResourceName(objectiveName).replace(/[:/]/g, '.')
+		namespaced
+			// TODO: Use `` basePath`.${objectiveName}` `` here instead.
+			? basePath.getResourceName(objectiveName).replace(/[:/]/g, '.')
+			: objectiveName
 	);
 
 	onLoad(basePath, () => {
