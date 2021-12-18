@@ -52,7 +52,7 @@ const setMetaAdvancements = (options: {
 			show_toast: false,
 			announce_to_chat: false
 		},
-		parent: Advancement(vt`meta/0`, {
+		parent: Advancement(vt`meta/root`, {
 			display: {
 				icon: {
 					item: 'minecraft:player_head',
