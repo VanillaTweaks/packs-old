@@ -80,19 +80,19 @@ const canMergeComponents = (source: JSONTextComponent, target: JSONTextComponent
 };
 
 /** Concatenates line breaks and spaces into their siblings, spreads unnecessary arrays, and merges sibling components which have equivalent properties. */
-export default function simplifyComponent(component: JSONTextComponent, options?: {
+export default function minifyComponent(component: JSONTextComponent, options?: {
 	mustReturnArray?: false,
 	modifiedCallback?: () => void
 }): JSONTextComponent;
 
-export default function simplifyComponent(component: JSONTextComponent, options: {
+export default function minifyComponent(component: JSONTextComponent, options: {
 	mustReturnArray: true,
 	modifiedCallback?: () => void
 }): JSONTextComponent[];
 
 // This ESLint comment is necessary because the rule wants me to use an arrow function, which does not allow for the overloading used here.
 // eslint-disable-next-line func-style
-export default function simplifyComponent(component: JSONTextComponent, options: {
+export default function minifyComponent(component: JSONTextComponent, options: {
 	mustReturnArray?: boolean,
 	modifiedCallback?: () => void
 } = {}): JSONTextComponent {
@@ -153,7 +153,7 @@ export default function simplifyComponent(component: JSONTextComponent, options:
 						modified = true;
 						i -= 3;
 					} else {
-						component[i] = simplifyComponent(item, {
+						component[i] = minifyComponent(item, {
 							modifiedCallback: () => {
 								modified = true;
 								i -= 2;
@@ -170,14 +170,20 @@ export default function simplifyComponent(component: JSONTextComponent, options:
 			modified = true;
 		}
 	} else if (typeof component === 'object') {
+		let hasWithOrExtra = false;
+
 		if ('with' in component && component.with) {
+			hasWithOrExtra = true;
+
 			for (const item of component.with) {
-				simplifyComponent(item);
+				minifyComponent(item);
 			}
 		}
 
 		if ('extra' in component && component.extra) {
-			component.extra = simplifyComponent(component.extra, {
+			hasWithOrExtra = true;
+
+			component.extra = minifyComponent(component.extra, {
 				mustReturnArray: true,
 				modifiedCallback: () => {
 					modified = true;
@@ -185,11 +191,17 @@ export default function simplifyComponent(component: JSONTextComponent, options:
 			})!;
 		}
 
-		const keys = Object.keys(component);
-		if (keys.length === 1 && keys[0] === 'text') {
-			component = (component as { text: string }).text;
+		if (!hasWithOrExtra && 'text' in component && component.text === '') {
+			component = '';
 
 			modified = true;
+		} else {
+			const keys = Object.keys(component);
+			if (keys.length === 1 && keys[0] === 'text') {
+				component = (component as { text: string }).text;
+
+				modified = true;
+			}
 		}
 	}
 

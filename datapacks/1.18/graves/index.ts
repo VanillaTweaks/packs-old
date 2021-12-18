@@ -11,14 +11,14 @@ setMetaAdvancements({
 		icon: {
 			item: 'minecraft:stone_brick_wall'
 		},
-		titleSpaces: 9,
+		titlePadding: 36,
 		description: [
 			'',
 			{ text: 'When you die, your items and/or XP will be stored safely in a grave instead of dropped.', color: 'gold' }
 		]
 	},
 	usage: {
-		titleSpaces: 10,
+		titlePadding: 40,
 		description: [
 			'',
 			{ text: 'Right-click', color: 'yellow' },
@@ -28,7 +28,7 @@ setMetaAdvancements({
 		]
 	},
 	opUsage: {
-		titleSpaces: 14
+		titlePadding: 56
 	}
 });
 

@@ -1,6 +1,7 @@
 import * as meta from 'lib/meta';
 import horizontalBar from 'lib/datapacks/textComponents/horizontalBar';
 import { tellraw } from 'sandstone';
+import minifyComponent from 'lib/datapacks/textComponents/minifyComponent';
 
 /** Runs `tellraw` commands to display the head of a chat UI to `@s`. */
 const pageHead = (options: {
@@ -24,11 +25,12 @@ const pageHead = (options: {
 	horizontalBar();
 
 	const spaces = ' '.repeat(options.spaces);
-	tellraw('@s', [
+	tellraw('@s', minifyComponent([
 		spaces + (options.title || meta.title),
 		{ text: ' / ', color: 'gray' },
-		(options.subtitle || 'Global Settings') + (options.dev ? `${spaces.slice(0, -1)}.` : spaces)
-	]);
+		(options.subtitle || 'Global Settings'),
+		(options.dev ? `${spaces.slice(0, -1)}.` : '')
+	]));
 
 	horizontalBar();
 };

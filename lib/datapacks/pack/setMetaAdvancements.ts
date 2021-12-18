@@ -3,10 +3,12 @@ import state from 'lib/datapacks/state';
 import { Advancement, NBT } from 'sandstone';
 import type { AdvancementJSON, JSONTextComponent } from 'sandstone';
 import pack from 'lib/datapacks/pack';
+import padding from '../textComponents/padding';
+import minifyComponent from '../textComponents/minifyComponent';
 
 type MetaAdvancementOptions = {
 	/** The number of spaces after the title, so the advancement's description isn't so squished. */
-	titleSpaces?: number,
+	titlePadding?: number,
 	description: JSONTextComponent & ['', ...unknown[]]
 };
 
@@ -47,7 +49,10 @@ const setMetaAdvancements = (options: {
 	let lastAdvancement = pack.Advancement(`meta/${advancementIndex++}`, {
 		display: {
 			icon: options.root.icon,
-			title: pack.title + ' '.repeat(options.root.titleSpaces || 0),
+			title: minifyComponent([
+				pack.title,
+				padding(options.root.titlePadding || 0)
+			]),
 			description: options.root.description,
 			show_toast: false,
 			announce_to_chat: false
@@ -142,7 +147,10 @@ const setMetaAdvancements = (options: {
 				lastAdvancement = pack.Advancement(`meta/${advancementIndex++}`, {
 					display: {
 						icon: metaAdvancementType.icon,
-						title: metaAdvancementType.title + ' '.repeat(advancementOptions.titleSpaces || 0),
+						title: minifyComponent([
+							metaAdvancementType.title,
+							padding(advancementOptions.titlePadding || 0)
+						]),
 						description: advancementOptions.description,
 						show_toast: false,
 						announce_to_chat: false
