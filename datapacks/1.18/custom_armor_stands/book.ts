@@ -4,7 +4,7 @@ import { LootTable, NBT } from 'sandstone';
 const FIRST_PAGE_LINK_COLOR = 'gray';
 const PAGE_TITLE_COLOR = 'black';
 const PAGE_META_COLOR = 'gray';
-const INFO_COLOR = 'dark_red';
+const INFO_COLOR = '#aa0079';
 const HEADING_COLOR = 'black';
 const CLICKABLE_COLOR = '#b26c34';
 const CLICKABLE_COLOR_2 = '#a2462a';
