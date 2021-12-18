@@ -1,7 +1,7 @@
 import pack from 'lib/datapacks/pack';
 import { LootTable, NBT } from 'sandstone';
 
-const FIRST_PAGE_LINK_COLOR = 'gray';
+const FIRST_PAGE_LINK_COLOR = 'dark_gray';
 const PAGE_TITLE_COLOR = 'black';
 const PAGE_META_COLOR = 'gray';
 const INFO_COLOR = '#aa0079';
