@@ -170,32 +170,26 @@ export default function minify(component: JSONTextComponent, options: {
 			modified = true;
 		}
 	} else if (typeof component === 'object') {
-		let hasWithOrExtra = false;
-
 		if ('with' in component && component.with) {
-			hasWithOrExtra = true;
-
 			for (const item of component.with) {
 				minify(item);
 			}
 		}
 
 		if ('extra' in component && component.extra) {
-			hasWithOrExtra = true;
-
 			component.extra = minify(component.extra, {
 				mustReturnArray: true,
 				modifiedCallback: () => {
 					modified = true;
 				}
 			})!;
-		}
-
-		if (!hasWithOrExtra && 'text' in component && component.text === '') {
+		} else if ('text' in component && component.text === '') {
 			component = '';
 
 			modified = true;
-		} else {
+		}
+
+		if (component !== '') {
 			const keys = Object.keys(component);
 			if (keys.length === 1 && keys[0] === 'text') {
 				component = (component as { text: string }).text;
