@@ -56,7 +56,7 @@ const getWidth = (
 
 						invalidSurrogate = false;
 
-						codePoint = component.slice(i, i + 2);
+						codePoint += component[i + 1];
 
 						// Move past the low surrogate to the next code point.
 						i++;
