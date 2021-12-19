@@ -1,4 +1,4 @@
-import minifyComponent from 'lib/datapacks/textComponents/minifyComponent';
+import minify from 'lib/datapacks/textComponents/minify';
 
 /** Returns a `JSONTextComponent` of a combination of plain and bold spaces to achieve a specified width in pixels. */
 const padding = (
@@ -14,7 +14,7 @@ const padding = (
 	const boldSpaces = pixels % 4;
 	const plainSpaces = Math.floor(pixels / 4) - boldSpaces;
 
-	return minifyComponent([
+	return minify([
 		' '.repeat(plainSpaces),
 		{ text: ' '.repeat(boldSpaces), bold: true }
 	]);

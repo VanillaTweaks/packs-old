@@ -2,11 +2,8 @@ import onTrigger from 'lib/datapacks/onTrigger';
 import pack from 'lib/datapacks/pack';
 import setMetaAdvancements from 'lib/datapacks/pack/setMetaAdvancements';
 import setConfigFunction from 'lib/datapacks/setConfigFunction';
-import horizontalBar from 'lib/datapacks/textComponents/horizontalBar';
-import padding from 'lib/datapacks/textComponents/padding';
-import pageHead from 'lib/datapacks/textComponents/pageHead';
-import { execute } from 'sandstone';
 import book from './book';
+import { triggerChat } from './chat';
 
 setMetaAdvancements({
 	root: {
@@ -33,18 +30,7 @@ setMetaAdvancements({
 onTrigger(pack, 'custom_armor_stands', 'Custom Armor Stands', trigger => {
 	const $trigger = trigger('@s');
 
-	execute
-		.if($trigger.matches(1))
-		.run(() => {
-			pageHead({
-				before: padding(76),
-				subtitle: 'Main Menu'
-			});
-
-
-
-			horizontalBar();
-		});
+	triggerChat($trigger);
 });
 
 setConfigFunction(pack, () => {

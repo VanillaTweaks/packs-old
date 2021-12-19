@@ -1,4 +1,4 @@
-import minifyComponent from 'lib/datapacks/textComponents/minifyComponent';
+import minify from 'lib/datapacks/textComponents/minify';
 import { tellraw } from 'sandstone';
 import type { JSONTextComponent } from 'sandstone';
 
@@ -182,7 +182,7 @@ export const configLine = (
 	return () => {
 		tellraw('@s', [
 			'',
-			minifyComponent(component)
+			minify(component)
 		]);
 	};
 };

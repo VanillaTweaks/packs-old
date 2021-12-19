@@ -80,19 +80,19 @@ const canMergeComponents = (source: JSONTextComponent, target: JSONTextComponent
 };
 
 /** Concatenates line breaks and spaces into their siblings, spreads unnecessary arrays, and merges sibling components which have equivalent properties. */
-export default function minifyComponent(component: JSONTextComponent, options?: {
+export default function minify(component: JSONTextComponent, options?: {
 	mustReturnArray?: false,
 	modifiedCallback?: () => void
 }): JSONTextComponent;
 
-export default function minifyComponent(component: JSONTextComponent, options: {
+export default function minify(component: JSONTextComponent, options: {
 	mustReturnArray: true,
 	modifiedCallback?: () => void
 }): JSONTextComponent[];
 
 // This ESLint comment is necessary because the rule wants me to use an arrow function, which does not allow for the overloading used here.
 // eslint-disable-next-line func-style
-export default function minifyComponent(component: JSONTextComponent, options: {
+export default function minify(component: JSONTextComponent, options: {
 	mustReturnArray?: boolean,
 	modifiedCallback?: () => void
 } = {}): JSONTextComponent {
@@ -153,7 +153,7 @@ export default function minifyComponent(component: JSONTextComponent, options: {
 						modified = true;
 						i -= 3;
 					} else {
-						component[i] = minifyComponent(item, {
+						component[i] = minify(item, {
 							modifiedCallback: () => {
 								modified = true;
 								i -= 2;
@@ -176,14 +176,14 @@ export default function minifyComponent(component: JSONTextComponent, options: {
 			hasWithOrExtra = true;
 
 			for (const item of component.with) {
-				minifyComponent(item);
+				minify(item);
 			}
 		}
 
 		if ('extra' in component && component.extra) {
 			hasWithOrExtra = true;
 
-			component.extra = minifyComponent(component.extra, {
+			component.extra = minify(component.extra, {
 				mustReturnArray: true,
 				modifiedCallback: () => {
 					modified = true;

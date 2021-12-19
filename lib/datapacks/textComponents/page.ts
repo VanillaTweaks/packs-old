@@ -2,7 +2,7 @@ import * as meta from 'lib/meta';
 import horizontalBar from 'lib/datapacks/textComponents/horizontalBar';
 import type { JSONTextComponent } from 'sandstone';
 import { tellraw } from 'sandstone';
-import minifyComponent from 'lib/datapacks/textComponents/minifyComponent';
+import minify from 'lib/datapacks/textComponents/minify';
 
 /** Runs `tellraw` commands to display the top and bottom of a page UI to `@s`. */
 const page = (
@@ -19,7 +19,7 @@ const page = (
 	content: () => void
 ) => {
 	horizontalBar();
-	tellraw('@s', minifyComponent([
+	tellraw('@s', minify([
 		'',
 		options.before || '',
 		options.title || meta.title,
