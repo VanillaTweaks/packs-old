@@ -74,17 +74,19 @@ const getWidth = (
 						: UNKNOWN_CODE_POINT_WIDTH
 			);
 
-			const nonLegacyUnicode = (
-				invalidSurrogate
-				|| knownCodePoint
-				|| nonLegacyUnicodeCodePoints[codePoint.length as 1 | 2].includes(codePoint)
-			);
+			if (bold) {
+				const nonLegacyUnicode = (
+					invalidSurrogate
+					|| !knownCodePoint
+					|| nonLegacyUnicodeCodePoints[codePoint.length as 1 | 2].includes(codePoint)
+				);
 
-			width += (
-				nonLegacyUnicode
-					? BOLD_CODE_POINT_EXTRA_WIDTH
-					: BOLD_LEGACY_UNICODE_CODE_POINT_EXTRA_WIDTH
-			);
+				width += (
+					nonLegacyUnicode
+						? BOLD_CODE_POINT_EXTRA_WIDTH
+						: BOLD_LEGACY_UNICODE_CODE_POINT_EXTRA_WIDTH
+				);
+			}
 		}
 
 		return width;
