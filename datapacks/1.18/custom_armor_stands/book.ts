@@ -14,8 +14,7 @@ const NEGATIVE_NUMBER_COLOR = '#e64c4c';
 const POSITIVE_NUMBER_COLOR = 'dark_green';
 
 const book = LootTable(pack`book`, {
-	// TODO: Remove `as any`.
-	type: 'minecraft:command' as any,
+	type: 'minecraft:command',
 	pools: [{
 		rolls: 1,
 		entries: [{
@@ -422,9 +421,7 @@ const book = LootTable(pack`book`, {
 					].map(page => JSON.stringify(page))
 				})
 			}]
-		}],
-		// TODO: Remove this.
-		bonus_rolls: 0
+		}]
 	}]
 });
 
