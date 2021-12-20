@@ -13,15 +13,15 @@ const padding = (
 	// Ensure the width is an integer.
 	width = Math.floor(width);
 
-	// Round down for other invalid widths.
-	if (width === 6) {
+	// Round down for other invalid widths, and account for widths of 0 or less.
+	if (width === 0) {
+		return '';
+	} else if (width === 6) {
 		width = 5;
 	} else if (width === 11) {
 		width = 10;
-	}
-
-	if (width <= 0) {
-		throw TypeError('The padding width must be greater than 0.');
+	} else if (width < 0) {
+		throw TypeError('The padding width must not be negative.');
 	}
 
 	const boldSpaces = width % 4;
