@@ -20,7 +20,7 @@ const padding = (
 	if (!Number.isInteger(width) || (
 		width < 12 && ![4, 5, 8, 9, 10].includes(width)
 	)) {
-		throw TypeError(`The width cannot be ${width}.`);
+		throw TypeError(`The padding width cannot be ${width}.`);
 	}
 
 	const boldSpaces = width % 4;
