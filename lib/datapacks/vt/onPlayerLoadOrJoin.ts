@@ -13,8 +13,9 @@ const $globalCounter = counter('$global');
 const playerLoadOrJoinTag = Tag('functions', vt_`player_load_or_join`);
 
 onLoad(playerLoadOrJoin, () => {
-	// TODO: Replace all `$globalCounter.target, $globalCounter.objective` with `$globalCounter`.
-	scoreboard.players.reset($globalCounter.target, $globalCounter.objective);
+	// Reset all counters (including the global counter) to ensure all players are detected as out of sync next time.
+	// TODO: Remove `.toString()`.
+	scoreboard.players.reset('*', counter.toString());
 });
 
 every('1t', playerLoadOrJoin, () => {
@@ -28,6 +29,7 @@ every('1t', playerLoadOrJoin, () => {
 	// Increment the global counter, and sync all players' counters with it.
 	execute
 		.store.result.score(counter('@a'))
+		// TODO: Replace `$globalCounter.target, $globalCounter.objective` with `$globalCounter`.
 		.run.scoreboard.players.add($globalCounter.target, $globalCounter.objective, 1);
 
 	// The reason we use counters instead of the `minecraft.custom:minecraft.leave_game` criterion is because that criterion doesn't always detect server crashes.
