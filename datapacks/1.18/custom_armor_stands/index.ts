@@ -3,7 +3,6 @@ import pack from 'lib/datapacks/pack';
 import setMetaAdvancements from 'lib/datapacks/pack/setMetaAdvancements';
 import setConfigFunction from 'lib/datapacks/setConfigFunction';
 import book from './book';
-import { triggerChat } from './chat';
 
 setMetaAdvancements({
 	root: {
@@ -30,7 +29,7 @@ setMetaAdvancements({
 onTrigger(pack, 'custom_armor_stands', 'Custom Armor Stands', trigger => {
 	const $trigger = trigger('@s');
 
-	triggerChat($trigger);
+
 });
 
 setConfigFunction(pack, () => {
