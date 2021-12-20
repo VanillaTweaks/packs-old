@@ -90,8 +90,6 @@ export default function minify(component: JSONTextComponent, options: {
 	modifiedCallback?: () => void
 }): JSONTextComponent[];
 
-// This ESLint comment is necessary because the rule wants me to use an arrow function, which does not allow for the overloading used here.
-// eslint-disable-next-line func-style
 export default function minify(component: JSONTextComponent, options: {
 	mustReturnArray?: boolean,
 	modifiedCallback?: () => void
@@ -184,6 +182,9 @@ export default function minify(component: JSONTextComponent, options: {
 				}
 			})!;
 		} else if ('text' in component && component.text === '') {
+			// This transformation is invalid if `component` has special formatting and is the first element of an array with at least one non-empty element.
+			// That's probably not worth fixing since we always avoid putting special formatting on the first element of an array.
+
 			component = '';
 
 			modified = true;
