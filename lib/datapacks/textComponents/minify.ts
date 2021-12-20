@@ -1,36 +1,10 @@
 import type { JSONTextComponent } from 'sandstone';
-
-const specialFormattingKeys = [
-	'font',
-	'bold',
-	'italic',
-	'underlined',
-	'strikethrough',
-	'obfuscated',
-	'insertion',
-	'hoverEvent',
-	'clickEvent'
-] as const;
-
-const hasNoSpecialFormatting = (component: JSONTextComponent): boolean => {
-	if (typeof component === 'object') {
-		if ('text' in component) {
-			for (const key of specialFormattingKeys) {
-				if (key in component) {
-					return false;
-				}
-			}
-			return true;
-		}
-		return false;
-	}
-	return true;
-};
+import hasSpecialFormatting, { specialFormattingKeys } from 'lib/datapacks/textComponents/hasSpecialFormatting';
 
 const lineBreaks = /^\n*$/;
 const whitespace = /^\s*$/;
 
-/** Checks whether the `source` JSON text component can be merged into the `target` JSON text component, given neither are arrays. */
+/** Checks whether the `source` JSON text component can be merged into the `target` JSON text component without changing their appearance, given neither are arrays. */
 const canMergeComponents = (source: JSONTextComponent, target: JSONTextComponent, toLeft = false): boolean => {
 	if (source instanceof Array || target instanceof Array || typeof target === 'number' || typeof target === 'boolean') {
 		return false;
@@ -72,7 +46,7 @@ const canMergeComponents = (source: JSONTextComponent, target: JSONTextComponent
 	// If this point is reached, the source is primitive.
 	return typeof target === 'object' && 'text' in target && (
 		lineBreaks.test(source.toString()) || (
-			hasNoSpecialFormatting(target) && (
+			!hasSpecialFormatting(target) && (
 				!target.color || whitespace.test(source.toString())
 			)
 		)
