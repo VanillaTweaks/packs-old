@@ -34,7 +34,7 @@ const padding = (
 
 export default padding;
 
-/** Same as `padding`, except will round down if the specified width is invalid. */
+/** Same as `padding`, except rounds down (or up if it's below 4) if the specified width is invalid. */
 export const roundedPadding = (width: number) => {
 	if (width > 0 && width < 4) {
 		width = 4;
