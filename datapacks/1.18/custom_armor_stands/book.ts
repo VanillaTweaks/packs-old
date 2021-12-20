@@ -1,4 +1,6 @@
 import pack from 'lib/datapacks/pack';
+import center from 'lib/datapacks/textComponents/center';
+import minify from 'lib/datapacks/textComponents/minify';
 import padding from 'lib/datapacks/textComponents/padding';
 import { LootTable, NBT } from 'sandstone';
 
@@ -34,12 +36,14 @@ const book = LootTable(pack`book`, {
 					pages: [
 						[
 							'',
-							{ text: ' Custom Armor Stands\n         ', color: PAGE_TITLE_COLOR },
-							{ text: '⤺', color: CLICKABLE_COLOR, bold: true },
-							'  ',
-							{ text: '⟳', color: CLICKABLE_COLOR, bold: true },
-							'  ',
-							{ text: '⤻', color: CLICKABLE_COLOR, bold: true },
+							center([
+								{ text: 'Custom Armor Stands\n', color: PAGE_TITLE_COLOR },
+								{ text: '⤺', color: CLICKABLE_COLOR, bold: true },
+								'  ',
+								{ text: '⟳', color: CLICKABLE_COLOR, bold: true },
+								'  ',
+								{ text: '⤻', color: CLICKABLE_COLOR, bold: true }
+							]),
 							'\n\n    ',
 							{ text: 'Select Nearest', color: CLICKABLE_COLOR },
 							'\n   ',
@@ -418,7 +422,7 @@ const book = LootTable(pack`book`, {
 							'\n ',
 							{ text: 'Away From Your Feet', color: CLICKABLE_COLOR }
 						]
-					].map(page => JSON.stringify(page))
+					].map(page => JSON.stringify(minify(page)))
 				})
 			}]
 		}]
