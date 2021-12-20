@@ -1,26 +1,27 @@
 import minify from 'lib/datapacks/textComponents/minify';
 
-/**
- * Returns a `JSONTextComponent` of a combination of plain and bold spaces to achieve a specified width in in-game pixels.
- *
- * The width must be a natural number and cannot be 1, 2, 3, 6, or 11.
- */
+/** Returns a `JSONTextComponent` of a combination of plain and bold spaces to achieve a specified width in in-game pixels. */
 const padding = (
-	/**
-	 * The number of in-game pixels to generate spaces for.
-	 *
-	 * Must be a natural number and cannot be 1, 2, 3, 6, or 11.
-	 */
+	/** The number of in-game pixels to generate spaces for. */
 	width: number
 ) => {
-	if (width === 0) {
-		return '';
+	// If the width is small but non-zero, then round up to the smallest valid width.
+	if (width > 0 && width < 4) {
+		width = 4;
 	}
 
-	if (!Number.isInteger(width) || (
-		width < 12 && ![4, 5, 8, 9, 10].includes(width)
-	)) {
-		throw TypeError(`The padding width cannot be ${width}.`);
+	// Ensure the width is an integer.
+	width = Math.floor(width);
+
+	// Round down for other invalid widths.
+	if (width === 6) {
+		width = 5;
+	} else if (width === 11) {
+		width = 10;
+	}
+
+	if (width <= 0) {
+		throw TypeError('The padding width must be greater than 0.');
 	}
 
 	const boldSpaces = width % 4;
@@ -33,18 +34,3 @@ const padding = (
 };
 
 export default padding;
-
-/** Same as `padding`, except rounds down (or up if it's below 4) if the specified width is invalid. */
-export const roundedPadding = (width: number) => {
-	if (width > 0 && width < 4) {
-		width = 4;
-	} else if (width === 6) {
-		width = 5;
-	} else if (width === 11) {
-		width = 10;
-	} else if (!Number.isInteger(width)) {
-		width = Math.floor(width);
-	}
-
-	return padding(width);
-};
