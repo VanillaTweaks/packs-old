@@ -3,14 +3,14 @@ import type { JSONTextComponent } from 'sandstone';
 /**
  * Splits a `JSONTextComponent` into an array of multiple `JSONTextComponent`s (not minified).
  *
- * Assumes all arrays in the inputted component have elements which shouldn't inherit special formatting from the first, so it isn't necessary to avoid special formatting on the first element of any inputted array.
+ * Assumes all arrays in the inputted component have elements which shouldn't inherit special formatting from the first element, so it isn't necessary to avoid special formatting on the first element of any inputted array.
  *
  * The returned array is never empty.
  */
 const split = (
 	/** The text component to split. */
 	component: JSONTextComponent,
-	/** The pattern describing where each split should occur. */
+	/** The string on which each split should occur. */
 	separator: string
 ): JSONTextComponent[] => {
 	if (typeof component === 'string') {
