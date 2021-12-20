@@ -15,7 +15,7 @@ const center = (
 	component: JSONTextComponent,
 	/** The width of the container to be centered in. Defaults to `BOOK_WIDTH`. */
 	containerWidth = BOOK_WIDTH
-) => minify(
+) => (
 	join(
 		split(component, '\n').map(componentLine => {
 			const width = getWidth(componentLine);
