@@ -15,7 +15,7 @@ const center = (
 	component: JSONTextComponent,
 	/** The width of the container to be centered in. Defaults to `BOOK_WIDTH`. */
 	containerWidth = BOOK_WIDTH
-) => (
+) => minify(
 	join(
 		split(component, '\n').map(componentLine => {
 			const width = getWidth(componentLine);
@@ -29,10 +29,10 @@ const center = (
 				throw new TypeError('The width of a line cannot exceed the width of the container.');
 			}
 
-			return minify([
+			return [
 				padding((containerWidth - width) / 2),
 				componentLine
-			]);
+			];
 		}),
 		'\n'
 	)
