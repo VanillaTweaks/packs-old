@@ -1,6 +1,7 @@
 import type { JSONTextComponent } from 'sandstone';
 import nonLegacyUnicodeCodePoints from 'lib/datapacks/textComponents/nonLegacyUnicodeCodePoints.json';
 import codePointWidths from 'lib/datapacks/textComponents/codePointWidths.json';
+import split from 'lib/datapacks/textComponents/split';
 
 /** The width of an unknown code point in in-game pixels. */
 const UNKNOWN_CODE_POINT_WIDTH = 6;
@@ -20,21 +21,25 @@ const MAX_LOW_SURROGATE_CHAR_CODE = 0xdfff;
 /** Gets the width in in-game pixels of the specified text component. */
 const getWidth = (
 	component: JSONTextComponent,
-	bold = false
+	{ bold = false }: { bold?: boolean } = {}
 ): number => {
+	const componentLines = split(component, '\n');
+
+	if (componentLines.length > 1) {
+		// The width of the text component is the width of its longest line.
+		return Math.max(
+			...componentLines.map(componentLine => getWidth(componentLine))
+		);
+	}
+
 	if (typeof component === 'string') {
 		let width = 0;
 
 		for (let i = 0; i < component.length; i++) {
 			let codePoint: string = component[i];
-
-			if (codePoint === '\n') {
-				throw new TypeError('The width of a string containing line breaks cannot be determined.');
-			}
+			const charCode = component.charCodeAt(i);
 
 			let invalidSurrogate = false;
-
-			const charCode = component.charCodeAt(i);
 
 			if (
 				charCode >= MIN_HIGH_SURROGATE_CHAR_CODE
@@ -108,14 +113,14 @@ const getWidth = (
 		let width = 0;
 
 		for (let i = 0; i < component.length; i++) {
-			width += getWidth(component[i], bold);
+			width += getWidth(component[i], { bold });
 		}
 
 		return width;
 	}
 
 	if (typeof component === 'number' || typeof component === 'boolean') {
-		return getWidth(component.toString(), bold);
+		return getWidth(component.toString(), { bold });
 	}
 
 	if ('bold' in component && component.bold !== undefined) {
@@ -123,10 +128,10 @@ const getWidth = (
 	}
 
 	if ('text' in component) {
-		let width = getWidth(component.text, bold);
+		let width = getWidth(component.text, { bold });
 
 		if ('extra' in component && component.extra) {
-			width += getWidth(component.extra, bold);
+			width += getWidth(component.extra, { bold });
 		}
 
 		return width;
