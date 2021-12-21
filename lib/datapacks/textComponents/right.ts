@@ -6,11 +6,11 @@ import join from 'lib/datapacks/textComponents/join';
 import { BOOK_WIDTH } from 'lib/datapacks/textComponents/container';
 
 /**
- * Centers a text component by adding padding to the left of it, automatically minified.
+ * Right-aligns a text component by adding padding to the left of it, automatically minified.
  *
  * Assumes all arrays in the inputted component have elements which shouldn't inherit special formatting from the first element, so it isn't necessary to avoid special formatting on the first element of any inputted array.
  */
-const center = (
+const right = (
 	component: JSONTextComponent,
 	/** The width of the container to be centered in. Defaults to `BOOK_WIDTH`. */
 	containerWidth = BOOK_WIDTH
@@ -29,7 +29,7 @@ const center = (
 			}
 
 			return [
-				padding((containerWidth - width) / 2),
+				padding(containerWidth - width),
 				componentLine
 			];
 		}),
@@ -37,4 +37,4 @@ const center = (
 	)
 );
 
-export default center;
+export default right;
