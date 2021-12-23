@@ -4,6 +4,7 @@ import getWidth from 'lib/datapacks/textComponents/getWidth';
 import minify from 'lib/datapacks/textComponents/minify';
 import join from 'lib/datapacks/textComponents/join';
 import padding from 'lib/datapacks/textComponents/padding';
+import { containerWidth } from 'lib/datapacks/textComponents/container';
 
 type JSONTextComponentRange = {
 	/** The component in the range. Should not contain whitespace. */
@@ -190,26 +191,59 @@ const overlap = (...components: JSONTextComponent[]) => {
 
 	const outputLines: JSONTextComponent[][] = [];
 
-	for (const rangeLine of rangeLines) {
-		const outputLine: JSONTextComponent[] = [''];
+	for (let lineIndex = 0; lineIndex < rangeLines.length; lineIndex++) {
+		const rangeLine = rangeLines[lineIndex];
 
-		/** The exact position in the `outputLine` at which the previous range ended. */
-		let previousEnd = 0;
+		let outputLine: JSONTextComponent[];
+		/** The `end` value of the previous range. */
+		let previousEnd;
+		/** The net difference between actual padding and ideal padding that should be corrected for. Can be negative. */
+		let missedPaddingWidth = 0;
+		/** The amount that `outputLine`'s width exceeds the container width. */
+		let overflowingWidth: number;
 
-		for (const range of rangeLine) {
-			const idealPaddingWidthBeforeRange = range.start - previousEnd;
-			const paddingBeforeRange = padding(idealPaddingWidthBeforeRange);
+		for (let attempts = 0; attempts < 2; attempts++) {
+			// Attempt to construct the `outputLine`.
 
-			outputLine.push(
-				paddingBeforeRange,
-				range.value
-			);
+			const initialMissedPaddingWidth = missedPaddingWidth;
+			outputLine = [''];
+			previousEnd = 0;
 
-			const missedPaddingWidth = idealPaddingWidthBeforeRange - getWidth(paddingBeforeRange);
-			previousEnd = range.end - missedPaddingWidth;
+			for (const range of rangeLine) {
+				const idealPaddingWidthBeforeRange = range.start - previousEnd + missedPaddingWidth;
+				const paddingBeforeRange = padding(
+					Math.max(0, idealPaddingWidthBeforeRange)
+				);
+
+				outputLine.push(
+					paddingBeforeRange,
+					range.value
+				);
+
+				missedPaddingWidth = idealPaddingWidthBeforeRange - getWidth(paddingBeforeRange);
+				previousEnd = range.end;
+			}
+
+			missedPaddingWidth -= initialMissedPaddingWidth;
+
+			overflowingWidth = previousEnd - missedPaddingWidth - containerWidth;
+			if (overflowingWidth <= 0) {
+				// The attempt was successful.
+				break;
+			}
+
+			// The line overflows the container, so either try again from the beginning with the `missedPaddingWidth` at its new negative value, or throw an error after running out of attempts.
 		}
 
-		outputLines.push(outputLine);
+		if (overflowingWidth! > 0) {
+			// The line still overflows the container.
+			throw new TypeError(
+				'There is not enough padding between overlapping subcomponents to fit the following text component on one line:\n'
+				+ JSON.stringify(minify(outputLine!))
+			);
+		}
+
+		outputLines.push(outputLine!);
 	}
 
 	return join(outputLines, '\n');
