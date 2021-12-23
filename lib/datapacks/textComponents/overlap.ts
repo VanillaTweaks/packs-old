@@ -176,7 +176,10 @@ const overlap = (...components: JSONTextComponent[]) => {
 					return;
 				}
 
-				throw new TypeError(`The following text component cannot be overlapped due to having indeterminate width:\n${JSON.stringify(component)}`);
+				throw new TypeError(
+					'The following text component cannot be overlapped due to having indeterminate width:\n'
+					+ JSON.stringify(component)
+				);
 			};
 
 			iterateSubcomponent(componentLine);
