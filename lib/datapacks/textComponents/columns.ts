@@ -5,7 +5,7 @@ import { containerWidth } from 'lib/datapacks/textComponents/container';
 import padding from 'lib/datapacks/textComponents/padding';
 import join from 'lib/datapacks/textComponents/join';
 
-/** The width of a space in in-game pixels. */
+/** The width of a plain space in in-game pixels. */
 const SPACE_WIDTH = getWidth(' ');
 
 /**
