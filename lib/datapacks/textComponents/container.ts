@@ -9,12 +9,12 @@ const container = <Return>(
 	width: number,
 	callback: () => Return
 ) => {
+	const previousContainerWidth = containerWidth;
 	containerWidth = width;
 
 	const callbackReturn = callback();
 
-	// Restore the container width to its default.
-	containerWidth = BOOK_WIDTH;
+	containerWidth = previousContainerWidth;
 
 	return callbackReturn;
 };
