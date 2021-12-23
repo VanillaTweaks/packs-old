@@ -98,7 +98,7 @@ const getWidth = (
 	}
 
 	if (Array.isArray(component)) {
-		if (!component.length) {
+		if (component.length === 0) {
 			return 0;
 		}
 

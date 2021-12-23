@@ -16,7 +16,7 @@ const padding = (
 	// Round down for other invalid widths, and account for widths of 0 or less.
 	if (width === 0) {
 		return '';
-	} else if (width === 6) {
+	} else if (width === 6 || width === 7) {
 		width = 5;
 	} else if (width === 11) {
 		width = 10;

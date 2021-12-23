@@ -27,7 +27,7 @@ const split = (
 		for (let i = 1; i < component.length; i++) {
 			const splitSubComponent = split(component[i], separator);
 
-			// Concatenate the first element of the split sub-component onto the last element of the split component.
+			// Concatenate the first element of the split subcomponent onto the last element of the split component.
 			const lastSplitComponentIndex = splitComponent.length - 1;
 			splitComponent[lastSplitComponentIndex] = [
 				'',
@@ -35,7 +35,7 @@ const split = (
 				splitSubComponent[0]
 			];
 
-			// Push the rest of the split sub-component's elements separately.
+			// Push the rest of the split subcomponent's elements separately.
 			splitComponent.push(...splitSubComponent.slice(1));
 		}
 
