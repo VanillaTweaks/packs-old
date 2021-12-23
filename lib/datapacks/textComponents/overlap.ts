@@ -64,8 +64,6 @@ const overlap = (...components: JSONTextComponent[]) => {
 					valueIndex++;
 				}
 
-				const end = start + width;
-
 				const throwCollisionError = (conflictingSubcomponent: JSONTextComponent) => {
 					throw new TypeError(
 						'The text components cannot be overlapped due to collision between the following two subcomponents:\n'
@@ -76,19 +74,27 @@ const overlap = (...components: JSONTextComponent[]) => {
 
 				if (valueIndex !== 0) {
 					const previousRange = rangeLine[valueIndex - 1];
+
 					if (start < previousRange.end) {
 						throwCollisionError(previousRange.value);
 					}
 				}
 
+				const end = start + width;
+
 				if (valueIndex !== rangeLine.length) {
 					const nextRange = rangeLine[valueIndex];
+
 					if (end > nextRange.start) {
 						throwCollisionError(nextRange.value);
 					}
 				}
 
-				rangeLine.splice(valueIndex, 0, { value, start, end });
+				rangeLine.splice(valueIndex, 0, {
+					value,
+					start,
+					end
+				});
 
 			};
 
@@ -97,26 +103,33 @@ const overlap = (...components: JSONTextComponent[]) => {
 				properties: Partial<TextComponentObject> = {}
 			) => {
 				if (typeof subcomponent === 'string') {
-					const substrings = subcomponent.split(' ');
+					const substrings = subcomponent.split(
+						// The reason it's ` {2,}` instead of ` +` is because a single space in the middle of the string is most likely just a normal space that should not allow things to overlap it or be adjustable by missed padding when constructing the output.
+						/(^ +| {2,}| +$)/
+					);
 
 					for (let i = 0; i < substrings.length; i++) {
-						if (i !== 0) {
-							// A space has been found, so end the `value`.
+						const substring = substrings[i];
+
+						if (i % 2 === 0) {
+							// This substring does not contain only whitespace, so add it to the `value`.
+
+							if (substring) {
+								value.push({
+									...properties,
+									text: substring
+								});
+								width += getWidth(substring, properties);
+							}
+						} else {
+							// This substring contains only whitespace, so end the `value`.
+
 							endValue();
 
 							// Reset for the next `value`.
-							start += width + getWidth(' ', properties);
+							start += width + getWidth(substring, properties);
 							value = [];
 							width = 0;
-						}
-
-						const substring = substrings[i];
-						if (substring) {
-							value.push({
-								...properties,
-								text: substring
-							});
-							width += getWidth(substring, properties);
 						}
 					}
 
@@ -177,15 +190,20 @@ const overlap = (...components: JSONTextComponent[]) => {
 	for (const rangeLine of rangeLines) {
 		const outputLine: JSONTextComponent[] = [''];
 
+		/** The exact position in the `outputLine` at which the previous range ended. */
 		let previousEnd = 0;
 
 		for (const range of rangeLine) {
+			const idealPaddingWidthBeforeRange = range.start - previousEnd;
+			const paddingBeforeRange = padding(idealPaddingWidthBeforeRange);
+
 			outputLine.push(
-				padding(range.start - previousEnd),
+				paddingBeforeRange,
 				range.value
 			);
 
-			previousEnd = range.end;
+			const missedPaddingWidth = idealPaddingWidthBeforeRange - getWidth(paddingBeforeRange);
+			previousEnd = range.end - missedPaddingWidth;
 		}
 
 		outputLines.push(outputLine);
