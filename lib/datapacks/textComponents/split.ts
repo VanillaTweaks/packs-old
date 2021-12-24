@@ -11,7 +11,7 @@ const split = (
 	/** The text component to split. */
 	component: JSONTextComponent,
 	/** The string on which each split should occur. */
-	separator: string
+	separator: string | RegExp
 ): JSONTextComponent[] => {
 	if (typeof component === 'string') {
 		return component.split(separator);
@@ -22,24 +22,32 @@ const split = (
 			return [component];
 		}
 
-		const splitComponent: JSONTextComponent[] = split(component[0], separator);
+		const outputComponents: JSONTextComponent[] = split(component[0], separator);
 
 		for (let i = 1; i < component.length; i++) {
 			const splitSubComponent = split(component[i], separator);
 
-			// Concatenate the first element of the split subcomponent onto the last element of the split component.
-			const lastSplitComponentIndex = splitComponent.length - 1;
-			splitComponent[lastSplitComponentIndex] = [
-				'',
-				splitComponent[lastSplitComponentIndex],
-				splitSubComponent[0]
-			];
+			// Concatenate the first element of the split subcomponent onto the last component of the output.
+			const lastOutputComponent = outputComponents[outputComponents.length - 1];
+			if (Array.isArray(lastOutputComponent)) {
+				if (lastOutputComponent[0] !== '') {
+					lastOutputComponent.unshift('');
+				}
+
+				lastOutputComponent.push(splitSubComponent[0]);
+			} else {
+				outputComponents[outputComponents.length - 1] = [
+					'',
+					lastOutputComponent,
+					splitSubComponent[0]
+				];
+			}
 
 			// Push the rest of the split subcomponent's elements separately.
-			splitComponent.push(...splitSubComponent.slice(1));
+			outputComponents.push(...splitSubComponent.slice(1));
 		}
 
-		return splitComponent;
+		return outputComponents;
 	}
 
 	if (typeof component === 'number' || typeof component === 'boolean') {
