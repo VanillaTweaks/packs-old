@@ -2,8 +2,10 @@ import type { SandstoneConfig } from 'sandstone';
 import path from 'path';
 import fs from 'fs-extra';
 import { gameVersion, namespace, title, version, listed } from 'lib/meta';
-import state from 'lib/datapacks/state';
 import packFormats from 'lib/datapacks/packFormats.json';
+
+/** An array of functions called after the rest of the pack's processing, before the pack is saved. */
+export const finishFunctions: Array<() => void> = [];
 
 const config: SandstoneConfig = {
 	namespace: 'vanillatweaks',
@@ -27,7 +29,7 @@ const config: SandstoneConfig = {
 	},
 	scripts: {
 		beforeSave: () => {
-			for (const finishFunction of state.finishFunctions) {
+			for (const finishFunction of finishFunctions) {
 				finishFunction();
 			}
 		},

@@ -1,9 +1,9 @@
 import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
 import pack from 'lib/datapacks/pack';
-import state from 'lib/datapacks/state';
 import { MCFunction } from 'sandstone';
 import uninstallTag from 'lib/datapacks/vt/uninstallTag';
 import internalBasePath from 'lib/datapacks/internalBasePath';
+import { setHasUninstallFunction } from 'lib/datapacks/pack/setMetaAdvancements';
 
 /** Adds to a `BasePath`'s uninstall function. */
 const onUninstall = (
@@ -13,7 +13,7 @@ const onUninstall = (
 	let uninstallFunctionName;
 
 	if (basePath.namespace === pack.namespace) {
-		state.hasUninstallFunction = true;
+		setHasUninstallFunction(true);
 
 		uninstallFunctionName = basePath`uninstall`;
 	} else {

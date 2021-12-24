@@ -1,10 +1,32 @@
 import vt from 'lib/datapacks/vt';
-import state from 'lib/datapacks/state';
 import { Advancement, NBT } from 'sandstone';
 import type { AdvancementJSON, JSONTextComponent } from 'sandstone';
 import pack from 'lib/datapacks/pack';
-import padding from '../textComponents/padding';
-import minify from '../textComponents/minify';
+import padding from 'lib/datapacks/textComponents/padding';
+import minify from 'lib/datapacks/textComponents/minify';
+import { finishFunctions } from 'datapacks/sandstone.config';
+
+/** Whether the `pack` has an uninstall function. */
+let hasUninstallFunction = false;
+/**
+ * Sets whether the `pack` has an uninstall function.
+ *
+ * ⚠️ Should only be called by `onUninstall`.
+ */
+export const setHasUninstallFunction = (newValue: boolean) => {
+	hasUninstallFunction = newValue;
+};
+
+/** Whether the `pack` has a config function. */
+let hasConfigFunction = false;
+/**
+ * Sets whether the `pack` has a config function.
+ *
+ * ⚠️ Should only be called by `setConfigFunction`.
+ */
+export const setHasConfigFunction = (newValue: boolean) => {
+	hasConfigFunction = newValue;
+};
 
 type MetaAdvancementOptions = {
 	/** The number of spaces after the title, so the advancement's description isn't so squished. */
@@ -96,8 +118,8 @@ const setMetaAdvancements = (options: {
 		}
 	});
 
-	state.finishFunctions.push(() => {
-		if (state.hasUninstallFunction || state.hasConfigFunction) {
+	finishFunctions.push(() => {
+		if (hasUninstallFunction || hasConfigFunction) {
 			// Automatically update the `opUsage` meta advancement.
 
 			if (!options.opUsage) {
@@ -110,7 +132,7 @@ const setMetaAdvancements = (options: {
 				];
 			}
 
-			if (state.hasConfigFunction) {
+			if (hasConfigFunction) {
 				options.opUsage.description.push(
 					{
 						text: (
@@ -123,7 +145,7 @@ const setMetaAdvancements = (options: {
 				);
 			}
 
-			if (state.hasUninstallFunction) {
+			if (hasUninstallFunction) {
 				options.opUsage.description.push(
 					{
 						text: (
