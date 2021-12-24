@@ -5,19 +5,19 @@ const padding = (
 	/** The number of in-game pixels to generate spaces for. */
 	width: number
 ) => {
-	// If the width is small but non-zero, then round up to the smallest valid width.
+	// If the width is small, then round up to the smallest valid width rather than rounding down, since it is most likely intended that the padding is non-zero.
 	if (width > 0 && width < 4) {
 		width = 4;
 	}
 
-	// Ensure the width is an integer.
 	width = Math.floor(width);
 
-	// Round down for other invalid widths, and account for widths of 0 or less.
 	if (width === 0) {
 		return '';
-	} else if (width === 6 || width === 7) {
+	} else if (width === 6) {
 		width = 5;
+	} else if (width === 7) {
+		width = 8;
 	} else if (width === 11) {
 		width = 10;
 	} else if (width < 0) {
