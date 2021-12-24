@@ -96,94 +96,37 @@ const overlap = (...components: JSONTextComponent[]) => {
 					start,
 					end
 				});
-
 			};
 
-			const iterateSubcomponent = (
-				subcomponent: JSONTextComponent,
-				properties: Partial<TextComponentObject> = {}
-			) => {
-				if (typeof subcomponent === 'string') {
-					const substrings = subcomponent.split(
-						// The reason it's ` {2,}` instead of ` +` is because a single space in the middle of the string is most likely just a normal space that should not allow things to overlap it or be adjustable by missed padding when constructing the output.
-						/(^ +| {2,}| +$)/
-					);
+			/** The `componentLine` split into an array in which odd indexes have whitespace-only segments and even indexes do not. */
+			const subcomponents = split(
+				componentLine,
+				// The reason it's ` {2,}` instead of ` +` is because a single space in the middle of the string is most likely just a normal space that should not allow things to overlap it or be adjustable by missed padding when constructing the output.
+				/(^ +| {2,}| +$)/
+			);
 
-					for (let i = 0; i < substrings.length; i++) {
-						const substring = substrings[i];
+			for (let i = 0; i < subcomponents.length; i++) {
+				const subcomponent = subcomponents[i];
+				const subcomponentWidth = getWidth(subcomponent);
 
-						if (i % 2 === 0) {
-							// This substring does not contain only whitespace, so add it to the `value`.
+				if (i % 2 === 0) {
+					// This subcomponent does not contain only whitespace, so add it to the `value` if it isn't empty.
 
-							if (substring) {
-								value.push({
-									...properties,
-									text: substring
-								});
-								width += getWidth(substring, properties);
-							}
-						} else {
-							// This substring contains only whitespace, so end the `value`.
-
-							endValue();
-
-							// Reset for the next `value`.
-							start += width + getWidth(substring, properties);
-							value = [];
-							width = 0;
-						}
+					if (subcomponentWidth !== 0) {
+						value.push(subcomponent);
+						width += subcomponentWidth;
 					}
+				} else {
+					// This subcomponent contains only whitespace, so end the `value`.
 
-					return;
+					endValue();
+
+					// Reset for the next `value`.
+					start += width + subcomponentWidth;
+					value = [];
+					width = 0;
 				}
-
-				if (Array.isArray(subcomponent)) {
-					if (subcomponent.length === 0) {
-						return;
-					}
-
-					if (typeof subcomponent[0] === 'object') {
-						properties = {
-							...properties,
-							...subcomponent[0]
-						};
-					}
-
-					for (let i = 0; i < subcomponent.length; i++) {
-						iterateSubcomponent(subcomponent[i], properties);
-					}
-
-					return;
-				}
-
-				if (typeof subcomponent === 'number' || typeof subcomponent === 'boolean') {
-					iterateSubcomponent(subcomponent.toString(), properties);
-
-					return;
-				}
-
-				if ('extra' in subcomponent && subcomponent.extra) {
-					throw new TypeError('The `extra` property is not supported when overlapping text components.');
-				}
-
-				properties = {
-					...properties,
-					...subcomponent
-				};
-
-				if ('text' in subcomponent) {
-					iterateSubcomponent(subcomponent.text, properties);
-
-					return;
-				}
-
-				throw new TypeError(
-					'The following text component cannot be overlapped due to having indeterminate width:\n'
-					+ JSON.stringify(component)
-				);
-			};
-
-			iterateSubcomponent(componentLine);
+			}
 
 			endValue();
 		}
