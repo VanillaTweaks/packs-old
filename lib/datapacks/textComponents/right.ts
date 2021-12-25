@@ -4,6 +4,7 @@ import getWidth from 'lib/datapacks/textComponents/getWidth';
 import padding from 'lib/datapacks/textComponents/padding';
 import join from 'lib/datapacks/textComponents/join';
 import { containerWidth } from 'lib/datapacks/textComponents/container';
+import minify from 'lib/datapacks/textComponents/minify';
 
 /**
  * Right-aligns a text component by adding padding to the left of it, automatically minified.
@@ -21,7 +22,10 @@ const right = (component: JSONTextComponent) => (
 			}
 
 			if (width > containerWidth) {
-				throw new TypeError('The width of a line cannot exceed the width of the container.');
+				throw new TypeError(
+					'The width of the following line exceeds the width of the container:\n'
+					+ JSON.stringify(minify(componentLine))
+				);
 			}
 
 			return [
