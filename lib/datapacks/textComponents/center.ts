@@ -5,15 +5,17 @@ import padding from 'lib/datapacks/textComponents/padding';
 import join from 'lib/datapacks/textComponents/join';
 import { containerWidth } from 'lib/datapacks/textComponents/container';
 import minify from 'lib/datapacks/textComponents/minify';
+import trim from 'lib/datapacks/textComponents/trim';
 
 /**
- * Centers a text component by adding padding to the left of it, automatically minified.
+ * Centers a text component by trimming its whitespace and adding padding to the left of it, automatically minified.
  *
  * Assumes all arrays in the inputted component have elements which shouldn't inherit special formatting from the first element, so it isn't necessary to avoid special formatting on the first element of any inputted array.
  */
 const center = (component: JSONTextComponent) => (
 	join(
-		split(component, '\n').map(componentLine => {
+		split(component, '\n').map(untrimmedComponentLine => {
+			const componentLine = trim(untrimmedComponentLine);
 			const width = getWidth(componentLine);
 
 			if (width === 0) {
