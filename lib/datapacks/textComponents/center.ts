@@ -8,7 +8,7 @@ import minify from 'lib/datapacks/textComponents/minify';
 import trim from 'lib/datapacks/textComponents/trim';
 
 /**
- * Centers a text component by trimming its whitespace and adding padding to the left of it, automatically minified.
+ * Centers each of a text component's lines, automatically minified.
  *
  * Assumes all arrays in the inputted component have elements which shouldn't inherit special formatting from the first element, so it isn't necessary to avoid special formatting on the first element of any inputted array.
  */
