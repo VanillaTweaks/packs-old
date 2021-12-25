@@ -140,7 +140,7 @@ const overlap = (...components: JSONTextComponent[]) => {
 		let outputLine: JSONTextComponent[];
 		/** The amount of width in in-game pixels to add to the padding in order to avoid the line overflowing the container. */
 		let paddingWidthOffset = 0;
-		/** The maximum value that `paddingWidthOffset` is allowed to be before disallowing further overflow compensation attempts. */
+		/** The maximum value that `paddingWidthOffset` is allowed to be before disallowing further overflow correction attempts. */
 		const maxPaddingWidthOffset = 4;
 		/** The amount that `outputLine`'s width exceeds the container width. */
 		let overflowingWidth = 0;
@@ -159,7 +159,6 @@ const overlap = (...components: JSONTextComponent[]) => {
 				const range = rangeLine[rangeIndex];
 
 				const idealPaddingWidth = Math.max(0, range.start - previousEnd + paddingWidthOffsetRemaining);
-				console.log(previousEnd, range.start, paddingWidthOffsetRemaining, minify(range.value));
 				const paddingBeforeRange = padding(idealPaddingWidth);
 
 				outputLine.push(
@@ -173,7 +172,7 @@ const overlap = (...components: JSONTextComponent[]) => {
 
 				if (paddingWidthOffset === 0) {
 					paddingWidthsWithoutOffset[rangeIndex] = paddingWidth;
-				} else {
+				} else if (paddingWidthOffsetRemaining) {
 					const paddingWidthWithoutOffset = paddingWidthsWithoutOffset[rangeIndex];
 					paddingWidthOffsetRemaining = Math.min(
 						0,
@@ -188,7 +187,7 @@ const overlap = (...components: JSONTextComponent[]) => {
 				break;
 			}
 
-			// The line overflows the container, so either try again with more overflow compensation.
+			// The line overflows the container, so either try again with more overflow correction.
 			paddingWidthOffset -= 0.5;
 		} while (paddingWidthOffset <= maxPaddingWidthOffset);
 
