@@ -1,4 +1,4 @@
-import type { JSONTextComponent, TextComponentObject } from 'sandstone';
+import type { JSONTextComponent } from 'sandstone';
 import split from 'lib/datapacks/textComponents/split';
 import getWidth from 'lib/datapacks/textComponents/getWidth';
 import minify from 'lib/datapacks/textComponents/minify';
@@ -138,47 +138,61 @@ const overlap = (...components: JSONTextComponent[]) => {
 		const rangeLine = rangeLines[lineIndex];
 
 		let outputLine: JSONTextComponent[];
-		/** The `end` value of the previous range. */
-		let previousEnd;
-		/** The net difference between actual padding and ideal padding that should be corrected for. Can be negative. */
-		let missedPaddingWidth = 0;
+		/** The amount of width in in-game pixels to add to the padding in order to avoid the line overflowing the container. */
+		let paddingWidthOffset = 0;
+		/** The maximum value that `paddingWidthOffset` is allowed to be before disallowing further overflow compensation attempts. */
+		const maxPaddingWidthOffset = 4;
 		/** The amount that `outputLine`'s width exceeds the container width. */
-		let overflowingWidth: number;
+		let overflowingWidth = 0;
+		/** Each range's original `paddingWidth` value. */
+		const paddingWidthsWithoutOffset: number[] = [];
 
-		for (let attempts = 0; attempts < 2; attempts++) {
+		do {
 			// Attempt to construct the `outputLine`.
 
-			const initialMissedPaddingWidth = missedPaddingWidth;
 			outputLine = [''];
-			previousEnd = 0;
+			/** The position in the line at which the previous range ended in in-game pixels. */
+			let previousEnd = 0;
+			let paddingWidthOffsetRemaining = paddingWidthOffset;
 
-			for (const range of rangeLine) {
-				const idealPaddingWidthBeforeRange = range.start - previousEnd + missedPaddingWidth;
-				const paddingBeforeRange = padding(
-					Math.max(0, idealPaddingWidthBeforeRange)
-				);
+			for (let rangeIndex = 0; rangeIndex < rangeLine.length; rangeIndex++) {
+				const range = rangeLine[rangeIndex];
+
+				const idealPaddingWidth = Math.max(0, range.start - previousEnd + paddingWidthOffsetRemaining);
+				console.log(previousEnd, range.start, paddingWidthOffsetRemaining, minify(range.value));
+				const paddingBeforeRange = padding(idealPaddingWidth);
 
 				outputLine.push(
 					paddingBeforeRange,
 					range.value
 				);
 
-				missedPaddingWidth = idealPaddingWidthBeforeRange - getWidth(paddingBeforeRange);
-				previousEnd = range.end;
+				const rangeWidth = range.end - range.start;
+				const paddingWidth = getWidth(paddingBeforeRange);
+				previousEnd += paddingWidth + rangeWidth;
+
+				if (paddingWidthOffset === 0) {
+					paddingWidthsWithoutOffset[rangeIndex] = paddingWidth;
+				} else {
+					const paddingWidthWithoutOffset = paddingWidthsWithoutOffset[rangeIndex];
+					paddingWidthOffsetRemaining = Math.min(
+						0,
+						paddingWidthOffsetRemaining + paddingWidthWithoutOffset - paddingWidth
+					);
+				}
 			}
 
-			missedPaddingWidth -= initialMissedPaddingWidth;
-
-			overflowingWidth = previousEnd - missedPaddingWidth - containerWidth;
+			overflowingWidth = previousEnd - containerWidth;
 			if (overflowingWidth <= 0) {
 				// The attempt was successful.
 				break;
 			}
 
-			// The line overflows the container, so either try again from the beginning with the `missedPaddingWidth` at its new negative value, or throw an error after running out of attempts.
-		}
+			// The line overflows the container, so either try again with more overflow compensation.
+			paddingWidthOffset -= 0.5;
+		} while (paddingWidthOffset <= maxPaddingWidthOffset);
 
-		if (overflowingWidth! > 0) {
+		if (overflowingWidth > 0) {
 			// The line still overflows the container.
 			throw new TypeError(
 				'There is not enough padding between overlapping subcomponents to fit the following text component on one line:\n'
