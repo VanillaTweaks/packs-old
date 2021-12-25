@@ -52,7 +52,11 @@ const columns = (...components: JSONTextComponent[]) => {
 	/** The amount of padding around or between each column. */
 	let columnSpacing = freeSpace / (components.length + 1);
 
-	if (columnSpacing < SPACE_WIDTH) {
+	if (
+		// This check is only useful if there are more than one columns, because if there's only one column, it doesn't need any spacing.
+		components.length > 1
+		&& columnSpacing < SPACE_WIDTH
+	) {
 		// There isn't room to fit the spacing around columns, so try removing it.
 		spacingAroundColumns = false;
 
