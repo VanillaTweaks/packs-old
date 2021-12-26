@@ -10,7 +10,7 @@ import type { JSONTextComponent } from 'sandstone';
 const split = (
 	/** The text component to split. */
 	component: JSONTextComponent,
-	/** The string on which each split should occur. */
+	/** The pattern on which each split should occur. */
 	separator: string | RegExp
 ): JSONTextComponent[] => {
 	if (typeof component === 'string') {
