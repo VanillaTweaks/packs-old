@@ -8,7 +8,7 @@ import { LootTable, NBT } from 'sandstone';
 
 const FIRST_PAGE_LINK_COLOR = 'dark_gray';
 const PAGE_TITLE_COLOR = 'black';
-const PAGE_META_COLOR = 'gray';
+const DETAILS_COLOR = 'gray';
 const INFO_COLOR = '#aa0079';
 const HEADING_COLOR = 'black';
 const CLICKABLE_COLOR = '#b26c34';
@@ -51,19 +51,19 @@ const book = LootTable(pack`book`, {
 								{ text: 'Highlight Selected', color: CLICKABLE_COLOR }
 							]),
 							'\n\n',
-							columns(
+							columns([
 								{ text: 'Properties', color: CLICKABLE_COLOR_2 },
-								{ text: 'Utilities', color: CLICKABLE_COLOR_2 }
-							),
-							'\n',
-							center(
-								{ text: 'Presets', color: CLICKABLE_COLOR_2 }
-							),
-							'\n\n',
-							columns(
-								{ text: 'Position', color: CLICKABLE_COLOR_2 },
+								'\n',
+								{ text: 'Clipboard', color: CLICKABLE_COLOR_2 },
+								'\n',
+								{ text: 'Position', color: CLICKABLE_COLOR_2 }
+							], [
+								{ text: 'Presets', color: CLICKABLE_COLOR_2 },
+								'\n',
+								{ text: 'Slots', color: CLICKABLE_COLOR_2 },
+								'\n',
 								{ text: 'Rotation', color: CLICKABLE_COLOR_2 }
-							),
+							]),
 							'\n\n',
 							columns([
 								{ text: 'Head', color: CLICKABLE_COLOR_2 },
@@ -113,35 +113,49 @@ const book = LootTable(pack`book`, {
 							overlap(
 								{ text: '⏪', color: FIRST_PAGE_LINK_COLOR },
 								center(
-									{ text: 'Utilities', color: PAGE_TITLE_COLOR }
+									{ text: 'Clipboard', color: PAGE_TITLE_COLOR }
+								),
+								right(
+									{ text: 'ℹ', color: INFO_COLOR }
+								)
+							),
+							'\n',
+							center([
+								{ text: 'Reset', color: CLICKABLE_COLOR },
+								'\n\n',
+								{ text: 'Copy', color: HEADING_COLOR },
+								'\n',
+								{ text: 'Properties and Poses', color: CLICKABLE_COLOR },
+								'\n',
+								{ text: 'Only Properties', color: CLICKABLE_COLOR },
+								'\n',
+								{ text: 'Only Poses', color: CLICKABLE_COLOR },
+								'\n',
+								{ text: 'Record New Macro', color: CLICKABLE_COLOR },
+								'\n\n',
+								{ text: 'Paste', color: HEADING_COLOR },
+								'\n',
+								{ text: 'Clipboard Data', color: CLICKABLE_COLOR }
+							])
+						], [
+							overlap(
+								{ text: '⏪', color: FIRST_PAGE_LINK_COLOR },
+								center(
+									{ text: 'Slots', color: PAGE_TITLE_COLOR }
 								),
 								right(
 									{ text: 'ℹ', color: INFO_COLOR }
 								)
 							),
 							'\n\n',
-							columns(
-								{ text: 'Copy', color: CLICKABLE_COLOR_2 },
-								{ text: 'Paste', color: CLICKABLE_COLOR_2 }
-							),
-							'\n',
 							center([
-								{ text: 'Save to Book', color: CLICKABLE_COLOR_2 },
-								'\n\n',
-								{ text: 'Flip Horizontally', color: CLICKABLE_COLOR },
+								{ text: 'Swap Main Hand With', color: HEADING_COLOR },
 								'\n',
-								{ text: 'Randomize Pose', color: CLICKABLE_COLOR },
-								'\n\n',
-								{ text: 'Swap Main Hand With', color: HEADING_COLOR }
-							]),
-							'\n',
-							columns([
 								{ text: 'Off-Hand', color: CLICKABLE_COLOR },
 								'\n',
 								{ text: 'Helmet', color: CLICKABLE_COLOR },
 								'\n',
-								{ text: 'Leggings', color: CLICKABLE_COLOR }
-							], [
+								{ text: 'Leggings', color: CLICKABLE_COLOR },
 								'\n',
 								{ text: 'Chestplate', color: CLICKABLE_COLOR },
 								'\n',
@@ -238,8 +252,10 @@ const book = LootTable(pack`book`, {
 									{ text: 'ℹ', color: INFO_COLOR }
 								)
 							),
-							'\n\n',
+							'\n',
 							center([
+								{ text: 'Flip Horizontally', color: CLICKABLE_COLOR },
+								'\n\n',
 								{ text: 'Rotate Left/Right', color: HEADING_COLOR },
 								'\n',
 								{ text: '-1', color: NEGATIVE_NUMBER_COLOR },
@@ -288,7 +304,7 @@ const book = LootTable(pack`book`, {
 								center([
 									{ text: 'Head', color: PAGE_TITLE_COLOR },
 									' ',
-									{ text: '(1 of 2)', color: PAGE_META_COLOR }
+									{ text: '(1 of 2)', color: DETAILS_COLOR }
 								]),
 								right(
 									{ text: 'ℹ', color: INFO_COLOR }
@@ -363,7 +379,7 @@ const book = LootTable(pack`book`, {
 								center([
 									{ text: 'Head', color: PAGE_TITLE_COLOR },
 									' ',
-									{ text: '(2 of 2)', color: PAGE_META_COLOR }
+									{ text: '(2 of 2)', color: DETAILS_COLOR }
 								]),
 								right(
 									{ text: 'ℹ', color: INFO_COLOR }
@@ -421,7 +437,7 @@ const book = LootTable(pack`book`, {
 								center([
 									{ text: 'Left Arm', color: PAGE_TITLE_COLOR },
 									' ',
-									{ text: '(1 of 2)', color: PAGE_META_COLOR }
+									{ text: '(1 of 2)', color: DETAILS_COLOR }
 								]),
 								right(
 									{ text: 'ℹ', color: INFO_COLOR }
@@ -500,7 +516,7 @@ const book = LootTable(pack`book`, {
 								center([
 									{ text: 'Left Arm', color: PAGE_TITLE_COLOR },
 									' ',
-									{ text: '(2 of 2)', color: PAGE_META_COLOR }
+									{ text: '(2 of 2)', color: DETAILS_COLOR }
 								]),
 								right(
 									{ text: 'ℹ', color: INFO_COLOR }
