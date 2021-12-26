@@ -49,8 +49,10 @@ const columns = (...components: JSONTextComponent[]) => {
 	/** Whether there should be padding to the left and right of all columns rather than only between columns. */
 	let spacingAroundColumns = true;
 
-	/** The amount of padding around or between each column. */
-	let columnSpacing = freeSpace / (components.length + 1);
+	/** The amount of padding around or between each column, rounded to the nearest valid padding width. */
+	let columnSpacing = getWidth(padding(
+		freeSpace / (components.length + 1)
+	));
 
 	if (
 		// This check is only useful if there are more than one columns, because if there's only one column, it doesn't need any spacing.
