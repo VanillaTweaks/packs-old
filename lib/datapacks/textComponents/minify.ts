@@ -1,5 +1,6 @@
 import type { JSONTextComponent } from 'sandstone';
 import hasSpecialFormatting, { specialFormattingKeys } from 'lib/datapacks/textComponents/hasSpecialFormatting';
+import { ComponentClass } from 'sandstone/variables';
 
 const lineBreaks = /^\n*$/;
 const whitespace = /^\s*$/;
@@ -53,11 +54,7 @@ const canMergeComponents = (source: JSONTextComponent, target: JSONTextComponent
 	);
 };
 
-/**
- * Concatenates line breaks and spaces into their siblings, spreads unnecessary arrays, and merges sibling components which have equivalent properties.
- *
- * Sometimes mutates the inputted component, though that can easily be fixed if necessary.
- */
+/** Concatenates line breaks and spaces into their siblings, spreads unnecessary arrays, and merges sibling components which have equivalent properties. */
 export default function minify(component: JSONTextComponent, options?: {
 	mustReturnArray?: false,
 	modifiedCallback?: () => void
@@ -75,6 +72,8 @@ export default function minify(component: JSONTextComponent, options: {
 	let modified = false;
 
 	if (component instanceof Array) {
+		component = [...component];
+
 		for (let i = 0; i < component.length; i++) {
 			if (i < 0) {
 				continue;
@@ -146,10 +145,20 @@ export default function minify(component: JSONTextComponent, options: {
 			modified = true;
 		}
 	} else if (typeof component === 'object') {
+		if (component instanceof ComponentClass) {
+			throw new TypeError('TODO: Figure out why `ComponentClass` is necessary to check for. Consider making a new type that excludes it from `JSONTextComponent` and using that everywhere instead.');
+		}
+
+		component = { ...component };
+
 		if ('with' in component && component.with) {
-			for (const item of component.with) {
-				minify(item);
-			}
+			component.with = minify(component.with, {
+				mustReturnArray: true,
+				modifiedCallback: () => {
+					modified = true;
+				}
+			// TODO: Remove ` as any`.
+			}) as any;
 		}
 
 		if ('extra' in component && component.extra) {
@@ -158,7 +167,7 @@ export default function minify(component: JSONTextComponent, options: {
 				modifiedCallback: () => {
 					modified = true;
 				}
-			})!;
+			});
 		} else if ('text' in component && component.text === '') {
 			// This transformation is invalid if `component` has special formatting and is the first element of an array with at least one non-empty element.
 			// That's probably not worth fixing since we always avoid putting special formatting on the first element of an array.
