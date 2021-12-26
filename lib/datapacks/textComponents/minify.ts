@@ -152,13 +152,14 @@ export default function minify(component: JSONTextComponent, options: {
 		component = { ...component };
 
 		if ('with' in component && component.with) {
-			component.with = minify(component.with, {
-				mustReturnArray: true,
-				modifiedCallback: () => {
-					modified = true;
-				}
-			// TODO: Remove ` as any`.
-			}) as any;
+			component.with = component.with.map(subcomponent => (
+				minify(subcomponent, {
+					modifiedCallback: () => {
+						modified = true;
+					}
+				})
+			// TODO: Remove `as any`.
+			)) as any;
 		}
 
 		if ('extra' in component && component.extra) {
