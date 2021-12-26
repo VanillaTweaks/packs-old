@@ -155,9 +155,9 @@ const book = LootTable(pack`book`, {
 								'\n',
 								{ text: 'Helmet', color: CLICKABLE_COLOR },
 								'\n',
-								{ text: 'Leggings', color: CLICKABLE_COLOR },
-								'\n',
 								{ text: 'Chestplate', color: CLICKABLE_COLOR },
+								'\n',
+								{ text: 'Leggings', color: CLICKABLE_COLOR },
 								'\n',
 								{ text: 'Boots', color: CLICKABLE_COLOR }
 							])
