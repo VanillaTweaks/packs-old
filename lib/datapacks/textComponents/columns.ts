@@ -1,9 +1,9 @@
 import type { JSONTextComponent } from 'sandstone';
 import getWidth from 'lib/datapacks/textComponents/getWidth';
-import split from 'lib/datapacks/textComponents/split';
 import { containerWidth } from 'lib/datapacks/textComponents/container';
 import padding from 'lib/datapacks/textComponents/padding';
-import join from 'lib/datapacks/textComponents/join';
+import padEachLine from 'lib/datapacks/textComponents/padEachLine';
+import overlap from 'lib/datapacks/textComponents/overlap';
 
 /** The width of a plain space in in-game pixels. */
 const SPACE_WIDTH = getWidth(' ');
@@ -14,34 +14,14 @@ const SPACE_WIDTH = getWidth(' ');
  * Assumes all arrays in the inputted component have elements which shouldn't inherit special formatting from the first element, so it isn't necessary to avoid special formatting on the first element of any inputted array.
  */
 const columns = (...components: JSONTextComponent[]) => {
-	/** An array in which each element is an array of a column's lines. */
-	const componentsLines: JSONTextComponent[][] = [];
-
-	/** An array in which each element is an array of a column's line widths. */
-	const componentsLineWidths: number[][] = [];
-
-	/** An array of each column's width. */
 	const componentWidths: number[] = [];
-
-	/** The number of lines in the output. */
-	let outputLineCount = 0;
 
 	/** The total width of in-game pixels remaining after subtracting the width of each column from the container width. */
 	let freeSpace = containerWidth;
 
 	for (const component of components) {
-		const componentLines = split(component, '\n');
-		componentsLines.push(componentLines);
-
-		const componentLineWidths = componentLines.map(line => getWidth(line));
-		componentsLineWidths.push(componentLineWidths);
-
-		const componentWidth = Math.max(...componentLineWidths);
+		const componentWidth = getWidth(component);
 		componentWidths.push(componentWidth);
-
-		if (componentLines.length > outputLineCount) {
-			outputLineCount = componentLines.length;
-		}
 
 		freeSpace -= componentWidth;
 	}
@@ -68,44 +48,31 @@ const columns = (...components: JSONTextComponent[]) => {
 		}
 	}
 
-	// Rounded to the nearest valid padding width.
+	// Round to the nearest valid padding width.
 	columnSpacing = getWidth(padding(columnSpacing));
 
-	const outputLines: JSONTextComponent[] = [];
+	const paddedColumns: JSONTextComponent[] = [];
 
-	for (let lineIndex = 0; lineIndex < outputLineCount; lineIndex++) {
-		const outputLine: JSONTextComponent[] = [];
+	/** The amount to pad the next component pushed to `paddedColumns`. */
+	let precedingPadding = 0;
 
-		/** The amount of padding to be added immediately before the next component pushed to `outputLine`. */
-		let precedingPadding = 0;
-
-		if (spacingAroundColumns) {
-			precedingPadding += columnSpacing;
-		}
-
-		for (let columnIndex = 0; columnIndex < componentsLines.length; columnIndex++) {
-			const componentLine = componentsLines[columnIndex][lineIndex] as JSONTextComponent | undefined;
-
-			if (componentLine !== undefined) {
-				outputLine.push(
-					padding(precedingPadding),
-					componentLine
-				);
-
-				precedingPadding = 0;
-			}
-
-			const componentWidth = componentWidths[columnIndex];
-			const componentLineWidth = componentsLineWidths[columnIndex][lineIndex];
-			precedingPadding += componentWidth - componentLineWidth;
-
-			precedingPadding += columnSpacing;
-		}
-
-		outputLines.push(outputLine);
+	if (spacingAroundColumns) {
+		precedingPadding += columnSpacing;
 	}
 
-	return join(outputLines, '\n');
+	for (let columnIndex = 0; columnIndex < components.length; columnIndex++) {
+		const component = components[columnIndex];
+
+		paddedColumns.push(
+			padEachLine(component, precedingPadding)
+		);
+
+		const componentWidth = componentWidths[columnIndex];
+		precedingPadding += componentWidth;
+		precedingPadding += columnSpacing;
+	}
+
+	return overlap(...paddedColumns);
 };
 
 export default columns;
