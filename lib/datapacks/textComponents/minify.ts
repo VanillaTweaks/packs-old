@@ -53,7 +53,11 @@ const canMergeComponents = (source: JSONTextComponent, target: JSONTextComponent
 	);
 };
 
-/** Concatenates line breaks and spaces into their siblings, spreads unnecessary arrays, and merges sibling components which have equivalent properties. */
+/**
+ * Concatenates line breaks and spaces into their siblings, spreads unnecessary arrays, and merges sibling components which have equivalent properties.
+ *
+ * Sometimes mutates the inputted component, though that can easily be fixed if necessary.
+ */
 export default function minify(component: JSONTextComponent, options?: {
 	mustReturnArray?: false,
 	modifiedCallback?: () => void
