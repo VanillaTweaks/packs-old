@@ -3,11 +3,15 @@ import minify from 'lib/datapacks/textComponents/minify';
 /** Returns a `JSONTextComponent` of a combination of plain and bold spaces to achieve a specified width in in-game pixels. */
 const padding = (
 	/** The number of in-game pixels to generate spaces for. */
-	width: number
+	width: number,
+	{ floor = false }: {
+		/** Whether to floor the inputted width to the nearest valid padding, rather than (roughly) round which is the default. */
+		floor?: boolean
+	} = {}
 ) => {
 	// If the width is small, then round up to the smallest valid width rather than rounding down, since it is most likely intended that the padding is non-zero.
 	if (width > 0 && width < 4) {
-		width = 4;
+		width = floor ? 0 : 4;
 	}
 
 	width = Math.floor(width);
@@ -17,7 +21,7 @@ const padding = (
 	} else if (width === 6) {
 		width = 5;
 	} else if (width === 7) {
-		width = 8;
+		width = floor ? 5 : 8;
 	} else if (width === 11) {
 		width = 10;
 	} else if (width < 0) {

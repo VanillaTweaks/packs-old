@@ -30,10 +30,15 @@ const center = (component: JSONTextComponent) => (
 				);
 			}
 
-			return [
-				padding((containerWidth - width) / 2),
-				componentLine
-			];
+			const idealPaddingWidth = (containerWidth - width) / 2;
+			let paddingBeforeLine = padding(idealPaddingWidth);
+			const paddingWidth = getWidth(paddingBeforeLine);
+
+			if (width + paddingWidth > containerWidth) {
+				paddingBeforeLine = padding(idealPaddingWidth, { floor: true });
+			}
+
+			return [paddingBeforeLine, componentLine];
 		}),
 		'\n'
 	)
