@@ -53,7 +53,7 @@ const columns = (...components: JSONTextComponent[]) => {
 
 	const paddedColumns: JSONTextComponent[] = [];
 
-	/** The amount to pad the next component pushed to `paddedColumns`. */
+	/** The amount of padding to insert before the next component pushed to `paddedColumns`. */
 	let precedingPadding = 0;
 
 	if (spacingAroundColumns) {
