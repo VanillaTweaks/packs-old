@@ -39,6 +39,19 @@ const book = LootTable(pack`book`, {
 						[
 							center([
 								{ text: 'Custom Armor Stands', color: PAGE_TITLE_COLOR },
+								'\n\n',
+								{ text: 'To proceed, first\nselect the armor\nstand you want to\ncustomize.', color: DETAILS_COLOR },
+								'\n\n',
+								{ text: 'Select', color: HEADING_COLOR },
+								'\n',
+								{ text: 'Nearest Armor Stand', color: CLICKABLE_COLOR },
+								'\n',
+								{ text: 'Use Mouse', color: CLICKABLE_COLOR }
+							])
+						],
+						[
+							center([
+								{ text: 'Custom Armor Stands', color: PAGE_TITLE_COLOR },
 								'\n',
 								{ text: '⤺', color: CLICKABLE_COLOR, bold: true },
 								' ',
@@ -46,9 +59,7 @@ const book = LootTable(pack`book`, {
 								' ',
 								{ text: '⤻', color: CLICKABLE_COLOR, bold: true },
 								'\n\n',
-								{ text: 'Select Nearest', color: CLICKABLE_COLOR },
-								'\n',
-								{ text: 'Highlight Selected', color: CLICKABLE_COLOR }
+								{ text: 'Manage Selection', color: CLICKABLE_COLOR }
 							]),
 							'\n\n',
 							columns([
@@ -77,6 +88,28 @@ const book = LootTable(pack`book`, {
 								{ text: 'Right Arm', color: CLICKABLE_COLOR_2 },
 								'\n',
 								{ text: 'Right Leg', color: CLICKABLE_COLOR_2 }
+							])
+						], [
+							overlap(
+								{ text: '⏪', color: FIRST_PAGE_LINK_COLOR },
+								center(
+									{ text: 'Manage Selection', color: PAGE_TITLE_COLOR }
+								),
+								right(
+									{ text: 'ℹ', color: INFO_COLOR }
+								)
+							),
+							'\n\n',
+							center([
+								{ text: 'Highlight Selected', color: CLICKABLE_COLOR },
+								'\n',
+								{ text: 'Deselect', color: CLICKABLE_COLOR },
+								'\n\n',
+								{ text: 'Select', color: HEADING_COLOR },
+								'\n',
+								{ text: 'Nearest Armor Stand', color: CLICKABLE_COLOR },
+								'\n',
+								{ text: 'Use Mouse', color: CLICKABLE_COLOR }
 							])
 						], [
 							overlap(
