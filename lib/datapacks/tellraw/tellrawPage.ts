@@ -1,11 +1,11 @@
 import * as meta from 'lib/meta';
-import horizontalBar from 'lib/datapacks/textComponents/horizontalBar';
+import horizontalBar from 'lib/datapacks/tellraw/horizontalBar';
 import type { JSONTextComponent } from 'sandstone';
 import { tellraw } from 'sandstone';
 import minify from 'lib/datapacks/textComponents/minify';
 
 /** Runs `tellraw` commands to display the top and bottom of a page UI to `@s`. */
-const page = (
+const tellrawPage = (
 	options: {
 		/** Content placed directly before the title, minified automatically. Put `padding` here. */
 		before?: JSONTextComponent,
@@ -34,4 +34,4 @@ const page = (
 	horizontalBar();
 };
 
-export default page;
+export default tellrawPage;

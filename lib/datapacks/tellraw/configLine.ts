@@ -27,7 +27,7 @@ const configColors = {
  * execute.as('@s').run(configLine(...));
  * ```
  */
-export const configLine = (
+const configLine = (
 	options: (
 		{
 			/** The text displayed as the name of the config option. */
@@ -186,3 +186,5 @@ export const configLine = (
 		]);
 	};
 };
+
+export default configLine;
