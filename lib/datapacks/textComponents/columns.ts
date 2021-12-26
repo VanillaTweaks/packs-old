@@ -50,9 +50,7 @@ const columns = (...components: JSONTextComponent[]) => {
 	let spacingAroundColumns = true;
 
 	/** The amount of padding around or between each column, rounded to the nearest valid padding width. */
-	let columnSpacing = getWidth(padding(
-		freeSpace / (components.length + 1)
-	));
+	let columnSpacing = freeSpace / (components.length + 1);
 
 	if (
 		// This check is only useful if there are more than one columns, because if there's only one column, it doesn't need any spacing.
@@ -69,6 +67,9 @@ const columns = (...components: JSONTextComponent[]) => {
 			throw new TypeError('The specified columns are too wide to fit in the container.');
 		}
 	}
+
+	// Rounded to the nearest valid padding width.
+	columnSpacing = getWidth(padding(columnSpacing));
 
 	const outputLines: JSONTextComponent[] = [];
 
