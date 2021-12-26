@@ -392,7 +392,7 @@ const book = LootTable(pack`book`, {
 							),
 							'\n\n',
 							center([
-								{ text: 'X Rotation', color: HEADING_COLOR },
+								{ text: 'Z Rotation', color: HEADING_COLOR },
 								'\n',
 								{ text: '-1', color: NEGATIVE_NUMBER_COLOR },
 								' ',
@@ -533,7 +533,7 @@ const book = LootTable(pack`book`, {
 							),
 							'\n\n',
 							center([
-								{ text: 'X Rotation', color: HEADING_COLOR },
+								{ text: 'Z Rotation', color: HEADING_COLOR },
 								'\n',
 								{ text: '-1', color: NEGATIVE_NUMBER_COLOR },
 								' ',
