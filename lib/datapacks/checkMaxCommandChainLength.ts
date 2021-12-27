@@ -2,12 +2,12 @@ import vt from 'lib/datapacks/vt';
 import { execute, MCFunction, schedule, Tag } from 'sandstone';
 import internalBasePath from 'lib/datapacks/internalBasePath';
 import temp from 'lib/datapacks/temp';
+import onUninstall from 'lib/datapacks/onUninstall';
 
 const DEFAULT_MAX_COMMAND_CHAIN_LENGTH = 65536;
 
-const maxCommandChainLength_ = internalBasePath(
-	vt.child({ directory: 'max_command_chain_length' })
-);
+const maxCommandChainLength = vt.child({ directory: 'max_command_chain_length' });
+const maxCommandChainLength_ = internalBasePath(maxCommandChainLength);
 
 const $maxCommandChainLength = temp('$maxCommandChainLength');
 
@@ -40,3 +40,7 @@ const checkMaxCommandChainLength = Tag('functions', maxCommandChainLength_`check
 ]);
 
 export default checkMaxCommandChainLength;
+
+onUninstall(maxCommandChainLength, () => {
+	schedule.clear(checkMaxCommandChainLength);
+});
