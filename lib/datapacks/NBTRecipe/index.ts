@@ -8,16 +8,22 @@ import every from 'lib/datapacks/every';
 import temp from 'lib/datapacks/vt/temp';
 
 const nbtRecipes = vt.child({ directory: 'nbt_recipes' });
+const nbtRecipes_ = internalBasePath(nbtRecipes);
 
 const craftedKnowledgeBook = objective(nbtRecipes, 'crafted_knowledge_book', 'minecraft.crafted:minecraft.knowledge_book');
 /** `@s`'s `craftedKnowledgeBook` score. */
 const $craftedKnowledgeBook = craftedKnowledgeBook('@s');
 
-/** An `MCFunction` called as any player who crafts an NBT recipe. */
-const craftNBTRecipe = MCFunction(nbtRecipes`craft`, () => {
-	clear('@s', 'minecraft:knowledge_book', 1);
+every('1t', nbtRecipes, () => {
+	// Reset everyone's `craftedKnowledgeBook` score in case they crafted a knowledge book by a means independent from Vanilla Tweaks.
+	// No need to do this for spectators since spectators can't craft.
+	// TODO: Remove `.name`.
+	scoreboard.players.reset('@a[gamemode=!spectator]', craftedKnowledgeBook.name);
+});
 
-	stopsound('@s', '*', 'minecraft:entity.item.pickup');
+/** An `MCFunction` called as any player who crafts an NBT recipe. */
+const craftNBTRecipe = MCFunction(nbtRecipes_`craft`, () => {
+	clear('@s', 'minecraft:knowledge_book', 1);
 
 	// Reset the player's `craftedKnowledgeBook` score so that the score being detected as not 1 is still accurate later in this tick.
 	// TODO: Replace `$craftedKnowledgeBook.target, $craftedKnowledgeBook.objective` with `$craftedKnowledgeBook`.
@@ -41,13 +47,6 @@ const NBTRecipe = (
 ) => {
 	const recipes = basePath.child({ directory: 'recipes' });
 	const recipes_ = internalBasePath(recipes);
-
-	every('1t', recipes, () => {
-		// Reset everyone's `craftedKnowledgeBook` score in case they crafted a knowledge book by a means independent from Vanilla Tweaks.
-		// No need to do this for spectators since spectators can't craft.
-		// TODO: Remove `.name`.
-		scoreboard.players.reset('@a[gamemode=!spectator]', craftedKnowledgeBook.name);
-	});
 
 	/** The crafting recipe that outputs a knowledge book. */
 	// TODO: Replace all `.getResourceName` with template tagging.
