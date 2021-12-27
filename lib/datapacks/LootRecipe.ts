@@ -5,7 +5,7 @@ import vt from 'lib/datapacks/vt';
 import internalBasePath from 'lib/datapacks/internalBasePath';
 import objective from 'lib/datapacks/objective';
 import every from 'lib/datapacks/every';
-import temp from 'lib/datapacks/temp';
+import giveLootTable from 'lib/datapacks/giveLootTable';
 
 const lootRecipes = vt.child({ directory: 'loot_recipes' });
 const lootRecipes_ = internalBasePath(lootRecipes);
@@ -108,16 +108,7 @@ const LootRecipe = (
 					.run(recipes_.getResourceName(`${name}/craft`), () => {
 						craftLootRecipe();
 
-						const $lootGiveResult = temp('$lootGiveResult');
-						execute
-							.store.result.score($lootGiveResult)
-							.run.loot.give('@s').loot(lootTable);
-						// This fallback is only necessary because of https://bugs.mojang.com/browse/MC-154422.
-						execute
-							.if($lootGiveResult.matches(0))
-							.anchored('eyes')
-							// TODO: Replace `['^', '^', '^']` with `'^ ^ ^'`.
-							.run.loot.spawn(['^', '^', '^']).loot(lootTable);
+						giveLootTable(lootTable);
 					});
 			})
 		}
