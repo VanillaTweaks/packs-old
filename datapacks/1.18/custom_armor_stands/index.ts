@@ -1,4 +1,4 @@
-import NBTRecipe from 'lib/datapacks/NBTRecipe';
+import LootRecipe from 'lib/datapacks/LootRecipe';
 import onTrigger from 'lib/datapacks/onTrigger';
 import pack from 'lib/datapacks/pack';
 import setMetaAdvancements from 'lib/datapacks/setMetaAdvancements';
@@ -27,7 +27,7 @@ setMetaAdvancements({
 	}
 });
 
-NBTRecipe(pack, 'book', {
+LootRecipe(pack, 'book', {
 	// TODO: Remove type assertion.
 	type: 'minecraft:crafting_shapeless' as 'crafting_shapeless',
 	ingredients: [{

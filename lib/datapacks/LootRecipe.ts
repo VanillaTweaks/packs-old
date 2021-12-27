@@ -1,5 +1,5 @@
 import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
-import { advancement, Advancement, clear, execute, LootTable, MCFunction, NBT, recipe, Recipe, say, scoreboard, stopsound } from 'sandstone';
+import { advancement, Advancement, clear, execute, LootTable, MCFunction, NBT, recipe, Recipe, scoreboard } from 'sandstone';
 import type { RecipeJSON, RootNBT } from 'sandstone';
 import vt from 'lib/datapacks/vt';
 import internalBasePath from 'lib/datapacks/internalBasePath';
@@ -7,22 +7,22 @@ import objective from 'lib/datapacks/objective';
 import every from 'lib/datapacks/every';
 import temp from 'lib/datapacks/temp';
 
-const nbtRecipes = vt.child({ directory: 'nbt_recipes' });
-const nbtRecipes_ = internalBasePath(nbtRecipes);
+const lootRecipes = vt.child({ directory: 'loot_recipes' });
+const lootRecipes_ = internalBasePath(lootRecipes);
 
-const craftedKnowledgeBook = objective(nbtRecipes, 'crafted_knowledge_book', 'minecraft.crafted:minecraft.knowledge_book');
+const craftedKnowledgeBook = objective(lootRecipes, 'crafted_knowledge_book', 'minecraft.crafted:minecraft.knowledge_book');
 /** `@s`'s `craftedKnowledgeBook` score. */
 const $craftedKnowledgeBook = craftedKnowledgeBook('@s');
 
-every('1t', nbtRecipes, () => {
-	// Reset everyone's `craftedKnowledgeBook` score in case they crafted a knowledge book by a means independent from Vanilla Tweaks.
+every('1t', lootRecipes, () => {
+	// Reset everyone's `craftedKnowledgeBook` score in case they crafted a knowledge book by external means.
 	// No need to do this for spectators since spectators can't craft.
 	// TODO: Remove `.name`.
 	scoreboard.players.reset('@a[gamemode=!spectator]', craftedKnowledgeBook.name);
 });
 
 /** An `MCFunction` called as any player who crafts an NBT recipe. */
-const craftNBTRecipe = MCFunction(nbtRecipes_`craft`, () => {
+const craftLootRecipe = MCFunction(lootRecipes_`craft`, () => {
 	clear('@s', 'minecraft:knowledge_book', 1);
 
 	// Reset the player's `craftedKnowledgeBook` score so that the score being detected as not 1 is still accurate later in this tick.
@@ -30,35 +30,23 @@ const craftNBTRecipe = MCFunction(nbtRecipes_`craft`, () => {
 	scoreboard.players.reset($craftedKnowledgeBook.target, $craftedKnowledgeBook.objective);
 });
 
-export type NBTRecipeJSON = RecipeJSON & {
+export type LootRecipeJSON = RecipeJSON & {
 	type: Extract<RecipeJSON, { result: { item: string } }>['type'],
 	result: {
 		nbt: RootNBT
 	}
 };
 
-/** A crafting recipe that outputs a knowledge book which becomes a specified item with NBT when taken out of the crafting output. */
-const NBTRecipe = (
+/** A crafting recipe that outputs a knowledge book which gives the player a specified loot table when taken out of the crafting output. */
+const LootRecipe = (
 	/** The `BasePath` under which to create a `recipes` directory for the recipes, loot tables, advancements, and functions. */
 	basePath: VTBasePathInstance,
 	/** The non-namespaced name of the recipe. */
 	name: string,
-	recipeJSON: NBTRecipeJSON
+	recipeJSON: LootRecipeJSON
 ) => {
 	const recipes = basePath.child({ directory: 'recipes' });
 	const recipes_ = internalBasePath(recipes);
-
-	/** The crafting recipe that outputs a knowledge book. */
-	// TODO: Replace all `.getResourceName` with template tagging.
-	const nbtRecipe = Recipe(recipes.getResourceName(name), {
-		...recipeJSON,
-		result: {
-			item: 'minecraft:knowledge_book',
-			...recipeJSON.result.count !== undefined && {
-				count: recipeJSON.result.count
-			}
-		}
-	});
 
 	const lootTable = LootTable(recipes.getResourceName(name), {
 		type: 'minecraft:command',
@@ -76,6 +64,18 @@ const NBTRecipe = (
 		}]
 	});
 
+	/** The crafting recipe that outputs a knowledge book. */
+	// TODO: Replace all `.getResourceName` with template tagging.
+	const lootRecipe = Recipe(recipes.getResourceName(name), {
+		...recipeJSON,
+		result: {
+			item: 'minecraft:knowledge_book',
+			...recipeJSON.result.count !== undefined && {
+				count: recipeJSON.result.count
+			}
+		}
+	});
+
 	const recipeUnlockedAdvancement = Advancement(recipes.getResourceName(name), {
 		parent: Advancement(recipes`root`, {
 			criteria: {
@@ -89,7 +89,7 @@ const NBTRecipe = (
 				trigger: 'minecraft:recipe_unlocked',
 				conditions: {
 					// TODO: Remove `.toString()`.
-					recipe: nbtRecipe.toString()
+					recipe: lootRecipe.toString()
 				}
 			}
 		},
@@ -99,14 +99,14 @@ const NBTRecipe = (
 
 				advancement.revoke('@s').only(recipeUnlockedAdvancement);
 				// TODO: Remove `.toString()`.
-				recipe.take('@s', nbtRecipe.toString());
+				recipe.take('@s', lootRecipe.toString());
 
 				execute
 					// Check if they actually crafted a knowledge book and aren't unlocking the recipe by other means.
 					// TODO: Replace all `greaterThan(0)` with `matches('1..')`.
 					.if($craftedKnowledgeBook.greaterThan(0))
 					.run(recipes_.getResourceName(`${name}/craft`), () => {
-						craftNBTRecipe();
+						craftLootRecipe();
 
 						const $lootGiveResult = temp('$lootGiveResult');
 						execute
@@ -124,4 +124,4 @@ const NBTRecipe = (
 	});
 };
 
-export default NBTRecipe;
+export default LootRecipe;
