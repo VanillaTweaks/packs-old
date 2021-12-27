@@ -1,7 +1,7 @@
 import pack, { pack_ } from 'lib/datapacks/pack';
 import { advancement, data, execute, MCFunction, NBT, schedule, tag } from 'sandstone';
 import FunctionalAdvancement from 'lib/datapacks/FunctionalAdvancement';
-import setMetaAdvancements from 'lib/datapacks/pack/setMetaAdvancements';
+import setMetaAdvancements from 'lib/datapacks/setMetaAdvancements';
 import setConfigFunction from 'lib/datapacks/setConfigFunction';
 import onLoad from 'lib/datapacks/onLoad';
 import onUninstall from 'lib/datapacks/onUninstall';

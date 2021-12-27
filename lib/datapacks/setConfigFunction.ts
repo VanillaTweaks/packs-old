@@ -1,7 +1,7 @@
 import pack from 'lib/datapacks/pack';
 import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
 import { MCFunction } from 'sandstone';
-import { setHasConfigFunction } from 'lib/datapacks/pack/setMetaAdvancements';
+import { setHasConfigFunction } from 'lib/datapacks/setMetaAdvancements';
 
 /** Sets a `BasePath`'s config function. */
 const setConfigFunction = (

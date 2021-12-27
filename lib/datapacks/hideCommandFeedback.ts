@@ -1,6 +1,6 @@
 import { vt_ } from 'lib/datapacks/vt';
 import { execute, gamerule, schedule } from 'sandstone';
-import temp from 'lib/datapacks/vt/temp';
+import temp from 'lib/datapacks/temp';
 
 const $sendCommandFeedback = temp('$sendCommandFeedback');
 

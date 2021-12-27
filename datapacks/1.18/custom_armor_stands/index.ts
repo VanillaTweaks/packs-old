@@ -1,7 +1,7 @@
 import NBTRecipe from 'lib/datapacks/NBTRecipe';
 import onTrigger from 'lib/datapacks/onTrigger';
 import pack from 'lib/datapacks/pack';
-import setMetaAdvancements from 'lib/datapacks/pack/setMetaAdvancements';
+import setMetaAdvancements from 'lib/datapacks/setMetaAdvancements';
 import setConfigFunction from 'lib/datapacks/setConfigFunction';
 import bookNBT from './book/bookNBT';
 

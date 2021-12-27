@@ -1,7 +1,7 @@
 import vt from 'lib/datapacks/vt';
 import { execute, MCFunction, schedule, Tag } from 'sandstone';
 import internalBasePath from 'lib/datapacks/internalBasePath';
-import temp from 'lib/datapacks/vt/temp';
+import temp from 'lib/datapacks/temp';
 
 const DEFAULT_MAX_COMMAND_CHAIN_LENGTH = 65536;
 

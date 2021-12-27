@@ -5,7 +5,7 @@ import vt from 'lib/datapacks/vt';
 import internalBasePath from 'lib/datapacks/internalBasePath';
 import objective from 'lib/datapacks/objective';
 import every from 'lib/datapacks/every';
-import temp from 'lib/datapacks/vt/temp';
+import temp from 'lib/datapacks/temp';
 
 const nbtRecipes = vt.child({ directory: 'nbt_recipes' });
 const nbtRecipes_ = internalBasePath(nbtRecipes);
