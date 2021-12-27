@@ -3,13 +3,13 @@
 import { MCFunction, scoreboard, Tag } from 'sandstone';
 import VTBasePath from 'lib/datapacks/VTBasePath';
 import checkMaxCommandChainLength from 'lib/datapacks/checkMaxCommandChainLength';
-import { addTempObjective } from 'lib/datapacks/temp';
+import { loadTempObjective } from 'lib/datapacks/temp';
 
 const lanternLoad = VTBasePath({ namespace: 'load' });
 
 export const preLoadTag = Tag('functions', lanternLoad`pre_load`, [
 	// Add the `temp` objective so it can be used in `checkMaxCommandChainLength`.
-	addTempObjective,
+	loadTempObjective,
 	checkMaxCommandChainLength
 ]);
 
