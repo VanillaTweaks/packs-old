@@ -11,6 +11,7 @@ import onUninstall from 'lib/datapacks/onUninstall';
 const objective = (
 	/** The `BasePath` to be used as a prefix to the objective name, and to add to the load and uninstall functions of. */
 	basePath: VTBasePathInstance,
+	/** The non-namespaced name of this objective. */
 	objectiveName: string,
 	criterion: Parameters<typeof scoreboard['objectives']['add']>[1] = 'dummy',
 	displayName?: Parameters<typeof scoreboard['objectives']['add']>[2],
