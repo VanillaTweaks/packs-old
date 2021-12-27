@@ -4,7 +4,7 @@ import { Objective, scoreboard } from 'sandstone';
 import onUninstall from 'lib/datapacks/onUninstall';
 
 /**
- * Creates a scoreboard objective, adds the necessary `scoreboard` commands to the load and uninstall functions, and returns an `Objective` instance.
+ * Creates a scoreboard objective (by default, namespaced), adds the necessary `scoreboard` commands to the load and uninstall functions, and returns an `Objective` instance.
  *
  * ⚠️ Not for objectives with the `trigger` criterion. Use `onTrigger` for that instead.
  */
@@ -16,7 +16,7 @@ const objective = (
 	criterion: Parameters<typeof scoreboard['objectives']['add']>[1] = 'dummy',
 	displayName?: Parameters<typeof scoreboard['objectives']['add']>[2],
 	{ namespaced = true }: {
-		/** Whether to prepend the namespace to the objective name. Defaults to `true`. */
+		/** Whether to prepend the specified `BasePath`'s namespace and directory to the objective name. Defaults to `true`. */
 		namespaced?: boolean
 	} = {}
 ) => {
