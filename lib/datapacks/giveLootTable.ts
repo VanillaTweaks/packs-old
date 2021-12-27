@@ -7,7 +7,7 @@ const $lootGiveResult = temp('$lootGiveResult');
 /**
  * Gives `@s` a loot table, working around https://bugs.mojang.com/browse/MC-154422 by first trying `/loot give` and then falling back to `/loot spawn`.
  *
- * ⚠️ Assumes its commands are running `at @s`.
+ * ⚠️ Assumes its commands are being executed `at @s`.
  */
 const giveLootTable = (
 	lootTable: Parameters<ReturnType<typeof loot['give']>['loot']>[0]
