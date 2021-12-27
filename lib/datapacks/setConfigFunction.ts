@@ -4,11 +4,9 @@ import { MCFunction } from 'sandstone';
 import { setHasConfigFunction } from 'lib/datapacks/pack/setMetaAdvancements';
 
 /** Sets a `BasePath`'s config function. */
-const setConfigFunction = <
-	ReturnValue extends void | Promise<void> = void | Promise<void>
->(
+const setConfigFunction = (
 	basePath: VTBasePathInstance,
-	callback: () => ReturnValue
+	callback: () => void
 ) => {
 	if (basePath.namespace === pack.namespace) {
 		setHasConfigFunction(true);
