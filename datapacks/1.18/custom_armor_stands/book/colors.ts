@@ -1,0 +1,10 @@
+export const FIRST_PAGE_LINK_COLOR = 'dark_gray';
+export const PAGE_TITLE_COLOR = 'black';
+export const DETAILS_COLOR = 'gray';
+export const INFO_COLOR = '#aa0079';
+export const HEADING_COLOR = 'black';
+export const CLICKABLE_COLOR = '#b26c34';
+export const CLICKABLE_COLOR_2 = '#a2462a';
+export const NUMBER_COLOR = 'dark_green';
+export const NEGATIVE_NUMBER_COLOR = '#e64c4c';
+export const POSITIVE_NUMBER_COLOR = 'dark_green';

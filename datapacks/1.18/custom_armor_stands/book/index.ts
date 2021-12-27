@@ -2,20 +2,9 @@ import pack from 'lib/datapacks/pack';
 import center from 'lib/datapacks/textComponents/center';
 import columns from 'lib/datapacks/textComponents/columns';
 import minify from 'lib/datapacks/textComponents/minify';
-import overlap from 'lib/datapacks/textComponents/overlap';
-import right from 'lib/datapacks/textComponents/right';
 import { LootTable, NBT } from 'sandstone';
-
-const FIRST_PAGE_LINK_COLOR = 'dark_gray';
-const PAGE_TITLE_COLOR = 'black';
-const DETAILS_COLOR = 'gray';
-const INFO_COLOR = '#aa0079';
-const HEADING_COLOR = 'black';
-const CLICKABLE_COLOR = '#b26c34';
-const CLICKABLE_COLOR_2 = '#a2462a';
-const NUMBER_COLOR = 'dark_green';
-const NEGATIVE_NUMBER_COLOR = '#e64c4c';
-const POSITIVE_NUMBER_COLOR = 'dark_green';
+import { PAGE_TITLE_COLOR, DETAILS_COLOR, HEADING_COLOR, CLICKABLE_COLOR, CLICKABLE_COLOR_2, NEGATIVE_NUMBER_COLOR, POSITIVE_NUMBER_COLOR, NUMBER_COLOR } from '../book/colors';
+import page from '../book/page';
 
 const book = LootTable(pack`book`, {
 	type: 'minecraft:command',
@@ -36,19 +25,17 @@ const book = LootTable(pack`book`, {
 						)
 					},
 					pages: [
-						[
-							center([
-								{ text: 'Custom Armor Stands', color: PAGE_TITLE_COLOR },
-								'\n\n',
-								{ text: 'To proceed, first\nselect the armor\nstand you want to\ncustomize.', color: DETAILS_COLOR },
-								'\n\n',
-								{ text: 'Select', color: HEADING_COLOR },
-								'\n',
-								{ text: 'Nearest Armor Stand', color: CLICKABLE_COLOR },
-								'\n',
-								{ text: 'Use Mouse', color: CLICKABLE_COLOR }
-							])
-						],
+						center([
+							{ text: 'Custom Armor Stands', color: PAGE_TITLE_COLOR },
+							'\n\n',
+							{ text: 'To proceed, first\nselect the armor\nstand you want to\ncustomize.', color: DETAILS_COLOR },
+							'\n\n',
+							{ text: 'Select', color: HEADING_COLOR },
+							'\n',
+							{ text: 'Nearest Armor Stand', color: CLICKABLE_COLOR },
+							'\n',
+							{ text: 'Use Mouse', color: CLICKABLE_COLOR }
+						]),
 						[
 							center([
 								{ text: 'Custom Armor Stands', color: PAGE_TITLE_COLOR },
@@ -89,17 +76,9 @@ const book = LootTable(pack`book`, {
 								'\n',
 								{ text: 'Right Leg', color: CLICKABLE_COLOR_2 }
 							])
-						], [
-							overlap(
-								{ text: '⏪', color: FIRST_PAGE_LINK_COLOR },
-								center(
-									{ text: 'Manage Selection', color: PAGE_TITLE_COLOR }
-								),
-								right(
-									{ text: 'ℹ', color: INFO_COLOR }
-								)
-							),
-							'\n\n',
+						],
+						page('Manage Selection', [
+							'\n',
 							center([
 								{ text: 'Highlight Selected', color: CLICKABLE_COLOR },
 								'\n',
@@ -111,17 +90,9 @@ const book = LootTable(pack`book`, {
 								'\n',
 								{ text: 'Use Mouse', color: CLICKABLE_COLOR }
 							])
-						], [
-							overlap(
-								{ text: '⏪', color: FIRST_PAGE_LINK_COLOR },
-								center(
-									{ text: 'Properties', color: PAGE_TITLE_COLOR }
-								),
-								right(
-									{ text: 'ℹ', color: INFO_COLOR }
-								)
-							),
-							'\n\n',
+						]),
+						page('Properties', [
+							'\n',
 							{ text: '[ ✔ ]', color: 'dark_green' },
 							{ text: ' Base Plate\n', color: 'dark_gray' },
 							{ text: '[ ✔ ]', color: 'dark_green' },
@@ -142,45 +113,26 @@ const book = LootTable(pack`book`, {
 							{ text: ' Small\n', color: 'dark_gray' },
 							{ text: '[ ❌ ]', color: 'red' },
 							{ text: ' Visual Fire', color: 'dark_gray' }
-						], [
-							overlap(
-								{ text: '⏪', color: FIRST_PAGE_LINK_COLOR },
-								center(
-									{ text: 'Clipboard', color: PAGE_TITLE_COLOR }
-								),
-								right(
-									{ text: 'ℹ', color: INFO_COLOR }
-								)
-							),
-							'\n',
-							center([
-								{ text: 'Reset', color: CLICKABLE_COLOR },
-								'\n\n',
-								{ text: 'Copy', color: HEADING_COLOR },
-								'\n',
-								{ text: 'Properties and Poses', color: CLICKABLE_COLOR },
-								'\n',
-								{ text: 'Only Properties', color: CLICKABLE_COLOR },
-								'\n',
-								{ text: 'Only Poses', color: CLICKABLE_COLOR },
-								'\n',
-								{ text: 'Record New Macro', color: CLICKABLE_COLOR },
-								'\n\n',
-								{ text: 'Paste', color: HEADING_COLOR },
-								'\n',
-								{ text: 'Clipboard Data', color: CLICKABLE_COLOR }
-							])
-						], [
-							overlap(
-								{ text: '⏪', color: FIRST_PAGE_LINK_COLOR },
-								center(
-									{ text: 'Slots', color: PAGE_TITLE_COLOR }
-								),
-								right(
-									{ text: 'ℹ', color: INFO_COLOR }
-								)
-							),
+						]),
+						page('Clipboard', center([
+							{ text: 'Reset', color: CLICKABLE_COLOR },
 							'\n\n',
+							{ text: 'Copy', color: HEADING_COLOR },
+							'\n',
+							{ text: 'Properties and Poses', color: CLICKABLE_COLOR },
+							'\n',
+							{ text: 'Only Properties', color: CLICKABLE_COLOR },
+							'\n',
+							{ text: 'Only Poses', color: CLICKABLE_COLOR },
+							'\n',
+							{ text: 'Record New Macro', color: CLICKABLE_COLOR },
+							'\n\n',
+							{ text: 'Paste', color: HEADING_COLOR },
+							'\n',
+							{ text: 'Clipboard Data', color: CLICKABLE_COLOR }
+						])),
+						page('Slots', [
+							'\n',
 							center([
 								{ text: 'Swap Main Hand With', color: HEADING_COLOR },
 								'\n',
@@ -194,17 +146,8 @@ const book = LootTable(pack`book`, {
 								'\n',
 								{ text: 'Boots', color: CLICKABLE_COLOR }
 							])
-						], [
-							overlap(
-								{ text: '⏪', color: FIRST_PAGE_LINK_COLOR },
-								center(
-									{ text: 'Position', color: PAGE_TITLE_COLOR }
-								),
-								right(
-									{ text: 'ℹ', color: INFO_COLOR }
-								)
-							),
-							'\n',
+						]),
+						page('Position', [
 							center([
 								{ text: 'Use Mouse', color: CLICKABLE_COLOR },
 								'\n\n',
@@ -275,75 +218,53 @@ const book = LootTable(pack`book`, {
 								{ text: 'Use Mouse', color: CLICKABLE_COLOR },
 								{ text: 'Center', color: CLICKABLE_COLOR }
 							)
-						], [
-							overlap(
-								{ text: '⏪', color: FIRST_PAGE_LINK_COLOR },
-								center(
-									{ text: 'Rotation', color: PAGE_TITLE_COLOR }
-								),
-								right(
-									{ text: 'ℹ', color: INFO_COLOR }
-								)
-							),
+						]),
+						page('Rotation', center([
+							{ text: 'Flip Horizontally', color: CLICKABLE_COLOR },
+							'\n\n',
+							{ text: 'Rotate Left/Right', color: HEADING_COLOR },
 							'\n',
-							center([
-								{ text: 'Flip Horizontally', color: CLICKABLE_COLOR },
-								'\n\n',
-								{ text: 'Rotate Left/Right', color: HEADING_COLOR },
-								'\n',
-								{ text: '-1', color: NEGATIVE_NUMBER_COLOR },
-								' ',
-								{ text: '-5', color: NEGATIVE_NUMBER_COLOR },
-								' ',
-								{ text: '-15', color: NEGATIVE_NUMBER_COLOR },
-								' ',
-								{ text: '-22.5', color: NEGATIVE_NUMBER_COLOR },
-								' ',
-								{ text: '-90', color: NEGATIVE_NUMBER_COLOR },
-								'\n',
-								{ text: '+1', color: POSITIVE_NUMBER_COLOR },
-								' ',
-								{ text: '+5', color: POSITIVE_NUMBER_COLOR },
-								' ',
-								{ text: '+15', color: POSITIVE_NUMBER_COLOR },
-								' ',
-								{ text: '+22.5', color: POSITIVE_NUMBER_COLOR },
-								' ',
-								{ text: '+90', color: POSITIVE_NUMBER_COLOR },
-								'\n',
-								{ text: 'Use Mouse', color: CLICKABLE_COLOR },
-								'\n\n',
-								{ text: 'Snap to Multiple of', color: HEADING_COLOR },
-								'\n',
-								{ text: '5', color: NUMBER_COLOR },
-								' ',
-								{ text: '15', color: NUMBER_COLOR },
-								' ',
-								{ text: '22.5', color: NUMBER_COLOR },
-								' ',
-								{ text: '45', color: NUMBER_COLOR },
-								' ',
-								{ text: '90', color: NUMBER_COLOR },
-								'\n\n',
-								{ text: 'Set Rotation', color: HEADING_COLOR },
-								'\n',
-								{ text: 'Toward You', color: CLICKABLE_COLOR },
-								'\n',
-								{ text: 'Away From You', color: CLICKABLE_COLOR }
-							])
-						], [
-							overlap(
-								{ text: '⏪', color: FIRST_PAGE_LINK_COLOR },
-								center([
-									{ text: 'Head', color: PAGE_TITLE_COLOR },
-									' ',
-									{ text: '(1 of 2)', color: DETAILS_COLOR }
-								]),
-								right(
-									{ text: 'ℹ', color: INFO_COLOR }
-								)
-							),
+							{ text: '-1', color: NEGATIVE_NUMBER_COLOR },
+							' ',
+							{ text: '-5', color: NEGATIVE_NUMBER_COLOR },
+							' ',
+							{ text: '-15', color: NEGATIVE_NUMBER_COLOR },
+							' ',
+							{ text: '-22.5', color: NEGATIVE_NUMBER_COLOR },
+							' ',
+							{ text: '-90', color: NEGATIVE_NUMBER_COLOR },
 							'\n',
+							{ text: '+1', color: POSITIVE_NUMBER_COLOR },
+							' ',
+							{ text: '+5', color: POSITIVE_NUMBER_COLOR },
+							' ',
+							{ text: '+15', color: POSITIVE_NUMBER_COLOR },
+							' ',
+							{ text: '+22.5', color: POSITIVE_NUMBER_COLOR },
+							' ',
+							{ text: '+90', color: POSITIVE_NUMBER_COLOR },
+							'\n',
+							{ text: 'Use Mouse', color: CLICKABLE_COLOR },
+							'\n\n',
+							{ text: 'Snap to Multiple of', color: HEADING_COLOR },
+							'\n',
+							{ text: '5', color: NUMBER_COLOR },
+							' ',
+							{ text: '15', color: NUMBER_COLOR },
+							' ',
+							{ text: '22.5', color: NUMBER_COLOR },
+							' ',
+							{ text: '45', color: NUMBER_COLOR },
+							' ',
+							{ text: '90', color: NUMBER_COLOR },
+							'\n\n',
+							{ text: 'Set Rotation', color: HEADING_COLOR },
+							'\n',
+							{ text: 'Toward You', color: CLICKABLE_COLOR },
+							'\n',
+							{ text: 'Away From You', color: CLICKABLE_COLOR }
+						])),
+						page('Head', '(1 of 2)', [
 							columns(
 								{ text: 'Use Mouse', color: CLICKABLE_COLOR },
 								{ text: 'Reset', color: CLICKABLE_COLOR }
@@ -406,19 +327,8 @@ const book = LootTable(pack`book`, {
 								{ text: 'Use Mouse', color: CLICKABLE_COLOR },
 								{ text: 'Reset', color: CLICKABLE_COLOR }
 							)
-						], [
-							overlap(
-								{ text: '⏪', color: FIRST_PAGE_LINK_COLOR },
-								center([
-									{ text: 'Head', color: PAGE_TITLE_COLOR },
-									' ',
-									{ text: '(2 of 2)', color: DETAILS_COLOR }
-								]),
-								right(
-									{ text: 'ℹ', color: INFO_COLOR }
-								)
-							),
-							'\n',
+						]),
+						page('Head', '(2 of 2)', [
 							columns(
 								{ text: 'Use Mouse', color: CLICKABLE_COLOR },
 								{ text: 'Reset', color: CLICKABLE_COLOR }
@@ -464,19 +374,8 @@ const book = LootTable(pack`book`, {
 								'\n',
 								{ text: 'Away From Your Feet', color: CLICKABLE_COLOR }
 							])
-						], [
-							overlap(
-								{ text: '⏪', color: FIRST_PAGE_LINK_COLOR },
-								center([
-									{ text: 'Left Arm', color: PAGE_TITLE_COLOR },
-									' ',
-									{ text: '(1 of 2)', color: DETAILS_COLOR }
-								]),
-								right(
-									{ text: 'ℹ', color: INFO_COLOR }
-								)
-							),
-							'\n',
+						]),
+						page('Left Arm', '(1 of 2)', [
 							columns(
 								{ text: 'Use Mouse', color: CLICKABLE_COLOR },
 								{ text: 'Reset', color: CLICKABLE_COLOR }
@@ -543,19 +442,8 @@ const book = LootTable(pack`book`, {
 								{ text: 'Use Mouse', color: CLICKABLE_COLOR },
 								{ text: 'Reset', color: CLICKABLE_COLOR }
 							)
-						], [
-							overlap(
-								{ text: '⏪', color: FIRST_PAGE_LINK_COLOR },
-								center([
-									{ text: 'Left Arm', color: PAGE_TITLE_COLOR },
-									' ',
-									{ text: '(2 of 2)', color: DETAILS_COLOR }
-								]),
-								right(
-									{ text: 'ℹ', color: INFO_COLOR }
-								)
-							),
-							'\n',
+						]),
+						page('Left Arm', '(2 of 2)', [
 							columns(
 								{ text: 'Use Mouse', color: CLICKABLE_COLOR },
 								{ text: 'Reset', color: CLICKABLE_COLOR }
@@ -605,7 +493,7 @@ const book = LootTable(pack`book`, {
 								'\n',
 								{ text: 'Away From Your Feet', color: CLICKABLE_COLOR }
 							])
-						]
+						])
 					].map(page => JSON.stringify(minify(page)))
 				})
 			}]
