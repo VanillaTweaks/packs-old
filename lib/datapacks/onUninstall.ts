@@ -24,12 +24,15 @@ const onUninstall = (
 	}
 
 	const uninstallFunction = MCFunction(uninstallFunctionName, callback, {
-		onConflict: 'append'
+		// Prepend instead of append so things are uninstalled in the reverse order that they are installed.
+		onConflict: 'prepend'
 	});
 
 	// TODO: Use `!uninstallTag.has(uninstallFunction)` instead.
 	if (!uninstallTag.values.some(value => value.toString() === uninstallFunction.toString())) {
-		uninstallTag.add(uninstallFunction);
+		// Prepend here too for the same reason.
+		// TODO: Remove `as any`.
+		uninstallTag.values.unshift(uninstallFunction as any);
 	}
 };
 
