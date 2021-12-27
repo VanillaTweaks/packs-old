@@ -10,7 +10,7 @@ const $lootGiveResult = temp('$lootGiveResult');
  * ⚠️ Assumes its commands are being executed `at @s`.
  */
 const giveLootTable = (
-	lootTable: Parameters<ReturnType<typeof loot['give']>['loot']>[0]
+	lootTable: Parameters<ReturnType<typeof loot.give>['loot']>[0]
 ) => {
 	execute
 		.store.result.score($lootGiveResult)
