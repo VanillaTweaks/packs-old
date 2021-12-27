@@ -14,12 +14,14 @@ const split = (
 	separator: string | RegExp
 ): JSONTextComponent[] => {
 	if (typeof component === 'string') {
-		if (component === '' && separator === '') {
-			// Cover a special case where `''.split('') === []`, because our `split` must always return a non-empty array.
-			return [''];
+		const splitString = component.split(separator);
+
+		// Ensure we never return an empty array.
+		if (splitString.length === 0) {
+			splitString.push('');
 		}
 
-		return component.split(separator);
+		return splitString;
 	}
 
 	if (Array.isArray(component)) {
