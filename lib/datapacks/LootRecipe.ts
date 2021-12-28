@@ -1,11 +1,12 @@
 import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
-import { advancement, Advancement, clear, execute, LootTable, MCFunction, NBT, recipe, Recipe, scoreboard } from 'sandstone';
+import { advancement, Advancement, execute, kill, LootTable, MCFunction, NBT, recipe, Recipe, scoreboard } from 'sandstone';
 import type { RecipeJSON, RootNBT } from 'sandstone';
 import vt from 'lib/datapacks/vt';
 import internalBasePath from 'lib/datapacks/internalBasePath';
 import objective from 'lib/datapacks/objective';
 import every from 'lib/datapacks/every';
 import giveLootTable from 'lib/datapacks/giveLootTable';
+import temp from 'lib/datapacks/temp';
 
 const lootRecipes = vt.child({ directory: 'loot_recipes' });
 const lootRecipes_ = internalBasePath(lootRecipes);
@@ -19,15 +20,6 @@ every('1t', lootRecipes, () => {
 	// No need to do this for spectators since spectators can't craft.
 	// TODO: Remove `.name`.
 	scoreboard.players.reset('@a[gamemode=!spectator]', craftedKnowledgeBook.name);
-});
-
-/** An `MCFunction` called as any player who crafts an NBT recipe. */
-const craftLootRecipe = MCFunction(lootRecipes_`craft`, () => {
-	clear('@s', 'minecraft:knowledge_book', 1);
-
-	// Reset the player's `craftedKnowledgeBook` score so that the score being detected as not 1 is still accurate later in this tick.
-	// TODO: Replace `$craftedKnowledgeBook.target, $craftedKnowledgeBook.objective` with `$craftedKnowledgeBook`.
-	scoreboard.players.reset($craftedKnowledgeBook.target, $craftedKnowledgeBook.objective);
 });
 
 export type LootRecipeJSON = RecipeJSON & {
@@ -66,7 +58,7 @@ const LootRecipe = (
 
 	/** The crafting recipe that outputs a knowledge book. */
 	// TODO: Replace all `.getResourceName` with template tagging.
-	const lootRecipe = Recipe(recipes.getResourceName(name), {
+	const lootRecipe = Recipe(basePath.getResourceName(name), {
 		...recipeJSON,
 		result: {
 			item: 'minecraft:knowledge_book',
@@ -95,7 +87,7 @@ const LootRecipe = (
 		},
 		rewards: {
 			function: MCFunction(recipes_.getResourceName(`${name}/unlock`), () => {
-				// This runs as any player who unlocks the NBT recipe (e.g. due to crafting the recipe or using `/recipe give`).
+				// This runs `as` and `at` any player who unlocks the recipe (e.g. due to crafting the recipe or using `/recipe give`).
 
 				advancement.revoke('@s').only(recipeUnlockedAdvancement);
 				// TODO: Remove `.toString()`.
@@ -106,7 +98,38 @@ const LootRecipe = (
 					// TODO: Replace all `greaterThan(0)` with `matches('1..')`.
 					.if($craftedKnowledgeBook.greaterThan(0))
 					.run(recipes_.getResourceName(`${name}/craft`), () => {
-						craftLootRecipe();
+						MCFunction(lootRecipes_`craft`, () => {
+							// This runs `as` and `at` any player who successfully crafts a loot recipe.
+
+							// Try to delete the knowledge book.
+							// Clear it from their inventory.
+							const $clearedKnowledgeBook = temp('$clearedKnowledgeBook');
+							execute
+								.store.success.score($clearedKnowledgeBook)
+								// I wish we could simply only clear the knowledge books without NBT on them, or at least without the `Recipes` tag on them.
+								.run.clear('@s', 'minecraft:knowledge_book', 1);
+							// Or if it wasn't directly in their inventory, kill it in case they tried to drop it.
+							execute
+								.if($clearedKnowledgeBook.matches(0))
+								// TODO: Don't wrap these arguments in `MCFunction`.
+								.run.schedule.function(MCFunction(lootRecipes_`kill_knowledge_book`, () => {
+									kill(`@e[type=item,limit=1,nbt=${
+										NBT.stringify({
+											Item: { id: 'minecraft:knowledge_book' }
+										})
+									},nbt=!${
+										NBT.stringify({
+											// Ensure the knowledge book being killed doesn't have any NBT on it, meaning it likely came from crafting output and can't possibly be a meaningful item.
+											Item: { tag: {} }
+										})
+									}]`);
+								}), '1t', 'append');
+							// Or if they bundled it, just let them have it.
+
+							// Reset the player's `craftedKnowledgeBook` score so it can still be detected as not 1 later in this tick.
+							// TODO: Replace `$craftedKnowledgeBook.target, $craftedKnowledgeBook.objective` with `$craftedKnowledgeBook`.
+							scoreboard.players.reset($craftedKnowledgeBook.target, $craftedKnowledgeBook.objective);
+						})();
 
 						giveLootTable(lootTable);
 					});
