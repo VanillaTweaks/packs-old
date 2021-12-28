@@ -1,72 +1,53 @@
 import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
-import { advancement, Advancement, execute, kill, LootTable, MCFunction, NBT, recipe, Recipe, scoreboard } from 'sandstone';
-import type { RecipeJSON, RootNBT } from 'sandstone';
+import { advancement, Advancement, execute, kill, MCFunction, NBT, recipe, Recipe, scoreboard } from 'sandstone';
+import type { RecipeJSON } from 'sandstone';
 import vt from 'lib/datapacks/vt';
 import internalBasePath from 'lib/datapacks/internalBasePath';
 import objective from 'lib/datapacks/objective';
 import every from 'lib/datapacks/every';
-import giveLootTable from 'lib/datapacks/giveLootTable';
 import temp from 'lib/datapacks/temp';
+import type { UnionOmit } from 'lib/types';
 
-const lootRecipes = vt.child({ directory: 'loot_recipes' });
-const lootRecipes_ = internalBasePath(lootRecipes);
+const vtFunctionRecipes = vt.child({ directory: 'function_recipes' });
+const vtFunctionRecipes_ = internalBasePath(vtFunctionRecipes);
 
-const craftedKnowledgeBook = objective(lootRecipes, 'crafted_knowledge_book', 'minecraft.crafted:minecraft.knowledge_book');
+const craftedKnowledgeBook = objective(vtFunctionRecipes, 'crafted_knowledge_book', 'minecraft.crafted:minecraft.knowledge_book');
 /** `@s`'s `craftedKnowledgeBook` score. */
 const $craftedKnowledgeBook = craftedKnowledgeBook('@s');
 
-every('1t', lootRecipes, () => {
+every('1t', vtFunctionRecipes, () => {
 	// Reset everyone's `craftedKnowledgeBook` score in case they crafted a knowledge book by external means.
 	// No need to do this for spectators since spectators can't craft.
 	// TODO: Remove `.name`.
 	scoreboard.players.reset('@a[gamemode=!spectator]', craftedKnowledgeBook.name);
 });
 
-export type LootRecipeJSON = RecipeJSON & {
-	type: Extract<RecipeJSON, { result: { item: string } }>['type'],
-	result: {
-		nbt: RootNBT
-	}
+export type FunctionRecipeJSON = UnionOmit<Extract<RecipeJSON, { result: { item: string } }>, 'result'> & {
+	/** What to run when the recipe is crafted. */
+	result: () => void
 };
 
-/** A crafting recipe that outputs a knowledge book which gives the player a specified loot table when taken out of the crafting output. */
-const LootRecipe = (
-	/** The `BasePath` under which to create a `recipes` directory for the recipes, loot tables, advancements, and functions. */
+/** A crafting recipe that outputs a knowledge book which runs a specified callback `as` and `at` the player when taken from the crafting output. */
+const FunctionRecipe = (
+	/** The `BasePath` under which to create the necessary directories and resources. */
 	basePath: VTBasePathInstance,
 	/** The non-namespaced name of the recipe. */
 	name: string,
-	recipeJSON: LootRecipeJSON
+	recipeJSON: FunctionRecipeJSON
 ) => {
-	const recipes = basePath.child({ directory: 'recipes' });
-	const recipes_ = internalBasePath(recipes);
-
-	const lootTable = LootTable(recipes.getResourceName(name), {
-		type: 'minecraft:command',
-		pools: [{
-			rolls: 1,
-			entries: [{
-				type: 'minecraft:item',
-				name: recipeJSON.result.item,
-				functions: [{
-					// TODO: Remove type assertion.
-					function: 'minecraft:set_nbt' as 'set_nbt',
-					tag: NBT.stringify(recipeJSON.result.nbt)
-				}]
-			}]
-		}]
-	});
-
 	/** The crafting recipe that outputs a knowledge book. */
 	// TODO: Replace all `.getResourceName` with template tagging.
-	const lootRecipe = Recipe(basePath.getResourceName(name), {
+	const functionRecipe = Recipe(basePath.getResourceName(name), {
 		...recipeJSON,
 		result: {
-			item: 'minecraft:knowledge_book',
-			...recipeJSON.result.count !== undefined && {
-				count: recipeJSON.result.count
-			}
+			item: 'minecraft:knowledge_book'
 		}
 	});
+
+	const recipes = basePath.child({ directory: 'recipes' });
+
+	const functionRecipes = basePath.child({ directory: 'function_recipes' });
+	const functionRecipes_ = internalBasePath(functionRecipes);
 
 	const recipeUnlockedAdvancement = Advancement(recipes.getResourceName(name), {
 		parent: Advancement(recipes`root`, {
@@ -81,25 +62,25 @@ const LootRecipe = (
 				trigger: 'minecraft:recipe_unlocked',
 				conditions: {
 					// TODO: Remove `.toString()`.
-					recipe: lootRecipe.toString()
+					recipe: functionRecipe.toString()
 				}
 			}
 		},
 		rewards: {
-			function: MCFunction(recipes_.getResourceName(`${name}/unlock`), () => {
+			function: MCFunction(functionRecipes_.getResourceName(`${name}/unlock`), () => {
 				// This runs `as` and `at` any player who unlocks the recipe (e.g. due to crafting the recipe or using `/recipe give`).
 
 				advancement.revoke('@s').only(recipeUnlockedAdvancement);
 				// TODO: Remove `.toString()`.
-				recipe.take('@s', lootRecipe.toString());
+				recipe.take('@s', functionRecipe.toString());
 
 				execute
 					// Check if they actually crafted a knowledge book and aren't unlocking the recipe by other means.
 					// TODO: Replace all `greaterThan(0)` with `matches('1..')`.
 					.if($craftedKnowledgeBook.greaterThan(0))
-					.run(recipes_.getResourceName(`${name}/craft`), () => {
-						MCFunction(lootRecipes_`craft`, () => {
-							// This runs `as` and `at` any player who successfully crafts a loot recipe.
+					.run(functionRecipes_.getResourceName(`${name}/craft`), () => {
+						MCFunction(vtFunctionRecipes_`craft`, () => {
+							// This runs `as` and `at` any player who successfully crafts one of any `FunctionRecipe`.
 
 							// Try to delete the knowledge book.
 							// Clear it from their inventory.
@@ -112,7 +93,7 @@ const LootRecipe = (
 							execute
 								.if($clearedKnowledgeBook.matches(0))
 								// TODO: Don't wrap these arguments in `MCFunction`.
-								.run.schedule.function(MCFunction(lootRecipes_`kill_knowledge_book`, () => {
+								.run.schedule.function(MCFunction(vtFunctionRecipes_`kill_knowledge_book`, () => {
 									kill(`@e[type=item,limit=1,nbt=${
 										NBT.stringify({
 											Item: { id: 'minecraft:knowledge_book' }
@@ -131,11 +112,11 @@ const LootRecipe = (
 							scoreboard.players.reset($craftedKnowledgeBook.target, $craftedKnowledgeBook.objective);
 						})();
 
-						giveLootTable(lootTable);
+						recipeJSON.result();
 					});
 			})
 		}
 	});
 };
 
-export default LootRecipe;
+export default FunctionRecipe;
