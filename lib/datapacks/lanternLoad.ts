@@ -7,7 +7,7 @@ import { loadTempObjective } from 'lib/datapacks/temp';
 
 const lanternLoad = VTBasePath({ namespace: 'load' });
 
-export const preLoadTag = Tag('functions', lanternLoad`pre_load`, [
+const preLoadTag = Tag('functions', lanternLoad`pre_load`, [
 	// Add the `temp` objective so it can be used in `checkMaxCommandChainLength`.
 	loadTempObjective,
 	checkMaxCommandChainLength
