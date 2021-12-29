@@ -24,15 +24,12 @@ const tooLowAdvancement = Advancement(functionPermissionLevel`too_low`, {
 		function: MCFunction(functionPermissionLevel_`revoke_advancements`, () => {
 			// Revoke this advancement so players can never have it for at least a tick if the `function-permission-level` is too low.
 			advancement.revoke('@s').only(tooLowAdvancement);
-
-			// Revoke the `warnAdvancement` so it can be granted again if the `function-permission-level` is lowered in the future.
-			advancement.revoke('@s').only(warnAdvancement);
 		})
 	}
 });
 
 /** An advancement which is only granted when the `function-permission-level` is too low for the first time that the player is online for. */
-const warnAdvancement = Advancement(functionPermissionLevel`warn`, {
+Advancement(functionPermissionLevel`warn`, {
 	criteria: {
 		tick: {
 			trigger: 'minecraft:tick',
