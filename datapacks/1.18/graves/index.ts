@@ -1,6 +1,5 @@
 import pack, { pack_ } from 'lib/datapacks/pack';
-import { advancement, data, execute, MCFunction, NBT, schedule, tag } from 'sandstone';
-import FunctionalAdvancement from 'lib/datapacks/FunctionalAdvancement';
+import { Advancement, advancement, data, execute, MCFunction, NBT, schedule, tag } from 'sandstone';
 import setMetaAdvancements from 'lib/datapacks/setMetaAdvancements';
 import setConfigFunction from 'lib/datapacks/setConfigFunction';
 import onLoad from 'lib/datapacks/onLoad';
@@ -72,22 +71,31 @@ const activateGrave = MCFunction(pack_`activate_grave`, () => {
 	});
 });
 
-const interactWithGraveAdvancement = FunctionalAdvancement(pack, 'interact_with_grave', {
-	trigger: 'minecraft:player_interacted_with_entity',
-	conditions: {
-		entity: {
-			type: 'minecraft:armor_stand',
-			nbt: NBT.stringify({
-				Tags: ['graves.hitbox']
-			})
+const interactWithGraveAdvancement = Advancement(pack`interact_with_grave`, {
+	criteria: {
+		interact_with_grave: {
+			trigger: 'minecraft:player_interacted_with_entity',
+			conditions: {
+				entity: {
+					type: 'minecraft:armor_stand',
+					nbt: NBT.stringify({
+						Tags: ['graves.hitbox']
+					})
+				}
+			}
 		}
+	},
+	rewards: {
+		function: (
+			MCFunction(pack_`interact_with_grave`, () => {
+				activateGrave();
+				schedule.function(pack_`activate_graves`, () => {
+					execute
+						.as(`@a[advancements={${interactWithGraveAdvancement}=true}]`)
+						.at('@s')
+						.run(activateGrave);
+				}, '2t', 'append');
+			})
+		)
 	}
-}, () => {
-	activateGrave();
-	schedule.function(pack_`activate_graves`, () => {
-		execute
-			.as(`@a[advancements={${interactWithGraveAdvancement}=true}]`)
-			.at('@s')
-			.run(activateGrave);
-	}, '2t', 'append');
 });
