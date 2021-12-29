@@ -5,15 +5,6 @@ import internalBasePath from 'lib/datapacks/internalBasePath';
 const functionPermissionLevel = vt.child({ directory: 'function_permission_level' });
 const functionPermissionLevel_ = internalBasePath(functionPermissionLevel);
 
-/** Revokes all of `functionPermissionLevel`'s advancements. */
-const revokeAdvancements = MCFunction(functionPermissionLevel_`revoke_advancements`, () => {
-	// Revoke this advancement so players can never have it for at least a tick if the `function-permission-level` is too low.
-	advancement.revoke('@s').only(tooLowAdvancement);
-
-	// Revoke the `warnAdvancement` so it can be granted again if the `function-permission-level` is lowered in the future.
-	advancement.revoke('@s').only(warnAdvancement);
-});
-
 /** A periodically granted advancement that players only keep if the `function-permission-level` is or ever was too low, since its reward function immediately revokes it when it isn't. */
 const tooLowAdvancement = Advancement(functionPermissionLevel`too_low`, {
 	criteria: {
@@ -30,7 +21,13 @@ const tooLowAdvancement = Advancement(functionPermissionLevel`too_low`, {
 		}
 	},
 	rewards: {
-		function: revokeAdvancements
+		function: MCFunction(functionPermissionLevel_`revoke_advancements`, () => {
+			// Revoke this advancement so players can never have it for at least a tick if the `function-permission-level` is too low.
+			advancement.revoke('@s').only(tooLowAdvancement);
+
+			// Revoke the `warnAdvancement` so it can be granted again if the `function-permission-level` is lowered in the future.
+			advancement.revoke('@s').only(warnAdvancement);
+		})
 	}
 });
 
