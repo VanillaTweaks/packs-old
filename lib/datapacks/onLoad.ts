@@ -2,6 +2,7 @@ import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
 import internalBasePath from 'lib/datapacks/internalBasePath';
 import { loadTag } from 'lib/datapacks/lanternLoad';
 import { MCFunction } from 'sandstone';
+import 'lib/datapacks/checkFunctionPermissionLevel';
 
 /** Adds to a `BasePath`'s load function. */
 const onLoad = (
