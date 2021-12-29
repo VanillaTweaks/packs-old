@@ -14,7 +14,7 @@ const revokeAdvancements = MCFunction(functionPermissionLevel_`revoke_advancemen
 	advancement.revoke('@s').only(warnAdvancement);
 });
 
-/** A periodically granted advancement that players can only have if the `function-permission-level` is or ever was too low, since its reward function immediately revokes it when it isn't. */
+/** A periodically granted advancement that players only keep if the `function-permission-level` is or ever was too low, since its reward function immediately revokes it when it isn't. */
 const tooLowAdvancement = Advancement(functionPermissionLevel`too_low`, {
 	criteria: {
 		tick: {
