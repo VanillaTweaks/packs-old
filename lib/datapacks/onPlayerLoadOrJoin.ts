@@ -1,3 +1,4 @@
+import type { MCFunctionInstance, TagInstance } from 'sandstone';
 import { execute, MCFunction, scoreboard, Tag } from 'sandstone';
 import every from 'lib/datapacks/every';
 import vt, { vt_ } from 'lib/datapacks/vt';
@@ -36,21 +37,34 @@ every('1t', playerJoinOrLoad, () => {
 	// The reason we use counters instead of the `minecraft.custom:minecraft.leave_game` criterion is because that criterion doesn't always detect players leaving due to server crashes.
 });
 
-/** Runs a function as any player who joins the game, or as `@a` on load. */
+/** Runs something as any player who joins the game, or as `@a` on load. */
 const onPlayerJoinOrLoad = (
-	/** The `BasePath` to put the function under. */
-	basePath: VTBasePathInstance,
-	callback: () => void
+	...args: [
+		/** The `BasePath` to put the `player_join_or_load` function under. */
+		basePath: VTBasePathInstance,
+		callback: () => void
+	] | [
+		/** The function or function tag to add to the `playerJoinOrLoadTag`. */
+		functionOrFunctionTag: MCFunctionInstance | TagInstance<'functions'>
+	]
 ) => {
-	const basePath_ = internalBasePath(basePath);
+	let functionOrFunctionTag: MCFunctionInstance | TagInstance<'functions'>;
 
-	const playerJoinOrLoadFunction = MCFunction(basePath_`player_join_or_load`, callback, {
-		onConflict: 'append'
-	});
+	if (args.length === 1) {
+		[functionOrFunctionTag] = args;
+	} else {
+		const [basePath, callback] = args;
+		const basePath_ = internalBasePath(basePath);
 
-	// TODO: Use `!playerJoinOrLoadTag.has(playerJoinOrLoadFunction)` instead.
-	if (!playerJoinOrLoadTag.values.some(value => value.toString() === playerJoinOrLoadFunction.toString())) {
-		playerJoinOrLoadTag.add(playerJoinOrLoadFunction);
+		functionOrFunctionTag = MCFunction(basePath_`player_join_or_load`, callback, {
+			onConflict: 'append'
+		});
+	}
+
+	// TODO: Use `!playerJoinOrLoadTag.has(functionOrFunctionTag)` instead.
+	if (!playerJoinOrLoadTag.values.some(value => value.toString() === functionOrFunctionTag.toString())) {
+		// TODO: Remove `as any`.
+		playerJoinOrLoadTag.add(functionOrFunctionTag as any);
 	}
 };
 
