@@ -44,13 +44,13 @@ const onPlayerJoinOrLoad = (
 ) => {
 	const basePath_ = internalBasePath(basePath);
 
-	const loadFunction = MCFunction(basePath_`player_join_or_load`, callback, {
+	const playerJoinOrLoadFunction = MCFunction(basePath_`player_join_or_load`, callback, {
 		onConflict: 'append'
 	});
 
-	// TODO: Use `!playerJoinOrLoadTag.has(loadFunction)` instead.
-	if (!playerJoinOrLoadTag.values.some(value => value.toString() === loadFunction.toString())) {
-		playerJoinOrLoadTag.add(loadFunction);
+	// TODO: Use `!playerJoinOrLoadTag.has(playerJoinOrLoadFunction)` instead.
+	if (!playerJoinOrLoadTag.values.some(value => value.toString() === playerJoinOrLoadFunction.toString())) {
+		playerJoinOrLoadTag.add(playerJoinOrLoadFunction);
 	}
 };
 
