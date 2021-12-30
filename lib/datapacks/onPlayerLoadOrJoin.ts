@@ -37,7 +37,7 @@ every('1t', playerJoinOrLoad, () => {
 	// The reason we use counters instead of the `minecraft.custom:minecraft.leave_game` criterion is because that criterion doesn't always detect players leaving due to server crashes.
 });
 
-/** Runs something as any player who joins the game, or as `@a` on load. */
+/** Runs something as any player who joins the game and as `@a` on load. */
 const onPlayerJoinOrLoad = (
 	...args: [
 		/** The `BasePath` to put the `player_join_or_load` function under. */

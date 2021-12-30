@@ -4,7 +4,7 @@ import onPlayerJoinOrLoad from 'lib/datapacks/onPlayerLoadOrJoin';
 import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
 
 /**
- * Revokes the specified advancement from any player that joins and from all players on load.
+ * Revokes the specified advancement from any player that joins and from `@a` on load.
  *
  * If not for this, a player could keep the advancement forever if they were granted it while the `function-permission-level` was too low for its reward function to revoke it, leading the advancement to never trigger for that player again.
  */
