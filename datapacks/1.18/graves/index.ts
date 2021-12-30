@@ -4,6 +4,7 @@ import setMetaAdvancements from 'lib/datapacks/setMetaAdvancements';
 import setConfigFunction from 'lib/datapacks/setConfigFunction';
 import onLoad from 'lib/datapacks/onLoad';
 import onUninstall from 'lib/datapacks/onUninstall';
+import revokeOnPlayerLoadOrJoin from 'lib/datapacks/revokeOnPlayerLoadOrJoin';
 
 setMetaAdvancements({
 	root: {
@@ -99,3 +100,4 @@ const interactWithGraveAdvancement = Advancement(pack`interact_with_grave`, {
 		)
 	}
 });
+revokeOnPlayerLoadOrJoin(pack, interactWithGraveAdvancement);

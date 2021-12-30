@@ -7,6 +7,7 @@ import objective from 'lib/datapacks/objective';
 import every from 'lib/datapacks/every';
 import temp from 'lib/datapacks/temp';
 import type { UnionOmit } from 'lib/types';
+import revokeOnPlayerLoadOrJoin from 'lib/datapacks/revokeOnPlayerLoadOrJoin';
 
 const vtFunctionRecipes = vt.child({ directory: 'function_recipes' });
 const vtFunctionRecipes_ = internalBasePath(vtFunctionRecipes);
@@ -117,6 +118,7 @@ const FunctionRecipe = (
 			})
 		}
 	});
+	revokeOnPlayerLoadOrJoin(functionRecipes, recipeUnlockedAdvancement);
 };
 
 export default FunctionRecipe;

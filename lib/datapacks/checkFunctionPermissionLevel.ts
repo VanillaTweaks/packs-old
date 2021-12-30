@@ -1,9 +1,18 @@
 import { advancement, Advancement, MCFunction, me } from 'sandstone';
 import vt from 'lib/datapacks/vt';
 import internalBasePath from 'lib/datapacks/internalBasePath';
+import onPlayerJoinOrLoad from 'lib/datapacks/onPlayerLoadOrJoin';
 
 const functionPermissionLevel = vt.child({ directory: 'function_permission_level' });
 const functionPermissionLevel_ = internalBasePath(functionPermissionLevel);
+
+const revokeAdvancements = MCFunction(functionPermissionLevel_`revoke_advancements`, () => {
+	// Revoke this advancement so players can never have it for at least a tick if the `function-permission-level` is too low.
+	advancement.revoke('@s').only(tooLowAdvancement);
+
+	// Revoke the `warnAdvancement` so it can be granted again if the `function-permission-level` is lowered in the future.
+	advancement.revoke('@s').only(warnAdvancement);
+});
 
 /** A periodically granted advancement that players only keep if the `function-permission-level` is or ever was too low, since its reward function immediately revokes it when it isn't. */
 const tooLowAdvancement = Advancement(functionPermissionLevel`too_low`, {
@@ -13,15 +22,12 @@ const tooLowAdvancement = Advancement(functionPermissionLevel`too_low`, {
 		}
 	},
 	rewards: {
-		function: MCFunction(functionPermissionLevel_`revoke_too_low`, () => {
-			// Revoke this advancement so players can never have it for at least a tick if the `function-permission-level` is too low.
-			advancement.revoke('@s').only(tooLowAdvancement);
-		})
+		function: revokeAdvancements
 	}
 });
 
 /** An advancement which is only granted when the `function-permission-level` is too low for the first time that the player is online for. */
-Advancement(functionPermissionLevel`warn`, {
+const warnAdvancement = Advancement(functionPermissionLevel`warn`, {
 	criteria: {
 		tick: {
 			trigger: 'minecraft:tick',
@@ -48,5 +54,7 @@ Advancement(functionPermissionLevel`warn`, {
 		})
 	}
 });
+
+onPlayerJoinOrLoad(revokeAdvancements);
 
 export default {};
