@@ -3,7 +3,7 @@ import type { JSONTextComponent, ObjectiveInstance } from 'sandstone';
 import { execute, scoreboard } from 'sandstone';
 import every from 'lib/datapacks/every';
 import internalBasePath from 'lib/datapacks/internalBasePath';
-import objective from './objective';
+import objective from 'lib/datapacks/objective';
 
 /** Creates a scoreboard objective with the `trigger` criterion, adds the necessary `scoreboard` commands to the load and uninstall functions, and runs a function as any player who sets the trigger to 1 or greater. */
 const onTrigger = (
