@@ -6,26 +6,26 @@ import onLoad from 'lib/datapacks/onLoad';
 import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
 import internalBasePath from 'lib/datapacks/internalBasePath';
 
-const playerLoadOrJoin = vt.child({ directory: 'player_load_or_join' });
+const playerJoinOrLoad = vt.child({ directory: 'player_join_or_load' });
 
-const counter = objective(playerLoadOrJoin, 'counter');
+const counter = objective(playerJoinOrLoad, 'counter');
 const $globalCounter = counter('$global');
 
-const playerLoadOrJoinTag = Tag('functions', vt_`player_load_or_join`);
+const playerJoinOrLoadTag = Tag('functions', vt_`player_join_or_load`);
 
-onLoad(playerLoadOrJoin, () => {
+onLoad(playerJoinOrLoad, () => {
 	// Reset all counters (including the global counter) to ensure all players are detected as out of sync next time.
 	// TODO: Remove `.toString()`.
 	scoreboard.players.reset('*', counter.toString());
 });
 
-every('1t', playerLoadOrJoin, () => {
+every('1t', playerJoinOrLoad, () => {
 	execute
 		.as('@a')
 		// Check if the player's counter is not in sync with the global counter.
 		.unless(counter('@s').equalTo($globalCounter))
 		// The player's counter is not in sync, so we can tell they joined the game.
-		.run.functionCmd(playerLoadOrJoinTag);
+		.run.functionCmd(playerJoinOrLoadTag);
 
 	// Increment the global counter, and sync all players' counters with it.
 	execute
@@ -37,21 +37,21 @@ every('1t', playerLoadOrJoin, () => {
 });
 
 /** Runs a function as any player who joins the game, or as `@a` on load. */
-const onPlayerLoadOrJoin = (
+const onPlayerJoinOrLoad = (
 	/** The `BasePath` to put the function under. */
 	basePath: VTBasePathInstance,
 	callback: () => void
 ) => {
 	const basePath_ = internalBasePath(basePath);
 
-	const loadFunction = MCFunction(basePath_`player_load_or_join`, callback, {
+	const loadFunction = MCFunction(basePath_`player_join_or_load`, callback, {
 		onConflict: 'append'
 	});
 
-	// TODO: Use `!playerLoadOrJoinTag.has(loadFunction)` instead.
-	if (!playerLoadOrJoinTag.values.some(value => value.toString() === loadFunction.toString())) {
-		playerLoadOrJoinTag.add(loadFunction);
+	// TODO: Use `!playerJoinOrLoadTag.has(loadFunction)` instead.
+	if (!playerJoinOrLoadTag.values.some(value => value.toString() === loadFunction.toString())) {
+		playerJoinOrLoadTag.add(loadFunction);
 	}
 };
 
-export default onPlayerLoadOrJoin;
+export default onPlayerJoinOrLoad;
