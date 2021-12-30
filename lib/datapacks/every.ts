@@ -36,7 +36,7 @@ const every = (
 
 	if (!functionAlreadyExists) {
 		onLoad(basePath, () => {
-			// This is scheduled one tick ahead so that clock functions always run after `#load:_private/load` is fully complete.
+			// This is scheduled one tick ahead so that clock functions always run after the load tag is fully complete.
 			schedule.function(clockFunction, '1t');
 		});
 
