@@ -1,9 +1,10 @@
-import type { MCFunctionInstance, TagInstance } from 'sandstone';
 import { execute, MCFunction, scoreboard, Tag } from 'sandstone';
 import every from 'lib/datapacks/every';
 import vt, { vt_ } from 'lib/datapacks/vt';
 import objective from 'lib/datapacks/objective';
 import onLoad from 'lib/datapacks/onLoad';
+import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
+import internalBasePath from 'lib/datapacks/internalBasePath';
 
 const playerLoadOrJoin = vt.child({ directory: 'player_load_or_join' });
 
@@ -32,29 +33,25 @@ every('1t', playerLoadOrJoin, () => {
 		// TODO: Replace `$globalCounter.target, $globalCounter.objective` with `$globalCounter`.
 		.run.scoreboard.players.add($globalCounter.target, $globalCounter.objective, 1);
 
-	// The reason we use counters instead of the `minecraft.custom:minecraft.leave_game` criterion is because that criterion doesn't always detect server crashes.
+	// The reason we use counters instead of the `minecraft.custom:minecraft.leave_game` criterion is because that criterion doesn't always detect players leaving due to server crashes.
 });
 
-/** Runs a function as any player who joins the game, or as all players on load. */
+/** Runs a function as any player who joins the game, or as `@a` on load. */
 const onPlayerLoadOrJoin = (
-	...args: (
-		[functionOrFunctionTag: MCFunctionInstance | TagInstance<'functions'>]
-		| [
-			/** The namespaced name of the function to run as a player who joins the game. */
-			functionName: string,
-			callback: () => void
-		]
-	)
+	/** The `BasePath` to put the function under. */
+	basePath: VTBasePathInstance,
+	callback: () => void
 ) => {
-	const functionOrFunctionTag = (
-		args.length === 1
-			? args[0]
-			: MCFunction(...args)
-	);
+	const basePath_ = internalBasePath(basePath);
 
-	// TODO: Check for `!playerLoadOrJoinTag.has(functionOrFunctionTag)` first.
-	// TODO: Remove `as any`.
-	playerLoadOrJoinTag.add(functionOrFunctionTag as any);
+	const loadFunction = MCFunction(basePath_`player_load_or_join`, callback, {
+		onConflict: 'append'
+	});
+
+	// TODO: Use `!playerLoadOrJoinTag.has(loadFunction)` instead.
+	if (!playerLoadOrJoinTag.values.some(value => value.toString() === loadFunction.toString())) {
+		playerLoadOrJoinTag.add(loadFunction);
+	}
 };
 
 export default onPlayerLoadOrJoin;
