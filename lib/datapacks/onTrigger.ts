@@ -1,8 +1,6 @@
-import onLoad from 'lib/datapacks/onLoad';
 import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
 import type { JSONTextComponent, ObjectiveInstance } from 'sandstone';
 import { execute, scoreboard } from 'sandstone';
-import onUninstall from 'lib/datapacks/onUninstall';
 import every from 'lib/datapacks/every';
 import internalBasePath from 'lib/datapacks/internalBasePath';
 import objective from './objective';
