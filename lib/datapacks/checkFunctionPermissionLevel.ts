@@ -9,15 +9,7 @@ const functionPermissionLevel_ = internalBasePath(functionPermissionLevel);
 const tooLowAdvancement = Advancement(functionPermissionLevel`too_low`, {
 	criteria: {
 		tick: {
-			trigger: 'minecraft:tick',
-			conditions: {
-				player: {
-					condition: 'minecraft:time_check',
-					// The number of ticks between attempts to grant this advancement.
-					period: 20 * 5,
-					value: 0
-				}
-			}
+			trigger: 'minecraft:tick'
 		}
 	},
 	rewards: {
