@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import { gameVersion, namespace, title, version, listed } from 'lib/meta';
 import packFormats from 'lib/datapacks/packFormats.json';
+import { dataPack } from 'sandstone/init';
 
 /** An array of functions called after the rest of the pack's processing, before the pack is saved. */
 export const finishFunctions: Array<() => void> = [];
@@ -28,9 +29,14 @@ const config: SandstoneConfig = {
 		world: gameVersion.replace(/\./g, '_')
 	},
 	scripts: {
-		beforeSave: () => {
+		beforeSave: async () => {
 			for (const finishFunction of finishFunctions) {
 				finishFunction();
+			}
+
+			// Check if the data pack has any functions.
+			if (dataPack.rootFunctions.size) {
+				await import('lib/datapacks/checkFunctionPermissionLevel');
 			}
 		},
 		afterAll: (async ({ destination }) => {

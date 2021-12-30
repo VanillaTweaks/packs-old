@@ -3,7 +3,6 @@ import internalBasePath from 'lib/datapacks/internalBasePath';
 import { loadTag } from 'lib/datapacks/lanternLoad';
 import type { MCFunctionInstance, TagInstance } from 'sandstone';
 import { MCFunction } from 'sandstone';
-import 'lib/datapacks/checkFunctionPermissionLevel';
 
 /** Adds to a `BasePath`'s load function, or to the global load tag if a function or function tag is passed directly. */
 const onLoad = (
