@@ -118,7 +118,7 @@ const FunctionRecipe = (
 			})
 		}
 	});
-	revokeOnPlayerLoadOrJoin(functionRecipes, recipeUnlockedAdvancement);
+	revokeOnPlayerLoadOrJoin(basePath, recipeUnlockedAdvancement);
 };
 
 export default FunctionRecipe;
