@@ -13,7 +13,7 @@ const tooLowAdvancement = Advancement(functionPermissionLevel`too_low`, {
 		}
 	},
 	rewards: {
-		function: MCFunction(functionPermissionLevel_`revoke_advancements`, () => {
+		function: MCFunction(functionPermissionLevel_`revoke_too_low`, () => {
 			// Revoke this advancement so players can never have it for at least a tick if the `function-permission-level` is too low.
 			advancement.revoke('@s').only(tooLowAdvancement);
 		})
