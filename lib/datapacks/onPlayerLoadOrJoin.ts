@@ -16,8 +16,8 @@ const playerJoinOrLoadTag = Tag('functions', vt_`player_join_or_load`);
 
 onLoad(playerJoinOrLoad, () => {
 	// Reset all counters (including the global counter) to ensure all players are detected as out of sync next time.
-	// TODO: Remove `.toString()`.
-	scoreboard.players.reset('*', counter.toString());
+	// TODO: Remove `.name`.
+	scoreboard.players.reset('*', counter.name);
 });
 
 every('1t', playerJoinOrLoad, () => {
