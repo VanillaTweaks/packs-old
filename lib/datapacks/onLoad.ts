@@ -40,7 +40,7 @@ const onLoad = (
 		if (!loadTagNamespaces.includes(namespace)) {
 			loadTagNamespaces.push(namespace);
 
-			// TODO: Detect broken `#minecraft:load` tag by checking a failed mutation (e.g. score or storage change) `onLoad` under this namespace.
+			// TODO: Detect broken `#minecraft:load` tag by checking whether a mutation (e.g. score or storage change) `onLoad` under this namespace failed.
 		}
 	}
 };
