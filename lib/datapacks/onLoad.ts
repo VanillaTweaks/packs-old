@@ -4,6 +4,9 @@ import { loadTag } from 'lib/datapacks/lanternLoad';
 import type { MCFunctionInstance, TagInstance } from 'sandstone';
 import { MCFunction } from 'sandstone';
 
+/** An array of namespaces which have at least one function or function tag added to the `loadTag`. */
+const loadTagNamespaces: string[] = [];
+
 /** Adds to a `BasePath`'s load function, or to the global load tag if a function or function tag is passed directly. */
 const onLoad = (
 	...args: [
@@ -32,6 +35,13 @@ const onLoad = (
 	if (!loadTag.values.some(value => value.toString() === functionOrFunctionTag.toString())) {
 		// TODO: Remove `as any`.
 		loadTag.add(functionOrFunctionTag as any);
+
+		const namespace = functionOrFunctionTag.name.replace(/^#?(.+?):.+$/, '$1');
+		if (!loadTagNamespaces.includes(namespace)) {
+			loadTagNamespaces.push(namespace);
+
+			// TODO: Detect broken `#minecraft:load` tag by checking a failed mutation (e.g. score or storage change) `onLoad` under this namespace.
+		}
 	}
 };
 
