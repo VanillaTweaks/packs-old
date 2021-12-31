@@ -32,14 +32,6 @@ setMetaAdvancements({
 	}
 });
 
-onLoad(pack, () => {
-
-});
-
-onUninstall(pack, () => {
-
-});
-
 setConfigFunction(pack, () => {
 
 });
