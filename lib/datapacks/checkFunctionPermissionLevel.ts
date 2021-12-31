@@ -19,9 +19,7 @@ const revokeAdvancements = MCFunction(functionPermissionLevel_`revoke_advancemen
 /** A periodically granted advancement that players only keep if the `function-permission-level` is or ever was too low, since its reward function immediately revokes it when it isn't. */
 const tooLowAdvancement = Advancement(functionPermissionLevel`too_low`, {
 	criteria: {
-		tick: {
-			trigger: 'minecraft:tick'
-		}
+		tick: { trigger: 'minecraft:tick' }
 	},
 	rewards: {
 		function: revokeAdvancements
@@ -51,6 +49,7 @@ const warnAdvancement = Advancement(functionPermissionLevel`warn`, {
 	rewards: {
 		function: MCFunction(functionPermissionLevel_`warn`, () => {
 			// This function must only use commands that don't require any permission level, such as `/me`.
+			// Additionally, since `checkMaxCommandChainLength` doesn't work when the `function-permission-level` is too low, this function ideally should only have one command.
 
 			me('§7- §cError: The server\'s function permission level is set too low. It needs to be at least 2 for most data packs to function. An admin must open the server\'s §6server.properties§c file, find §6function-permission-level§c, and set it equal to §62§c, which is the default. Then save/upload the edited file and restart the server.');
 		})
