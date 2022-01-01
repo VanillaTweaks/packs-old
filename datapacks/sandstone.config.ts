@@ -4,7 +4,7 @@ import fs from 'fs-extra';
 import { gameVersion, namespace, title, version, listed } from 'lib/meta';
 import packFormats from 'lib/datapacks/packFormats.json';
 import { dataPack } from 'sandstone/init';
-import { beforeSaveCallbacks } from 'lib/onBeforeSave';
+import { promisesAndFunctionsBeforeSave } from 'lib/beforeSave';
 
 const config: SandstoneConfig = {
 	namespace: 'vanillatweaks',
@@ -28,8 +28,12 @@ const config: SandstoneConfig = {
 	},
 	scripts: {
 		beforeSave: async () => {
-			for (const callback of beforeSaveCallbacks) {
-				await callback();
+			for (const promiseOrFunction of promisesAndFunctionsBeforeSave) {
+				await (
+					typeof promiseOrFunction === 'function'
+						? promiseOrFunction()
+						: promiseOrFunction
+				);
 			}
 
 			// Check if the data pack has any functions.
