@@ -8,7 +8,7 @@ const setConfigFunction = (
 	basePath: VTBasePathInstance,
 	callback: () => void
 ) => {
-	if (basePath.namespace === pack.namespace) {
+	if (basePath === pack) {
 		setHasConfigFunction(true);
 	}
 

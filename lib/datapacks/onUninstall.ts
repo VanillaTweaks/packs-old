@@ -12,7 +12,7 @@ const onUninstall = (
 ) => {
 	let uninstallFunctionName;
 
-	if (basePath.namespace === pack.namespace) {
+	if (basePath === pack) {
 		setHasUninstallFunction(true);
 
 		uninstallFunctionName = basePath`uninstall`;

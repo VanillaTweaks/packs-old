@@ -1,6 +1,6 @@
 // A faithful implementation of https://github.com/LanternMC/load for Vanilla Tweaks.
 
-import { MCFunction, scoreboard, Tag } from 'sandstone';
+import { MCFunction, Objective, scoreboard, Tag } from 'sandstone';
 import VTBasePath from 'lib/datapacks/VTBasePath';
 import checkMaxCommandChainLength from 'lib/datapacks/checkMaxCommandChainLength';
 import { loadTempObjective } from 'lib/datapacks/temp';
@@ -15,12 +15,16 @@ const preLoadTag = Tag('functions', lanternLoad`pre_load`, [
 
 export const loadTag = Tag('functions', lanternLoad`load`);
 
+/** The [Lantern Load `load.status` objective](https://github.com/LanternMC/load#pack-versioning-specification). */
+// TODO: Replace `'load.status'` with `` lanternLoad`.status` ``.
+export const loadStatus = Objective.get('load.status');
+
 Tag('functions', lanternLoad`_private/load`, [
 	Tag('functions', lanternLoad`_private/init`, [
 		MCFunction(lanternLoad`_private/init`, () => {
-			// TODO: Replace both instances of `'load.status'` below with `` lanternLoad`.status` ``.
-			scoreboard.objectives.add('load.status', 'dummy');
-			scoreboard.players.reset('*', 'load.status');
+			// TODO: Remove both instances of `.name` below.
+			scoreboard.objectives.add(loadStatus.name, 'dummy');
+			scoreboard.players.reset('*', loadStatus.name);
 		})
 	]),
 	{ id: preLoadTag, required: false },

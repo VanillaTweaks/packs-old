@@ -1,15 +1,9 @@
-// Provides the `BasePath`s for the data pack.
-
-import * as meta from 'lib/meta';
 import internalBasePath from 'lib/datapacks/internalBasePath';
-import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
 import VTBasePath from 'lib/datapacks/VTBasePath';
+import { title, namespace, version } from 'lib/meta';
 
-/** The `BasePath` for the pack namespace. */
-const pack: VTBasePathInstance & typeof meta = Object.assign(
-	VTBasePath({ namespace: meta.namespace }),
-	meta
-);
+/** The `BasePath` for the data pack's namespace. */
+const pack = VTBasePath({ namespace, title, version });
 
 export default pack;
 

@@ -1,46 +1,52 @@
 import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
 import internalBasePath from 'lib/datapacks/internalBasePath';
-import { loadTag } from 'lib/datapacks/lanternLoad';
-import type { MCFunctionInstance, TagInstance } from 'sandstone';
-import { MCFunction } from 'sandstone';
+import { loadStatus, loadTag } from 'lib/datapacks/lanternLoad';
+import { MCFunction, scoreboard } from 'sandstone';
+import pack from 'lib/datapacks/pack';
 
-/** An array of namespaces which have at least one function or function tag added to the `loadTag`. */
-const loadTagNamespaces: string[] = [];
-
-/** Adds to a `BasePath`'s load function, or to the global load tag if a function or function tag is passed directly. */
+/** Adds to a `BasePath`'s `load` function, which is (indirectly) called by `#minecraft:load`. */
 const onLoad = (
-	...args: [
-		/** The `BasePath` to put the `load` function under. */
-		basePath: VTBasePathInstance,
-		callback: () => void
-	] | [
-		/** The function or function tag to add to the `loadTag`. */
-		functionOrFunctionTag: MCFunctionInstance | TagInstance<'functions'>
-	]
+	/** The `BasePath` to put the `load` function under. */
+	basePath: VTBasePathInstance,
+	callback: () => void
 ) => {
-	let functionOrFunctionTag: MCFunctionInstance | TagInstance<'functions'>;
+	const basePath_ = internalBasePath(basePath);
 
-	if (args.length === 1) {
-		[functionOrFunctionTag] = args;
-	} else {
-		const [basePath, callback] = args;
-		const basePath_ = internalBasePath(basePath);
+	const loadFunction = MCFunction(basePath_`load`, () => {
+		if (firstOnLoad) {
+			let basePathName = basePath.namespace!;
+			if (basePath.directory) {
+				basePathName += `.${basePath.directory.replace(/\//g, '.')}`;
+			}
 
-		functionOrFunctionTag = MCFunction(basePath_`load`, callback, {
-			onConflict: 'append'
-		});
-	}
+			// TODO: Remove all `.name` from `loadStatus.name`.
+			scoreboard.players.set(basePathName, loadStatus.name, 1);
 
-	// TODO: Use `!loadTag.has(functionOrFunctionTag)` instead.
-	if (!loadTag.values.some(value => value.toString() === functionOrFunctionTag.toString())) {
+			if (basePath.version) {
+				scoreboard.players.set(`#${basePathName}.major`, loadStatus.name, basePath.version.major);
+				scoreboard.players.set(`#${basePathName}.minor`, loadStatus.name, basePath.version.minor);
+				scoreboard.players.set(`#${basePathName}.patch`, loadStatus.name, basePath.version.patch);
+			}
+		}
+
+		callback();
+	}, {
+		onConflict: 'append'
+	});
+
+	/** Whether this is the first time `onLoad` has been called on this `basePath`. */
+	// TODO: Set this to `!loadTag.has(loadFunction)` instead.
+	const firstOnLoad = !loadTag.values.some(value => value.toString() === loadFunction.toString());
+
+	if (firstOnLoad) {
 		// TODO: Remove `as any`.
-		loadTag.add(functionOrFunctionTag as any);
+		loadTag.add(loadFunction as any);
 
-		const namespace = functionOrFunctionTag.name.replace(/^#?(.+?):.+$/, '$1');
-		if (!loadTagNamespaces.includes(namespace)) {
-			loadTagNamespaces.push(namespace);
+		if (basePath === pack) {
+			// It is a common error for data packs to reference missing functions from their `#minecraft:load` tag. This causes the entire `#minecraft:load` tag to break, becoming empty for all data packs.
+			// Detect a broken `#minecraft:load` tag by checking whether the pack failed to set its `loadStatus`.
 
-			// TODO: Detect broken `#minecraft:load` tag by checking whether a mutation (e.g. score or storage change) `onLoad` under this namespace failed.
+			// TODO
 		}
 	}
 };

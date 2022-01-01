@@ -2,6 +2,7 @@
 
 import path from 'path';
 import fs from 'fs-extra';
+import type { VersionString } from 'lib/datapacks/VTBasePath';
 
 const packDirectory = path.join(
 	process.cwd(),
@@ -20,6 +21,6 @@ export const namespace = packDirectory.slice(lastSlashIndex + 1);
 export const { title, version, listed }: {
 	// This is `title` and not `name` because assigning a `name` property to a `BasePath` throws an error from assigning to the read-only function property `name`.
 	title: string,
-	version: string,
+	version: VersionString,
 	listed: boolean
 } = JSON.parse(fs.readFileSync(path.join(packDirectory, 'pack.json'), 'utf8'));
