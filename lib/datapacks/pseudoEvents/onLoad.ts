@@ -3,7 +3,7 @@ import internalBasePath from 'lib/datapacks/internalBasePath';
 import { loadStatus, loadTag } from 'lib/datapacks/lanternLoad';
 import { MCFunction, scoreboard } from 'sandstone';
 import pack from 'lib/datapacks/pack';
-import loadStatusScore from 'lib/datapacks/lanternLoad/loadStatusScore';
+import loadStatusOf from 'lib/datapacks/lanternLoad/loadStatusOf';
 import beforeSave from 'lib/beforeSave';
 
 /** Adds to a `BasePath`'s `load` function, which is (indirectly) called by `#minecraft:load`. */
@@ -16,16 +16,20 @@ const onLoad = (
 
 	const loadFunction = MCFunction(basePath_`load`, () => {
 		if (firstOnLoad) {
-			const $basePathLoadStatus = loadStatusScore(basePath);
+			const $basePathLoadStatus = loadStatusOf(basePath);
 
 			// TODO: Replace `$basePathLoadStatus.target, $basePathLoadStatus.objective` with `$basePathLoadStatus`.
 			scoreboard.players.set($basePathLoadStatus.target, $basePathLoadStatus.objective, 1);
 
 			if (basePath.version) {
-				// TODO: Replace all `..., loadStatus.name` with `loadStatus(...)`.
-				scoreboard.players.set(`#${$basePathLoadStatus.target}.major`, loadStatus.name, basePath.version.major);
-				scoreboard.players.set(`#${$basePathLoadStatus.target}.minor`, loadStatus.name, basePath.version.minor);
-				scoreboard.players.set(`#${$basePathLoadStatus.target}.patch`, loadStatus.name, basePath.version.patch);
+				for (const versionKey of ['major', 'minor', 'patch'] as const) {
+					scoreboard.players.set(
+						// TODO: Replace `..., loadStatus.name` with `loadStatus(...)`.
+						`${$basePathLoadStatus.target}.${versionKey}`,
+						loadStatus.name,
+						basePath.version[versionKey]
+					);
+				}
 			}
 		}
 

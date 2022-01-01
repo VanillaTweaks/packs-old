@@ -2,10 +2,10 @@
 
 import { execute, tag } from 'sandstone';
 import pack from 'lib/datapacks/pack';
-import loadStatusScore from 'lib/datapacks/lanternLoad/loadStatusScore';
+import loadStatusOf from 'lib/datapacks/lanternLoad/loadStatusOf';
 import onAdvancementTick from 'lib/datapacks/pseudoEvents/onAdvancementTick';
 
-const $packLoadStatus = loadStatusScore(pack);
+const $packLoadStatus = loadStatusOf(pack);
 
 onAdvancementTick(pack, () => {
 	// TODO: Replace all `packNotLoaded` with `` pack`.notLoaded` ``.

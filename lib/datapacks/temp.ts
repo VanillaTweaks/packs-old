@@ -6,7 +6,7 @@ import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';
 const tempObjective = vt.child({ directory: 'temp_objective' });
 const tempObjective_ = internalBasePath(tempObjective);
 
-/** An objective only for scores that don't need to persist between ticks. */
+/** An objective only for temporary scores. */
 // TODO: Use `` vt`.temp` `` instead of `'vanillatweaks.temp'`.
 const temp = Objective.get('vanillatweaks.temp');
 
