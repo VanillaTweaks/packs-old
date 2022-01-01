@@ -4,7 +4,7 @@ import type { AdvancementJSON, JSONTextComponent } from 'sandstone';
 import pack from 'lib/datapacks/pack';
 import padding from 'lib/datapacks/textComponents/padding';
 import minify from 'lib/datapacks/textComponents/minify';
-import { finishFunctions } from 'datapacks/sandstone.config';
+import onBeforeSave from 'lib/onBeforeSave';
 
 /** Whether the `pack` has an uninstall function. */
 let hasUninstallFunction = false;
@@ -118,7 +118,7 @@ const setMetaAdvancements = (options: {
 		}
 	});
 
-	finishFunctions.push(() => {
+	onBeforeSave(() => {
 		if (hasUninstallFunction || hasConfigFunction) {
 			// Automatically update the `opUsage` meta advancement.
 

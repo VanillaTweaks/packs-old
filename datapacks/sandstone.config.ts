@@ -4,9 +4,7 @@ import fs from 'fs-extra';
 import { gameVersion, namespace, title, version, listed } from 'lib/meta';
 import packFormats from 'lib/datapacks/packFormats.json';
 import { dataPack } from 'sandstone/init';
-
-/** An array of functions called after the rest of the pack's processing, before the pack is saved. */
-export const finishFunctions: Array<() => void> = [];
+import { beforeSaveListeners } from 'lib/onBeforeSave';
 
 const config: SandstoneConfig = {
 	namespace: 'vanillatweaks',
@@ -30,8 +28,8 @@ const config: SandstoneConfig = {
 	},
 	scripts: {
 		beforeSave: async () => {
-			for (const finishFunction of finishFunctions) {
-				finishFunction();
+			for (const callback of beforeSaveListeners) {
+				await callback();
 			}
 
 			// Check if the data pack has any functions.
