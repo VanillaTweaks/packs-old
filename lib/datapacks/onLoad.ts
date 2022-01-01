@@ -14,7 +14,7 @@ const onLoad = (
 
 	const loadFunction = MCFunction(basePath_`load`, () => {
 		if (firstOnLoad) {
-			let basePathName = basePath.namespace!;
+			let basePathName = basePath.namespace;
 			if (basePath.directory) {
 				basePathName += `.${basePath.directory.replace(/\//g, '.')}`;
 			}
