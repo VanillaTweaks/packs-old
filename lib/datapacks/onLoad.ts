@@ -4,6 +4,7 @@ import { loadStatus, loadTag } from 'lib/datapacks/lanternLoad';
 import { MCFunction, scoreboard } from 'sandstone';
 import pack from 'lib/datapacks/pack';
 import loadStatusScore from 'lib/datapacks/lanternLoad/loadStatusScore';
+import beforeSave from 'lib/beforeSave';
 
 /** Adds to a `BasePath`'s `load` function, which is (indirectly) called by `#minecraft:load`. */
 const onLoad = (
@@ -42,7 +43,7 @@ const onLoad = (
 		loadTag.add(loadFunction as any);
 
 		if (basePath === pack) {
-
+			beforeSave(import('lib/datapacks/checkLoadTag'));
 		}
 	}
 };
