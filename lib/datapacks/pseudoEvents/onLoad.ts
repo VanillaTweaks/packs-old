@@ -5,6 +5,7 @@ import { MCFunction, scoreboard } from 'sandstone';
 import pack from 'lib/datapacks/pack';
 import loadStatusOf from 'lib/datapacks/lanternLoad/loadStatusOf';
 import beforeSave from 'lib/beforeSave';
+import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';
 
 /** Adds to a `BasePath`'s `load` function, which is (indirectly) called by `#minecraft:load`. */
 const onLoad = (
@@ -18,8 +19,12 @@ const onLoad = (
 		if (firstOnLoad) {
 			const $basePathLoadStatus = loadStatusOf(basePath);
 
-			// TODO: Replace `$basePathLoadStatus.target, $basePathLoadStatus.objective` with `$basePathLoadStatus`.
+			// TODO: Replace all `$basePathLoadStatus.target, $basePathLoadStatus.objective` with `$basePathLoadStatus`.
 			scoreboard.players.set($basePathLoadStatus.target, $basePathLoadStatus.objective, 1);
+
+			onUninstall(basePath, () => {
+				scoreboard.players.set($basePathLoadStatus.target, $basePathLoadStatus.objective, 0);
+			});
 
 			if (basePath.version) {
 				for (const versionKey of ['major', 'minor', 'patch'] as const) {
@@ -29,6 +34,15 @@ const onLoad = (
 						loadStatus.name,
 						basePath.version[versionKey]
 					);
+
+					onUninstall(basePath, () => {
+						scoreboard.players.set(
+							// TODO: Replace `..., loadStatus.name` with `loadStatus(...)`.
+							`${$basePathLoadStatus.target}.${versionKey}`,
+							loadStatus.name,
+							0
+						);
+					});
 				}
 			}
 		}

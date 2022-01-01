@@ -8,6 +8,7 @@ import vt from 'lib/datapacks/vt';
 import internalBasePath from 'lib/datapacks/internalBasePath';
 import temp from 'lib/datapacks/temp';
 import { loadStatus } from 'lib/datapacks/lanternLoad';
+import onLoad from 'lib/datapacks/pseudoEvents/onLoad';
 
 const loadTagNotLoaded = vt.child({ directory: 'load_tag_not_loaded' });
 const loadTagNotLoaded_ = internalBasePath(loadTagNotLoaded);
@@ -33,16 +34,19 @@ onAdvancementTick(pack, () => {
 	// TODO: Remove `.name` below.
 	scoreboard.objectives.add(loadStatus.name, 'dummy');
 
-	// This method is unfortunately not foolproof, since it's possible that every pack's `loadStatus` could have been set by a past load despite the `#minecraft:load` tag currently being broken.
+	// This method is unfortunately not foolproof, since it's possible that every pack's `loadStatus` could have been set by a past load despite the `#minecraft:load` tag currently being broken, but it's a lot better than nothing.
 	execute
-		.unless($packLoadStatus.matches(1))
+		// Don't warn if it's 0 (uninstalled) or 1 (loaded).
+		// TODO: Remove `as any`.
+		.unless($packLoadStatus.matches('0..1' as any))
+		// Don't warn if there was already a recent warning.
 		.unless($warnScheduled.matches(1))
 		.run(warn);
-	execute
-		.if($packLoadStatus.matches(1))
-		.if($warnScheduled.matches(1))
-		.run(loadTagNotLoaded_`stop_warning`, () => {
-			schedule.clear(warn);
-			scoreboard.players.set($warnScheduled.target, $warnScheduled.objective, 0);
-		});
+});
+
+onLoad(loadTagNotLoaded, () => {
+	// If this runs, then `#minecraft:load` is working now.
+
+	schedule.clear(warn);
+	scoreboard.players.set($warnScheduled.target, $warnScheduled.objective, 0);
 });
