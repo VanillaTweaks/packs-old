@@ -34,7 +34,10 @@ export const checkMaxCommandChainLengthTag = Tag('functions', maxCommandChainLen
 		execute
 			.if($maxCommandChainLength.matches([, DEFAULT_MAX_COMMAND_CHAIN_LENGTH - 1]))
 			.run.tellraw('@a', [
-				{ text: `Do not set the "maxCommandChainLength" game rule below its default value of ${DEFAULT_MAX_COMMAND_CHAIN_LENGTH}. Setting it too low often breaks data packs. It has automatically been reset to the default value accordingly.`, color: 'red' }
+				'',
+				{ text: 'Do not set the ', color: 'red' },
+				{ text: 'maxCommandChainLength', color: 'gold' },
+				{ text: ` game rule below its default value of ${DEFAULT_MAX_COMMAND_CHAIN_LENGTH}. Setting it too low often breaks data packs. For that reason, it has automatically been reset to the default value.`, color: 'red' }
 			]);
 	})
 ]);
