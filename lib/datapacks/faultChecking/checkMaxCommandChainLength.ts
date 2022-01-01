@@ -12,10 +12,10 @@ const maxCommandChainLength_ = internalBasePath(maxCommandChainLength);
 const $maxCommandChainLength = temp('$maxCommandChainLength');
 
 /** Checks the `maxCommandChainLength` game rule every tick to ensure it isn't set below the default. If it is, restores the default and warns the player about setting it lower. */
-const checkMaxCommandChainLength = Tag('functions', maxCommandChainLength_`check`, [
-	// Run only one command per function in case the `maxCommandChainLength` is 1.
+export const checkMaxCommandChainLengthTag = Tag('functions', maxCommandChainLength_`check`, [
+	// In case the `maxCommandChainLength` is 1 (the minimum value), run only one command per function in this tag.
 	MCFunction(maxCommandChainLength_`schedule`, () => {
-		schedule.function(checkMaxCommandChainLength, '1t');
+		schedule.function(checkMaxCommandChainLengthTag, '1t');
 	}),
 	MCFunction(maxCommandChainLength_`get`, () => {
 		execute
@@ -24,7 +24,7 @@ const checkMaxCommandChainLength = Tag('functions', maxCommandChainLength_`check
 	}),
 	MCFunction(maxCommandChainLength_`fix`, () => {
 		execute
-			// Replace all `[, DEFAULT_MAX_COMMAND_CHAIN_LENGTH - 1]` with `` `..${DEFAULT_MAX_COMMAND_CHAIN_LENGTH - 1}` ``.
+			// TODO: Replace all `[, DEFAULT_MAX_COMMAND_CHAIN_LENGTH - 1]` with `` `..${DEFAULT_MAX_COMMAND_CHAIN_LENGTH - 1}` ``.
 			.if($maxCommandChainLength.matches([, DEFAULT_MAX_COMMAND_CHAIN_LENGTH - 1]))
 			.run.gamerule('maxCommandChainLength', DEFAULT_MAX_COMMAND_CHAIN_LENGTH);
 	}),
@@ -39,8 +39,6 @@ const checkMaxCommandChainLength = Tag('functions', maxCommandChainLength_`check
 	})
 ]);
 
-export default checkMaxCommandChainLength;
-
 onUninstall(maxCommandChainLength, () => {
-	schedule.clear(checkMaxCommandChainLength);
+	schedule.clear(checkMaxCommandChainLengthTag);
 });
