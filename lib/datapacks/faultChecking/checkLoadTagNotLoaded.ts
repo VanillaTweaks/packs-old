@@ -1,4 +1,4 @@
-// This checks for a common error where data packs reference missing functions in their `#minecraft:load` tag, causing the entire `#minecraft:load` tag to break and become empty for all data packs.
+// This checks for a common error where data packs add a missing function reference to their `#minecraft:load` tag, causing the entire `#minecraft:load` tag to break and become empty for all data packs.
 
 import { execute, tag } from 'sandstone';
 import pack from 'lib/datapacks/pack';

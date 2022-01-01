@@ -43,7 +43,7 @@ const onLoad = (
 		loadTag.add(loadFunction as any);
 
 		if (basePath === pack) {
-			beforeSave(import('lib/datapacks/faultChecking/checkLoadTag'));
+			beforeSave(import('lib/datapacks/faultChecking/checkLoadTagNotLoaded'));
 		}
 	}
 };
