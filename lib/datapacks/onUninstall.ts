@@ -5,7 +5,6 @@ import vt, { vt_ } from 'lib/datapacks/vt';
 import internalBasePath from 'lib/datapacks/internalBasePath';
 import { setHasUninstallFunction } from 'lib/datapacks/setMetaAdvancements';
 
-/** The `` vt_`uninstall` `` function tag, which is called from the `` vt`uninstall` `` function. */
 const uninstallTag = Tag('functions', vt_`uninstall`);
 
 MCFunction(vt`uninstall`, () => {
@@ -38,7 +37,7 @@ const onUninstall = (
 
 	// TODO: Use `!uninstallTag.has(uninstallFunction)` instead.
 	if (!uninstallTag.values.some(value => value.toString() === uninstallFunction.toString())) {
-		// Prepend here too for the same reason.
+		// Prepend here for the same reason we use `onConflict: 'prepend'` on the `uninstallFunction`.
 		// TODO: Remove `as any`.
 		uninstallTag.values.unshift(uninstallFunction as any);
 	}
