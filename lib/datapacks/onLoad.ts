@@ -3,6 +3,7 @@ import internalBasePath from 'lib/datapacks/internalBasePath';
 import { loadStatus, loadTag } from 'lib/datapacks/lanternLoad';
 import { MCFunction, scoreboard } from 'sandstone';
 import pack from 'lib/datapacks/pack';
+import onAdvancementTick from 'lib/datapacks/onAdvancementTick';
 
 /** Adds to a `BasePath`'s `load` function, which is (indirectly) called by `#minecraft:load`. */
 const onLoad = (
@@ -46,7 +47,9 @@ const onLoad = (
 			// It is a common error for data packs to reference missing functions from their `#minecraft:load` tag. This causes the entire `#minecraft:load` tag to break, becoming empty for all data packs.
 			// Detect a broken `#minecraft:load` tag by checking whether the pack failed to set its `loadStatus`.
 
-			// TODO
+			onAdvancementTick(basePath, () => {
+
+			});
 		}
 	}
 };

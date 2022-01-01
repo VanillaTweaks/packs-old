@@ -1,5 +1,5 @@
 import type { MCFunctionInstance, TagInstance } from 'sandstone';
-import { advancement, Advancement, execute, functionCmd, MCFunction, tag, Tag } from 'sandstone';
+import { advancement, Advancement, execute, MCFunction, tag, Tag } from 'sandstone';
 import vt, { vt_ } from 'lib/datapacks/vt';
 import revokeOnPlayerLoadOrJoin from 'lib/datapacks/revokeOnPlayerLoadOrJoin';
 import internalBasePath from 'lib/datapacks/internalBasePath';
