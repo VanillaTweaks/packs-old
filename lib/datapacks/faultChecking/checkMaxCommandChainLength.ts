@@ -29,7 +29,7 @@ export const checkMaxCommandChainLengthTag = Tag('functions', maxCommandChainLen
 			.run.gamerule('maxCommandChainLength', DEFAULT_MAX_COMMAND_CHAIN_LENGTH);
 	}),
 	// The reason `fix` and `warn` are separate despite having the same `execute` condition is that the `function` command counts toward the `maxCommandChainLength`, so running it here is useless if the `maxCommandChainLength` is 1.
-	// The reason both `execute` commands can't be merged into one function is that changing the `maxCommandChainLength` has no effect for the rest of the function in which it was changed.
+	// Also, changing the `maxCommandChainLength` has no effect for the rest of the function in which it was changed, so the two `execute` commands can't be placed in the same function.
 	MCFunction(maxCommandChainLength_`warn`, () => {
 		execute
 			.if($maxCommandChainLength.matches([, DEFAULT_MAX_COMMAND_CHAIN_LENGTH - 1]))
