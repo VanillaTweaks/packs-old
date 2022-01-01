@@ -18,15 +18,16 @@ export const tickAdvancement = Advancement(advancementTick`tick`, {
 		function: MCFunction(vt_`advancement_tick`, () => {
 			advancement.revoke('@s').only(tickAdvancement);
 
-			tag('@s').add(advancementTick`.self`);
+			// TODO: Replace all `'vanillatweaks.advancement_tick.self'` with `` advancementTick`.self` ``.
+			tag('@s').add('vanillatweaks.advancement_tick.self');
 
 			execute
 				.as('@a[limit=1]')
-				.if.entity(`@s[tag=${advancementTick`.self`}]`)
+				.if.entity(`@s[tag=${'vanillatweaks.advancement_tick.self'}]`)
 				// TODO: Remove `.functionCmd`.
 				.run.functionCmd(advancementTickTag);
 
-			tag('@s').remove(advancementTick`.self`);
+			tag('@s').remove('vanillatweaks.advancement_tick.self');
 		})
 	}
 });
