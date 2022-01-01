@@ -3,7 +3,7 @@ import internalBasePath from 'lib/datapacks/internalBasePath';
 import { loadStatus, loadTag } from 'lib/datapacks/lanternLoad';
 import { MCFunction, scoreboard } from 'sandstone';
 import pack from 'lib/datapacks/pack';
-import onAdvancementTick from 'lib/datapacks/onAdvancementTick';
+import loadStatusScore from 'lib/datapacks/lanternLoad/loadStatusScore';
 
 /** Adds to a `BasePath`'s `load` function, which is (indirectly) called by `#minecraft:load`. */
 const onLoad = (
@@ -15,18 +15,16 @@ const onLoad = (
 
 	const loadFunction = MCFunction(basePath_`load`, () => {
 		if (firstOnLoad) {
-			let basePathName = basePath.namespace;
-			if (basePath.directory) {
-				basePathName += `.${basePath.directory.replace(/\//g, '.')}`;
-			}
+			const $basePathLoadStatus = loadStatusScore(basePath);
 
-			// TODO: Remove all `.name` from `loadStatus.name`.
-			scoreboard.players.set(basePathName, loadStatus.name, 1);
+			// TODO: Replace `$basePathLoadStatus.target, $basePathLoadStatus.objective` with `$basePathLoadStatus`.
+			scoreboard.players.set($basePathLoadStatus.target, $basePathLoadStatus.objective, 1);
 
 			if (basePath.version) {
-				scoreboard.players.set(`#${basePathName}.major`, loadStatus.name, basePath.version.major);
-				scoreboard.players.set(`#${basePathName}.minor`, loadStatus.name, basePath.version.minor);
-				scoreboard.players.set(`#${basePathName}.patch`, loadStatus.name, basePath.version.patch);
+				// TODO: Replace all `..., loadStatus.name` with `loadStatus(...)`.
+				scoreboard.players.set(`#${$basePathLoadStatus.target}.major`, loadStatus.name, basePath.version.major);
+				scoreboard.players.set(`#${$basePathLoadStatus.target}.minor`, loadStatus.name, basePath.version.minor);
+				scoreboard.players.set(`#${$basePathLoadStatus.target}.patch`, loadStatus.name, basePath.version.patch);
 			}
 		}
 
@@ -44,12 +42,7 @@ const onLoad = (
 		loadTag.add(loadFunction as any);
 
 		if (basePath === pack) {
-			// It is a common error for data packs to reference missing functions from their `#minecraft:load` tag. This causes the entire `#minecraft:load` tag to break, becoming empty for all data packs.
-			// Detect a broken `#minecraft:load` tag by checking whether the pack failed to set its `loadStatus`.
 
-			onAdvancementTick(basePath, () => {
-
-			});
 		}
 	}
 };
