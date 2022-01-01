@@ -2,7 +2,7 @@ import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
 import VTBasePath from 'lib/datapacks/VTBasePath';
 import { posix as path } from 'path';
 
-const INTERNAL_BASE_PATH_DIRECTORY = 'zz/do_not_run_or_the_pack_may_break';
+const INTERNAL_BASE_PATH_DIRECTORY = 'zz/do_not_run_or_packs_may_break';
 
 export type InternalBasePath = Omit<VTBasePathInstance, 'child'> & {
 	/** ⚠️ Use `internalBasePath(basePath.child(...))` instead of `internalBasePath(basePath).child(...)`. */
