@@ -12,7 +12,11 @@ const temp = Objective.get('vanillatweaks.temp');
 
 export default temp;
 
-/** An `MCFunction` that adds the `temp` objective. Should only ever be called from `preLoadTag`. */
+/**
+ * An `MCFunction` that adds the `temp` objective.
+ *
+ * ⚠️ Should only ever be called from `preLoadTag`.
+ */
 export const loadTempObjective = MCFunction(tempObjective_`load`, () => {
 	// Adding the temp objective must be the first command in the function so that it still runs when the `maxCommandChainLength` is 1.
 	// TODO: Replace all `temp.name` with `temp`.

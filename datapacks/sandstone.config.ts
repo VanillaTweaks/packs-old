@@ -4,7 +4,7 @@ import fs from 'fs-extra';
 import { gameVersion, namespace, title, version, listed } from 'lib/meta';
 import packFormats from 'lib/datapacks/packFormats.json';
 import { dataPack } from 'sandstone/init';
-import { beforeSaveListeners } from 'lib/onBeforeSave';
+import { beforeSaveCallbacks } from 'lib/onBeforeSave';
 
 const config: SandstoneConfig = {
 	namespace: 'vanillatweaks',
@@ -28,7 +28,7 @@ const config: SandstoneConfig = {
 	},
 	scripts: {
 		beforeSave: async () => {
-			for (const callback of beforeSaveListeners) {
+			for (const callback of beforeSaveCallbacks) {
 				await callback();
 			}
 
