@@ -1,5 +1,5 @@
 type PromiseOrFunction = (
-	Promise<void> | (() => void | Promise<void>)
+	Promise<unknown> | (() => unknown | Promise<unknown>)
 );
 
 /**
