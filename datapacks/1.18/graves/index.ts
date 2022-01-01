@@ -2,8 +2,8 @@ import pack, { pack_ } from 'lib/datapacks/pack';
 import { Advancement, advancement, data, execute, MCFunction, NBT, schedule, tag } from 'sandstone';
 import setMetaAdvancements from 'lib/datapacks/setMetaAdvancements';
 import setConfigFunction from 'lib/datapacks/setConfigFunction';
-import onLoad from 'lib/datapacks/onLoad';
-import onUninstall from 'lib/datapacks/onUninstall';
+import onLoad from 'lib/datapacks/pseudoEvents/onLoad';
+import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';
 import revokeOnPlayerLoadOrJoin from 'lib/datapacks/revokeOnPlayerLoadOrJoin';
 
 setMetaAdvancements({

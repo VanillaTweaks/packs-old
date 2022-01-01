@@ -1,7 +1,7 @@
 import { MCFunction, Objective, scoreboard } from 'sandstone';
 import vt from 'lib/datapacks/vt';
 import internalBasePath from 'lib/datapacks/internalBasePath';
-import onUninstall from 'lib/datapacks/onUninstall';
+import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';
 
 const tempObjective = vt.child({ directory: 'temp_objective' });
 const tempObjective_ = internalBasePath(tempObjective);

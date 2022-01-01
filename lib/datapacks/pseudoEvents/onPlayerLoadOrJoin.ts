@@ -3,7 +3,7 @@ import { execute, MCFunction, scoreboard, Tag } from 'sandstone';
 import every from 'lib/datapacks/every';
 import vt, { vt_ } from 'lib/datapacks/vt';
 import objective from 'lib/datapacks/objective';
-import onLoad from 'lib/datapacks/onLoad';
+import onLoad from 'lib/datapacks/pseudoEvents/onLoad';
 import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
 import internalBasePath from 'lib/datapacks/internalBasePath';
 

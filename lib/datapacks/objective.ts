@@ -1,7 +1,7 @@
-import onLoad from 'lib/datapacks/onLoad';
+import onLoad from 'lib/datapacks/pseudoEvents/onLoad';
 import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
 import { Objective, scoreboard } from 'sandstone';
-import onUninstall from 'lib/datapacks/onUninstall';
+import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';
 
 /**
  * Creates a scoreboard objective (by default, namespaced), adds the necessary `scoreboard` commands to the load and uninstall functions, and returns an `Objective` instance.

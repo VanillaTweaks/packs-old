@@ -1,6 +1,6 @@
 import type { AdvancementInstance } from 'sandstone';
 import { advancement } from 'sandstone';
-import onPlayerJoinOrLoad from 'lib/datapacks/onPlayerLoadOrJoin';
+import onPlayerJoinOrLoad from 'lib/datapacks/pseudoEvents/onPlayerLoadOrJoin';
 import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
 
 /**

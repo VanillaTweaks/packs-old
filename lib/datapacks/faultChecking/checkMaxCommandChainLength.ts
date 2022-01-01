@@ -2,7 +2,7 @@ import vt from 'lib/datapacks/vt';
 import { execute, MCFunction, schedule, Tag } from 'sandstone';
 import internalBasePath from 'lib/datapacks/internalBasePath';
 import temp from 'lib/datapacks/temp';
-import onUninstall from 'lib/datapacks/onUninstall';
+import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';
 
 const DEFAULT_MAX_COMMAND_CHAIN_LENGTH = 65536;
 

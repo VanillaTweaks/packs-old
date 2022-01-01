@@ -38,7 +38,7 @@ const config: SandstoneConfig = {
 
 			// Check if the data pack has any functions.
 			if (dataPack.rootFunctions.size) {
-				await import('lib/datapacks/checkFunctionPermissionLevel');
+				await import('lib/datapacks/faultChecking/checkFunctionPermissionLevel');
 			}
 		},
 		afterAll: (async ({ destination }) => {

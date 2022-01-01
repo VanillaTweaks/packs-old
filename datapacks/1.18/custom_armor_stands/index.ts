@@ -1,4 +1,4 @@
-import onTrigger from 'lib/datapacks/onTrigger';
+import onTrigger from 'lib/datapacks/pseudoEvents/onTrigger';
 import pack from 'lib/datapacks/pack';
 import setMetaAdvancements from 'lib/datapacks/setMetaAdvancements';
 import setConfigFunction from 'lib/datapacks/setConfigFunction';

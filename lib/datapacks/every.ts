@@ -2,8 +2,8 @@ import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
 import type { TimeArgument } from 'sandstone';
 import { MCFunction, schedule } from 'sandstone';
 import internalBasePath from 'lib/datapacks/internalBasePath';
-import onLoad from 'lib/datapacks/onLoad';
-import onUninstall from 'lib/datapacks/onUninstall';
+import onLoad from 'lib/datapacks/pseudoEvents/onLoad';
+import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';
 
 /** A mapping from the namespaced name of each function which has been created by `every` to `true`. */
 const existingFunctions: Partial<Record<string, true>> = {};

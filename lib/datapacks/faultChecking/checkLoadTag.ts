@@ -3,7 +3,7 @@
 import { execute, tag } from 'sandstone';
 import pack from 'lib/datapacks/pack';
 import loadStatusScore from 'lib/datapacks/lanternLoad/loadStatusScore';
-import onAdvancementTick from 'lib/datapacks/onAdvancementTick';
+import onAdvancementTick from 'lib/datapacks/pseudoEvents/onAdvancementTick';
 
 const $packLoadStatus = loadStatusScore(pack);
 
