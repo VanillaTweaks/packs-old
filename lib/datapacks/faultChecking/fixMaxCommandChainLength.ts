@@ -17,7 +17,7 @@ export const scheduleFixMaxCommandChainLength = MCFunction(maxCommandChainLength
 });
 
 /** Checks the `maxCommandChainLength` game rule every tick to ensure it isn't set below the default. If it is, restores the default and warns the player about setting it lower. */
-export const fixMaxCommandChainLengthTag = Tag('functions', maxCommandChainLength_`check`, [
+export const fixMaxCommandChainLengthTag = Tag('functions', maxCommandChainLength_`fix`, [
 	// In case the `maxCommandChainLength` is 1 (the minimum value), run only one command per function in this tag.
 	scheduleFixMaxCommandChainLength,
 	MCFunction(maxCommandChainLength_`get`, () => {
