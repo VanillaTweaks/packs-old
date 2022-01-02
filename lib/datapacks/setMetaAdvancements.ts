@@ -56,7 +56,7 @@ const metaAdvancementsJSON = {
 	} as MetaAdvancementJSON
 } as const;
 
-/** Sets the info for the pack listed in the advancements under a VT advancement tab. */
+/** Sets the info for the pack listed under a VT advancement tab. */
 const setMetaAdvancements = (options: {
 	root: MetaAdvancementOptions & {
 		icon: AdvancementIcon
