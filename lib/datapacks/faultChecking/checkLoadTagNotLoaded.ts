@@ -24,7 +24,9 @@ const warn = MCFunction(loadTagNotLoaded_`warn`, () => {
 
 	tellraw('@a', [
 		'',
-		{ text: 'TODO', color: 'red' }
+		{ text: 'At least one of the data packs you have installed has critical errors which are too complex to explain in one short chat message. If you own this world, please ', color: 'red' },
+		{ text: 'click here to join our Discord server', color: 'gold' },
+		{ text: ' and ask in our data pack help channel about how to fix this.', color: 'red' }
 	]);
 });
 
@@ -35,11 +37,11 @@ onAdvancementTick(pack, () => {
 	// TODO: Remove `.name` below.
 	scoreboard.objectives.add(loadStatus.name, 'dummy');
 
-	// This method is unfortunately not foolproof, since it's possible that every pack's `loadStatus` could have been set by a past load despite the `#minecraft:load` tag currently being broken, but it's a lot better than nothing.
+	// This method is unfortunately not foolproof, since it's possible that every pack's `loadStatus` could have been set by a past load despite the `#minecraft:load` tag currently being broken, but it covers most practical cases.
 	execute
-		// Don't warn if it's 0 (uninstalled) or 1 (loaded).
+		// Don't warn if it's -1 (uninstalled) or 1 (loaded).
 		// TODO: Remove `as any`.
-		.unless($packLoadStatus.matches('0..1' as any))
+		.unless($packLoadStatus.matches('-1..1' as any))
 		// Don't warn if there was already a recent warning.
 		.unless($warnScheduled.matches(1))
 		.run(warn);
