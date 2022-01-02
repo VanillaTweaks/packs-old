@@ -12,7 +12,7 @@ const functionPermissionLevel_ = internalBasePath(functionPermissionLevel);
 const $vtLoadStatus = loadStatusOf(vt);
 
 /** An advancement granted to all players and immediately revoked every tick, unless the `function-permission-level` is too low, in which case it will not be revoked. */
-const tickAdvancement = Advancement(functionPermissionLevel`tick`, {
+const tooLowAdvancement = Advancement(functionPermissionLevel`too_low`, {
 	criteria: {
 		tick: {
 			trigger: 'minecraft:tick',
@@ -40,11 +40,11 @@ const tickAdvancement = Advancement(functionPermissionLevel`tick`, {
 	rewards: {
 		function: MCFunction(functionPermissionLevel_`tick_advancement_reward`, () => {
 			// Revoke immediately so that no player can ever have this advancement for a full tick as long as the `function-permission-level` isn't too low.
-			advancement.revoke('@s').only(tickAdvancement);
+			advancement.revoke('@s').only(tooLowAdvancement);
 		})
 	}
 });
-revokeOnPlayerLoadOrJoin(functionPermissionLevel, tickAdvancement);
+revokeOnPlayerLoadOrJoin(functionPermissionLevel, tooLowAdvancement);
 
 /** An advancement which is only granted when the `function-permission-level` is too low. */
 const warnAdvancement = Advancement<string>(functionPermissionLevel`warn`, {
@@ -58,7 +58,7 @@ const warnAdvancement = Advancement<string>(functionPermissionLevel`warn`, {
 					predicate: {
 						player: {
 							advancements: {
-								[tickAdvancement.toString()]: true
+								[tooLowAdvancement.toString()]: true
 							}
 						}
 					}
