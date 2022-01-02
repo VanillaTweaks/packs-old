@@ -19,13 +19,13 @@ const fallbackTickTag = Tag('functions', vt_`fallback_tick`, [
 	// We schedule the `fixMaxCommandChainLengthTag` instead of running it directly so it can't run multiple times each tick.
 	scheduleFixMaxCommandChainLength,
 	MCFunction(fallbackTick_`revoke_from_all`, () => {
-		// Revoke the `tickAdvancement` from all players in case anyone kept it due to the `maxCommandChainLength` being too low.
-		advancement.revoke('@a').only(tickAdvancement);
+		// Revoke the `fallbackTickAdvancement` from all players in case anyone kept it due to the `maxCommandChainLength` being too low.
+		advancement.revoke('@a').only(fallbackTickAdvancement);
 	})
 ], { runEveryTick: true });
 
 /** An advancement granted to all players and immediately revoked every tick, unless the `function-permission-level` is too low, in which case it will not be revoked, or unless the `maxCommandChainLength` is 1, in which case it will be revoked after 1 tick. */
-export const tickAdvancement = Advancement(fallbackTick`tick`, {
+export const fallbackTickAdvancement = Advancement(vt`fallback_tick`, {
 	criteria: {
 		tick: {
 			trigger: 'minecraft:tick',
@@ -57,11 +57,11 @@ export const tickAdvancement = Advancement(fallbackTick`tick`, {
 			schedule.function(fallbackTickTag, '1t');
 
 			// Revoke immediately so that no player can ever have this advancement for a full tick as long as the `function-permission-level` and `maxCommandChainLength` are both at default.
-			advancement.revoke('@s').only(tickAdvancement);
+			advancement.revoke('@s').only(fallbackTickAdvancement);
 		})
 	}
 });
-revokeOnPlayerLoadOrJoin(fallbackTick, tickAdvancement);
+revokeOnPlayerLoadOrJoin(fallbackTick, fallbackTickAdvancement);
 
 onUninstall(fallbackTick, () => {
 	schedule.clear(fallbackTickTag);
