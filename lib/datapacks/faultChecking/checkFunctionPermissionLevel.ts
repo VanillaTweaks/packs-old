@@ -49,7 +49,7 @@ revokeOnPlayerLoadOrJoin(functionPermissionLevel, tooLowAdvancement);
 /** An advancement which is only granted when the `function-permission-level` is too low. */
 const warnAdvancement = Advancement<string>(functionPermissionLevel`warn`, {
 	criteria: {
-		has_tick_advancement: {
+		has_too_low_advancement: {
 			trigger: 'minecraft:tick',
 			conditions: {
 				player: [{
