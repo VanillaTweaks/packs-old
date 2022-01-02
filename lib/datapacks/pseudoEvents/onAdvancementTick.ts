@@ -6,6 +6,7 @@ import internalBasePath from 'lib/datapacks/internalBasePath';
 import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
 import { addTempObjective } from 'lib/datapacks/temp';
 import { scheduleFixMaxCommandChainLength } from 'lib/datapacks/faultChecking/fixMaxCommandChainLength';
+import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';
 
 const advancementTick = vt.child({ directory: 'advancement_tick' });
 
@@ -32,6 +33,10 @@ export const tickAdvancement = Advancement(advancementTick`tick`, {
 	}
 });
 revokeOnPlayerLoadOrJoin(advancementTick, tickAdvancement);
+
+onUninstall(advancementTick, () => {
+	schedule.clear(advancementTickTag);
+});
 
 /** Runs something one tick after every tick that a player is online, using an advancement reward function rather than `#minecraft:load`. */
 const onAdvancementTick = (
