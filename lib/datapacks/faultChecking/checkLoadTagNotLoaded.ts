@@ -20,7 +20,7 @@ const HELP_URL = 'https://vanillatweaks.net/help/load-tag-not-loaded';
 const $warnScheduled = temp(`$${loadTagNotLoaded.directory}.warnScheduled`);
 
 const warn = MCFunction(loadTagNotLoaded_`warn`, () => {
-	schedule.function(warn, '60s');
+	schedule.function(warn, `${60 * 2}s`);
 	// Replace all `$warnScheduled.target, $warnScheduled.objective` with `$warnScheduled`.
 	scoreboard.players.set($warnScheduled.target, $warnScheduled.objective, 1);
 
