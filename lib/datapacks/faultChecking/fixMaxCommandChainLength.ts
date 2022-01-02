@@ -11,12 +11,15 @@ const maxCommandChainLength_ = internalBasePath(maxCommandChainLength);
 
 const $maxCommandChainLength = temp('$maxCommandChainLength');
 
+/** Schedules the `fixMaxCommandChainLengthTag` to run in 1 tick. */
+export const scheduleFixMaxCommandChainLength = MCFunction(maxCommandChainLength_`schedule`, () => {
+	schedule.function(fixMaxCommandChainLengthTag, '1t');
+});
+
 /** Checks the `maxCommandChainLength` game rule every tick to ensure it isn't set below the default. If it is, restores the default and warns the player about setting it lower. */
 export const fixMaxCommandChainLengthTag = Tag('functions', maxCommandChainLength_`check`, [
 	// In case the `maxCommandChainLength` is 1 (the minimum value), run only one command per function in this tag.
-	MCFunction(maxCommandChainLength_`schedule`, () => {
-		schedule.function(fixMaxCommandChainLengthTag, '1t');
-	}),
+	scheduleFixMaxCommandChainLength,
 	MCFunction(maxCommandChainLength_`get`, () => {
 		execute
 			.store.result.score($maxCommandChainLength)

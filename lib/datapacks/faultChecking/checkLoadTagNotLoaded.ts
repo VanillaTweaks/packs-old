@@ -9,6 +9,7 @@ import internalBasePath from 'lib/datapacks/internalBasePath';
 import temp from 'lib/datapacks/temp';
 import { loadStatus } from 'lib/datapacks/lanternLoad';
 import onLoad from 'lib/datapacks/pseudoEvents/onLoad';
+import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';
 
 const loadTagNotLoaded = vt.child({ directory: 'load_tag_not_loaded' });
 const loadTagNotLoaded_ = internalBasePath(loadTagNotLoaded);
@@ -30,7 +31,7 @@ const warn = MCFunction(loadTagNotLoaded_`warn`, () => {
 const $packLoadStatus = loadStatusOf(pack);
 
 onAdvancementTick(pack, () => {
-	// Add the `loadStatus` objective in case `#minecraft:load` never got a chance to add it.
+	// Add the `loadStatus` objective in case `#minecraft:load` never got a chance to add it, so that the below score check works.
 	// TODO: Remove `.name` below.
 	scoreboard.objectives.add(loadStatus.name, 'dummy');
 
@@ -49,4 +50,8 @@ onLoad(loadTagNotLoaded, () => {
 
 	schedule.clear(warn);
 	scoreboard.players.set($warnScheduled.target, $warnScheduled.objective, 0);
+});
+
+onUninstall(loadTagNotLoaded, () => {
+	schedule.clear(warn);
 });
