@@ -14,19 +14,34 @@ import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';
 const loadTagNotLoaded = vt.child({ directory: 'load_tag_not_loaded' });
 const loadTagNotLoaded_ = internalBasePath(loadTagNotLoaded);
 
+const HELP_URL = 'https://vanillatweaks.net/help/load-tag-not-loaded';
+
 /** A score set to 1 when the `warn` function is currently `schedule`d. */
 const $warnScheduled = temp(`$${loadTagNotLoaded.directory}.warnScheduled`);
 
 const warn = MCFunction(loadTagNotLoaded_`warn`, () => {
-	schedule.function(warn, `${60 * 2}s`);
+	schedule.function(warn, '60s');
 	// Replace all `$warnScheduled.target, $warnScheduled.objective` with `$warnScheduled`.
 	scoreboard.players.set($warnScheduled.target, $warnScheduled.objective, 1);
 
 	tellraw('@a', [
 		'',
-		{ text: 'At least one of the data packs you have installed has critical errors which are too complex to explain in one short chat message. If you own this world, please ', color: 'red' },
-		{ text: 'click here to join our Discord server', color: 'gold' },
-		{ text: ' and ask in our data pack help channel about how to fix this.', color: 'red' }
+		{ text: `At least one of this world's data packs has errors interfering with ${vt.title}. To fix this, `, color: 'red' },
+		{
+			text: 'click here',
+			color: 'gold',
+			hoverEvent: {
+				action: 'show_text',
+				contents: [
+					'',
+					{ text: 'Click to open ', color: 'gray' },
+					HELP_URL.replace('https://', ''),
+					{ text: '.', color: 'gray' }
+				]
+			},
+			clickEvent: { action: 'open_url', value: HELP_URL }
+		},
+		{ text: '.', color: 'red' }
 	]);
 });
 
