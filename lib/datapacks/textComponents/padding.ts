@@ -1,4 +1,5 @@
 import minify from 'lib/datapacks/textComponents/minify';
+import { SPACE_WIDTH } from 'lib/datapacks/textComponents/getWidth';
 
 /** Returns a `JSONTextComponent` of a combination of plain and bold spaces to achieve a specified width in in-game pixels. */
 const padding = (
@@ -28,8 +29,8 @@ const padding = (
 		throw TypeError('The padding width must not be negative.');
 	}
 
-	const boldSpaces = width % 4;
-	const plainSpaces = Math.floor(width / 4) - boldSpaces;
+	const boldSpaces = width % SPACE_WIDTH;
+	const plainSpaces = Math.floor(width / SPACE_WIDTH) - boldSpaces;
 
 	return minify([
 		' '.repeat(plainSpaces),

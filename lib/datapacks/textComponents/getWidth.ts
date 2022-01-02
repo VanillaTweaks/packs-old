@@ -2,7 +2,6 @@ import type { JSONTextComponent } from 'sandstone';
 import nonLegacyUnicodeCodePoints from 'lib/datapacks/textComponents/nonLegacyUnicodeCodePoints.json';
 import codePointWidths from 'lib/datapacks/textComponents/codePointWidths.json';
 import split from 'lib/datapacks/textComponents/split';
-import minify from 'lib/datapacks/textComponents/minify';
 
 /** The width of an unknown code point in in-game pixels. */
 const UNKNOWN_CODE_POINT_WIDTH = 6;
@@ -145,3 +144,6 @@ const getWidth = (
 };
 
 export default getWidth;
+
+/** The width of a plain space in in-game pixels. */
+export const SPACE_WIDTH = getWidth(' ');

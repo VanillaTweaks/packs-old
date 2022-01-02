@@ -1,12 +1,9 @@
 import type { JSONTextComponent } from 'sandstone';
-import getWidth from 'lib/datapacks/textComponents/getWidth';
+import getWidth, { SPACE_WIDTH } from 'lib/datapacks/textComponents/getWidth';
 import { containerWidth } from 'lib/datapacks/textComponents/setContainer';
 import padding from 'lib/datapacks/textComponents/padding';
 import padEachLine from 'lib/datapacks/textComponents/padEachLine';
 import overlap from 'lib/datapacks/textComponents/overlap';
-
-/** The width of a plain space in in-game pixels. */
-const SPACE_WIDTH = getWidth(' ');
 
 /**
  * Places a set of components into evenly spaced columns, each column being locally left-aligned.
