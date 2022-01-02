@@ -26,6 +26,7 @@ const scheduleTick = MCFunction(loadTagNotLoaded_`schedule_tick`, () => {
 });
 
 /** A function tag which runs as close as possible to every tick in case `#minecraft:load` isn't working, using advancement reward functions and `#minecraft:tick`. */
+// This method is unfortunately not foolproof, because if the `function-permission-level` was previously too low, then the `tickAdvancement` was granted to all online players with no means of being revoked. Then, if the `#minecraft:load` and `#minecraft:tick` tags have always been broken, this function tag has no means of running unless a new player who was not online when the `function-permission-level` was too low joins the server.
 const tickTag = Tag('functions', loadTagNotLoaded_`tick`, [
 	// In case the `maxCommandChainLength` is 1 (the minimum value), ensure that only the first command of each function in this tag is necessary for `fixMaxCommandChainLength` to work.
 	MCFunction(loadTagNotLoaded_`tick`, () => {
