@@ -10,13 +10,18 @@ import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';
 import loadStatusOf from 'lib/datapacks/lanternLoad/loadStatusOf';
 
 const advancementTick = vt.child({ directory: 'advancement_tick' });
+const advancementTick_ = internalBasePath(advancementTick);
 
 const $vtLoadStatus = loadStatusOf(vt);
 
 const advancementTickTag = Tag('functions', vt_`advancement_tick`, [
 	addTempObjective,
 	// We schedule the `fixMaxCommandChainLengthTag` instead of running it directly so it can't run multiple times each tick.
-	scheduleFixMaxCommandChainLength
+	scheduleFixMaxCommandChainLength,
+	MCFunction(advancementTick_`revoke_from_all`, () => {
+		// Revoke the `tickAdvancement` from all players in case anyone kept it due to the `maxCommandChainLength` being too low.
+		advancement.revoke('@a').only(tickAdvancement);
+	})
 ]);
 
 /** An advancement granted to all players every tick, unless the `function-permission-level` is too low, in which case the advancement will be granted and then never revoked. */
@@ -50,8 +55,7 @@ export const tickAdvancement = Advancement(advancementTick`tick`, {
 			// Schedule `advancementTickTag` first in case their `maxCommandChainLength` is too low to run it second, since it has `scheduleFixMaxCommandChainLength` in it.
 			schedule.function(advancementTickTag, '1t');
 
-			// Revoke the advancement so it can be granted again the next tick.
-			// If the `maxCommandChainLength` is too low for this to run, it will eventually run `onPlayerLoadOrJoin` anyway, assuming the warning messages are obeyed.
+			// Revoke immediately so that no player can ever have this advancement for a full tick as long as the `function-permission-level` and `maxCommandChainLength` are both at default.
 			advancement.revoke('@s').only(tickAdvancement);
 		})
 	}
