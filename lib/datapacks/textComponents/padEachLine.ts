@@ -3,7 +3,7 @@ import split from 'lib/datapacks/textComponents/split';
 import getWidth from 'lib/datapacks/textComponents/getWidth';
 import padding from 'lib/datapacks/textComponents/padding';
 import join from 'lib/datapacks/textComponents/join';
-import { containerWidth } from 'lib/datapacks/textComponents/container';
+import { containerWidth } from 'lib/datapacks/textComponents/setContainer';
 import minify from 'lib/datapacks/textComponents/minify';
 import trim from 'lib/datapacks/textComponents/trim';
 

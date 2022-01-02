@@ -1,6 +1,6 @@
 import type { JSONTextComponent } from 'sandstone';
 import padEachLine from 'lib/datapacks/textComponents/padEachLine';
-import { containerWidth } from 'lib/datapacks/textComponents/container';
+import { containerWidth } from 'lib/datapacks/textComponents/setContainer';
 
 /**
  * Right-aligns each of a text component's lines, automatically minified.
