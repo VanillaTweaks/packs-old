@@ -18,7 +18,7 @@ export default temp;
  * ⚠️ Should only ever be called from `preLoadTag` and `advancementTickTag`.
  */
 export const addTempObjective = MCFunction(tempObjective_`add`, () => {
-	// This function must only have one command so it still runs when the `maxCommandChainLength` is 1.
+	// Ideally, this function should only have one command so it still runs when the `maxCommandChainLength` is 1.
 
 	// TODO: Replace all `temp.name` with `temp`.
 	scoreboard.objectives.add(temp.name, 'dummy');
