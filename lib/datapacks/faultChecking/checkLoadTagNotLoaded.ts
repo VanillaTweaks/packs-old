@@ -150,7 +150,7 @@ const tickAdvancements: AdvancementInstance[] = [tickAdvancement];
 
 // Add a couple advancements with randomized time delays that call `scheduleTick` upon being granted, because if the `function-permission-level` was previously too low, then the `tickAdvancement` was granted to all online players with no means of being revoked.
 // If not for this, the `tickTag` would have no means of running if the `#minecraft:load` and `#minecraft:tick` tags have always been broken, unless a new player who was not online when the `function-permission-level` was too low joins the server.
-// This isn't foolproof, but the chance that it fails given the `function-permission-level` is fixed within a few minutes after seeing the error message is extremely low.
+// This isn't foolproof, but the chance that it fails given the `function-permission-level` is fixed within a few minutes after seeing the error message is very low.
 for (let i = 0; i < 5; i++) {
 	// TODO: Use template tag here.
 	const randomTickAdvancement = Advancement(loadTagNotLoaded.getResourceName(`tick/${i + 1}`), {
