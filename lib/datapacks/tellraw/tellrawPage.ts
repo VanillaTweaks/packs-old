@@ -1,37 +1,37 @@
-import * as meta from 'lib/meta';
+import pack from 'lib/datapacks/pack';
 import horizontalBar from 'lib/datapacks/tellraw/horizontalBar';
-import type { JSONTextComponent } from 'sandstone';
+import type { JSONTextComponent, MultiplePlayersArgument } from 'sandstone';
 import { tellraw } from 'sandstone';
-import minify from 'lib/datapacks/textComponents/minify';
+import overlap from 'lib/datapacks/textComponents/overlap';
+import center from 'lib/datapacks/textComponents/center';
 
-/** Runs `tellraw` commands to display the top and bottom of a page UI to `@s`. */
+/** Runs `tellraw` commands to display the top and bottom of a page UI. */
 const tellrawPage = (
+	targets: MultiplePlayersArgument,
 	options: {
-		/** Content placed directly before the title, minified automatically. Put `padding` here. */
-		before?: JSONTextComponent,
-		/** The part of the center text before the slash, minified automatically. Defaults to the name of the pack. */
+		/** The part of the centered text in the heading line before the slash, minified automatically. Defaults to the name of the pack. */
 		title?: string,
-		/** The part of the center text after the slash, minified automatically. */
+		/** The part of the centered text in the heading line after the slash, minified automatically. */
 		subtitle: string,
-		/** Content placed directly after the subtitle, minified automatically. */
-		after?: JSONTextComponent
+		/** An array of text components to overlap onto the heading line, minified automatically. */
+		overlapHeadingWith?: JSONTextComponent[]
 	},
 	content: () => void
 ) => {
-	horizontalBar();
-	tellraw('@s', minify([
-		'',
-		options.before || '',
-		options.title || meta.title,
-		{ text: ' / ', color: 'gray' },
-		options.subtitle,
-		options.after || ''
-	]));
-	horizontalBar();
+	horizontalBar(targets);
+	tellraw(targets, overlap(
+		center([
+			options.title || pack.title,
+			{ text: ' / ', color: 'gray' },
+			options.subtitle
+		]),
+		...options.overlapHeadingWith || []
+	));
+	horizontalBar(targets);
 
 	content();
 
-	horizontalBar();
+	horizontalBar(targets);
 };
 
 export default tellrawPage;
