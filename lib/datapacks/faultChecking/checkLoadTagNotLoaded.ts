@@ -150,42 +150,42 @@ const tickAdvancements: AdvancementInstance[] = [tickAdvancement];
 
 // Add a couple advancements with randomized time delays that call `scheduleTick` upon being granted, because if the `function-permission-level` was previously too low, then the `tickAdvancement` was granted to all online players with no means of being revoked.
 // If not for this, the `tickTag` would have no means of running if the `#minecraft:load` and `#minecraft:tick` tags have always been broken, unless a new player who was not online when the `function-permission-level` was too low joins the server.
-// This isn't foolproof, but the chance that it fails given the `function-permission-level` is fixed within a few minutes after seeing the error message is very low.
-for (let i = 0; i < 5; i++) {
-	// TODO: Use template tag here.
-	const randomTickAdvancement = Advancement(loadTagNotLoaded.getResourceName(`tick/${i + 1}`), {
-		criteria: {
-			tick: {
-				trigger: 'minecraft:tick',
-				conditions: {
-					player: [{
-						condition: 'minecraft:entity_properties',
-						entity: 'this',
-						predicate: {
-							player: {
-								advancements: {
-									[fplTooLowAdvancement.toString()]: true
+// This isn't foolproof, but the chance that it fails given the `function-permission-level` is fixed within a couple minutes after seeing the error message is very low.
+for (let i = 1; i <= 5; i++) {
+	tickAdvancements.push(
+		// TODO: Use template tag here.
+		Advancement(loadTagNotLoaded.getResourceName(`tick/${i}`), {
+			criteria: {
+				tick: {
+					trigger: 'minecraft:tick',
+					conditions: {
+						player: [{
+							condition: 'minecraft:entity_properties',
+							entity: 'this',
+							predicate: {
+								player: {
+									advancements: {
+										[fplTooLowAdvancement.toString()]: true
+									}
 								}
 							}
-						}
-					}, {
-						condition: 'minecraft:value_check',
-						value: {
-							type: 'minecraft:uniform',
-							min: 0,
-							// Set the chance that each of these advancements goes off to 1 in this value.
-							max: 12000
-						},
-						range: 0
-					// TODO: Remove `as any`.
-					} as any]
+						}, {
+							condition: 'minecraft:value_check',
+							value: {
+								type: 'minecraft:uniform',
+								min: 0,
+								// Set the chance that each of these advancements goes off to 1 in this value.
+								max: 12000
+							},
+							range: 0
+						// TODO: Remove `as any`.
+						} as any]
+					}
 				}
-			}
-		},
-		rewards: tickAdvancement.advancementJSON.rewards
-	});
-
-	tickAdvancements.push(randomTickAdvancement);
+			},
+			rewards: tickAdvancement.advancementJSON.rewards
+		})
+	);
 }
 
 for (const someTickAdvancement of tickAdvancements) {
