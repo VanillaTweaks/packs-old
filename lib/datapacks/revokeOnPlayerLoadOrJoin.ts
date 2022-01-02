@@ -8,6 +8,7 @@ import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
  *
  * If not for this, a player could keep the advancement forever if they were granted it while the `function-permission-level` was too low for its reward function to revoke it, leading the advancement to never trigger for that player again.
  */
+// TODO: Consider that this should not be necessary (except in edge cases) since any technical advancements should have a `loadStatus` score check.
 const revokeOnPlayerLoadOrJoin = (
 	/** The `BasePath` under which to create the function that revokes the advancement. */
 	basePath: VTBasePathInstance,
