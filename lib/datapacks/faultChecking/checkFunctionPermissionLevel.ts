@@ -4,7 +4,7 @@ import { Advancement, MCFunction, me } from 'sandstone';
 import vt from 'lib/datapacks/vt';
 import internalBasePath from 'lib/datapacks/internalBasePath';
 import revokeOnPlayerLoadOrJoin from 'lib/datapacks/revokeOnPlayerLoadOrJoin';
-import { tickAdvancement } from 'lib/datapacks/pseudoEvents/onAdvancementTick';
+import { tickAdvancement } from 'lib/datapacks/pseudoEvents/onFallbackTick';
 
 const functionPermissionLevel = vt.child({ directory: 'function_permission_level' });
 const functionPermissionLevel_ = internalBasePath(functionPermissionLevel);

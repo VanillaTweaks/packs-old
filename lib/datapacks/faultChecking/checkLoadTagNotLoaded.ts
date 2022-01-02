@@ -3,7 +3,7 @@
 import { execute, MCFunction, schedule, scoreboard, tellraw } from 'sandstone';
 import pack from 'lib/datapacks/pack';
 import loadStatusOf from 'lib/datapacks/lanternLoad/loadStatusOf';
-import onAdvancementTick from 'lib/datapacks/pseudoEvents/onAdvancementTick';
+import onFallbackTick from 'lib/datapacks/pseudoEvents/onFallbackTick';
 import vt from 'lib/datapacks/vt';
 import internalBasePath from 'lib/datapacks/internalBasePath';
 import temp from 'lib/datapacks/temp';
@@ -47,7 +47,7 @@ const warn = MCFunction(loadTagNotLoaded_`warn`, () => {
 
 const $packLoadStatus = loadStatusOf(pack);
 
-onAdvancementTick(pack, () => {
+onFallbackTick(pack, () => {
 	// Add the `loadStatus` objective in case `#minecraft:load` never got a chance to add it, so that the below score check works.
 	// TODO: Remove `.name` below.
 	scoreboard.objectives.add(loadStatus.name, 'dummy');

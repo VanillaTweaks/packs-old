@@ -9,23 +9,23 @@ import { scheduleFixMaxCommandChainLength } from 'lib/datapacks/faultChecking/fi
 import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';
 import loadStatusOf from 'lib/datapacks/lanternLoad/loadStatusOf';
 
-const advancementTick = vt.child({ directory: 'advancement_tick' });
-const advancementTick_ = internalBasePath(advancementTick);
+const fallbackTick = vt.child({ directory: 'fallback_tick' });
+const fallbackTick_ = internalBasePath(fallbackTick);
 
 const $vtLoadStatus = loadStatusOf(vt);
 
-const advancementTickTag = Tag('functions', vt_`advancement_tick`, [
+const fallbackTickTag = Tag('functions', vt_`fallback_tick`, [
 	addTempObjective,
 	// We schedule the `fixMaxCommandChainLengthTag` instead of running it directly so it can't run multiple times each tick.
 	scheduleFixMaxCommandChainLength,
-	MCFunction(advancementTick_`revoke_from_all`, () => {
+	MCFunction(fallbackTick_`revoke_from_all`, () => {
 		// Revoke the `tickAdvancement` from all players in case anyone kept it due to the `maxCommandChainLength` being too low.
 		advancement.revoke('@a').only(tickAdvancement);
 	})
-]);
+], { runEveryTick: true });
 
-/** An advancement granted to all players every tick, unless the `function-permission-level` is too low, in which case the advancement will be granted and then never revoked. */
-export const tickAdvancement = Advancement(advancementTick`tick`, {
+/** An advancement granted to all players and immediately revoked every tick, unless the `function-permission-level` is too low, in which case it will not be revoked, or unless the `maxCommandChainLength` is 1, in which case it will be revoked after 1 tick. */
+export const tickAdvancement = Advancement(fallbackTick`tick`, {
 	criteria: {
 		tick: {
 			trigger: 'minecraft:tick',
@@ -42,7 +42,7 @@ export const tickAdvancement = Advancement(advancementTick`tick`, {
 							},
 							score: $vtLoadStatus.objective
 						},
-						// Ensure VT was not uninstalled, since otherwise the reward function would add objectives even after the `uninstall` function was run.
+						// Ensure VT is not uninstalled, since otherwise the `fallbackTickTag` would add objectives even after the `uninstall` function was run.
 						range: -1
 					// TODO: Remove `as any`.
 					} as any
@@ -51,29 +51,34 @@ export const tickAdvancement = Advancement(advancementTick`tick`, {
 		}
 	},
 	rewards: {
-		function: MCFunction(vt_`advancement_tick`, () => {
-			// Schedule `advancementTickTag` first in case their `maxCommandChainLength` is too low to run it second, since it has `scheduleFixMaxCommandChainLength` in it.
-			schedule.function(advancementTickTag, '1t');
+		function: MCFunction(fallbackTick_`tick_advancement_reward`, () => {
+			// Schedule `fallbackTickTag` first in case their `maxCommandChainLength` is too low to run it second, since it has `scheduleFixMaxCommandChainLength` in it.
+			// The reason we must schedule it instead of calling it immediately is because the `function` command counts toward the `maxCommandChainLength`, so nothing inside the function tag would run if the `maxCommandChainLength` is 1.
+			schedule.function(fallbackTickTag, '1t');
 
 			// Revoke immediately so that no player can ever have this advancement for a full tick as long as the `function-permission-level` and `maxCommandChainLength` are both at default.
 			advancement.revoke('@s').only(tickAdvancement);
 		})
 	}
 });
-revokeOnPlayerLoadOrJoin(advancementTick, tickAdvancement);
+revokeOnPlayerLoadOrJoin(fallbackTick, tickAdvancement);
 
-onUninstall(advancementTick, () => {
-	schedule.clear(advancementTickTag);
+onUninstall(fallbackTick, () => {
+	schedule.clear(fallbackTickTag);
 });
 
-/** Runs something one tick after every tick that a player is online, using an advancement reward function rather than `#minecraft:load`. */
-const onAdvancementTick = (
+/**
+ * Runs something as close as possible to every tick when `#minecraft:load` isn't working, using advancement reward functions and `#minecraft:tick`.
+ *
+ * ⚠️ Only for emergency use cases. Use `every('1t', ...)` instead if possible.
+ */
+const onFallbackTick = (
 	...args: [
-		/** The `BasePath` to put the `advancement_tick` function under. */
+		/** The `BasePath` to put the `fallback_tick` function under. */
 		basePath: VTBasePathInstance,
 		callback: () => void
 	] | [
-		/** The function or function tag to add to the `advancementTickTag`. */
+		/** The function or function tag to add to the `fallbackTickTag`. */
 		functionOrFunctionTag: MCFunctionInstance | TagInstance<'functions'>
 	]
 ) => {
@@ -85,16 +90,16 @@ const onAdvancementTick = (
 		const [basePath, callback] = args;
 		const basePath_ = internalBasePath(basePath);
 
-		functionOrFunctionTag = MCFunction(basePath_`advancement_tick`, callback, {
+		functionOrFunctionTag = MCFunction(basePath_`fallback_tick`, callback, {
 			onConflict: 'append'
 		});
 	}
 
-	// TODO: Use `!advancementTickTag.has(functionOrFunctionTag)` instead.
-	if (!advancementTickTag.values.some(value => value.toString() === functionOrFunctionTag.toString())) {
+	// TODO: Use `!fallbackTickTag.has(functionOrFunctionTag)` instead.
+	if (!fallbackTickTag.values.some(value => value.toString() === functionOrFunctionTag.toString())) {
 		// TODO: Remove `as any`.
-		advancementTickTag.add(functionOrFunctionTag as any);
+		fallbackTickTag.add(functionOrFunctionTag as any);
 	}
 };
 
-export default onAdvancementTick;
+export default onFallbackTick;
