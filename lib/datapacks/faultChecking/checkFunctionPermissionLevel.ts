@@ -47,7 +47,7 @@ export const fplTooLowAdvancement = Advancement(functionPermissionLevel`too_low`
 revokeOnPlayerLoadOrJoin(functionPermissionLevel, fplTooLowAdvancement);
 
 /** An advancement which is only granted when the `function-permission-level` is too low. */
-const warnAdvancement = Advancement<string>(functionPermissionLevel`warn`, {
+const warnAdvancement = Advancement(functionPermissionLevel`warn`, {
 	criteria: {
 		has_too_low_advancement: {
 			trigger: 'minecraft:tick',
