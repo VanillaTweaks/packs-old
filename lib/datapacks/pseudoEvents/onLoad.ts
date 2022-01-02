@@ -1,11 +1,11 @@
 import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
 import internalBasePath from 'lib/datapacks/internalBasePath';
-import { loadStatus, loadTag } from 'lib/datapacks/lanternLoad';
-import { MCFunction, scoreboard } from 'sandstone';
+import { loadTag } from 'lib/datapacks/lanternLoad';
+import { MCFunction } from 'sandstone';
 import pack from 'lib/datapacks/pack';
-import loadStatusOf from 'lib/datapacks/lanternLoad/loadStatusOf';
 import beforeSave from 'lib/beforeSave';
-import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';
+import setLoadStatus from 'lib/datapacks/lanternLoad/setLoadStatus';
+import vt from 'lib/datapacks/vt';
 
 /** Adds to a `BasePath`'s `load` function, which is (indirectly) called by `#minecraft:load`. */
 const onLoad = (
@@ -15,40 +15,7 @@ const onLoad = (
 ) => {
 	const basePath_ = internalBasePath(basePath);
 
-	const loadFunction = MCFunction(basePath_`load`, () => {
-		if (firstOnLoad) {
-			const $basePathLoadStatus = loadStatusOf(basePath);
-
-			// TODO: Replace all `$basePathLoadStatus.target, $basePathLoadStatus.objective` with `$basePathLoadStatus`.
-			scoreboard.players.set($basePathLoadStatus.target, $basePathLoadStatus.objective, 1);
-
-			onUninstall(basePath, () => {
-				scoreboard.players.set($basePathLoadStatus.target, $basePathLoadStatus.objective, 0);
-			});
-
-			if (basePath.version) {
-				for (const versionKey of ['major', 'minor', 'patch'] as const) {
-					scoreboard.players.set(
-						// TODO: Replace `..., loadStatus.name` with `loadStatus(...)`.
-						`${$basePathLoadStatus.target}.${versionKey}`,
-						loadStatus.name,
-						basePath.version[versionKey]
-					);
-
-					onUninstall(basePath, () => {
-						scoreboard.players.set(
-							// TODO: Replace `..., loadStatus.name` with `loadStatus(...)`.
-							`${$basePathLoadStatus.target}.${versionKey}`,
-							loadStatus.name,
-							0
-						);
-					});
-				}
-			}
-		}
-
-		callback();
-	}, {
+	const loadFunction = MCFunction(basePath_`load`, callback, {
 		onConflict: 'append'
 	});
 
@@ -57,6 +24,9 @@ const onLoad = (
 	const firstOnLoad = !loadTag.values.some(value => value.toString() === loadFunction.toString());
 
 	if (firstOnLoad) {
+		setLoadStatus(vt);
+		setLoadStatus(basePath);
+
 		// TODO: Remove `as any`.
 		loadTag.add(loadFunction as any);
 
