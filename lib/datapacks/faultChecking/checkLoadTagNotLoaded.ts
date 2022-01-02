@@ -1,5 +1,6 @@
 // This checks for a common error where data packs add a missing function reference to their `#minecraft:load` tag, causing the entire `#minecraft:load` tag to break and become empty for all data packs.
 
+import type { AdvancementInstance } from 'sandstone';
 import { advancement, Advancement, execute, MCFunction, schedule, scoreboard, Tag, tellraw } from 'sandstone';
 import vt from 'lib/datapacks/vt';
 import internalBasePath from 'lib/datapacks/internalBasePath';
@@ -10,6 +11,8 @@ import { loadStatus } from 'lib/datapacks/lanternLoad';
 import onLoad from 'lib/datapacks/pseudoEvents/onLoad';
 import temp from 'lib/datapacks/temp';
 import { scheduleFixMaxCommandChainLength } from 'lib/datapacks/faultChecking/fixMaxCommandChainLength';
+import { fplTooLowAdvancement } from 'lib/datapacks/faultChecking/checkFunctionPermissionLevel';
+import onPlayerJoinOrLoad from 'lib/datapacks/pseudoEvents/onPlayerLoadOrJoin';
 
 const loadTagNotLoaded = vt.child({ directory: 'load_tag_not_loaded' });
 const loadTagNotLoaded_ = internalBasePath(loadTagNotLoaded);
@@ -26,15 +29,11 @@ const scheduleTick = MCFunction(loadTagNotLoaded_`schedule_tick`, () => {
 });
 
 /** A function tag which runs as close as possible to every tick in case `#minecraft:load` isn't working, using advancement reward functions and `#minecraft:tick`. */
-// This method is unfortunately not foolproof, because if the `function-permission-level` was previously too low, then the `tickAdvancement` was granted to all online players with no means of being revoked. Then, if the `#minecraft:load` and `#minecraft:tick` tags have always been broken, this function tag has no means of running unless a new player who was not online when the `function-permission-level` was too low joins the server.
 const tickTag = Tag('functions', loadTagNotLoaded_`tick`, [
 	// In case the `maxCommandChainLength` is 1 (the minimum value), ensure that only the first command of each function in this tag is necessary for `fixMaxCommandChainLength` to work.
 	MCFunction(loadTagNotLoaded_`tick`, () => {
 		// Add the `loadStatus` objective, so that `loadStatus` score checks work for the rest of the `tickTag`.
 		scoreboard.objectives.add(loadStatus.name, 'dummy');
-
-		// Revoke the advancement from everyone so it has the greatest chance of being granted again in the event that `tickTag` stops running (e.g. due to VT being uninstalled).
-		advancement.revoke('@a').only(tickAdvancement);
 	}),
 	MCFunction(loadTagNotLoaded_`add_temp_objective`, () => {
 		// Add the `temp` objective if VT isn't uninstalled, so that `temp` score checks work for the rest of the `tickTag`.
@@ -146,3 +145,58 @@ const tickAdvancement = Advancement(loadTagNotLoaded`tick`, {
 		function: scheduleTick
 	}
 });
+
+const tickAdvancements: AdvancementInstance[] = [tickAdvancement];
+
+// Add a couple advancements with randomized time delays that call `scheduleTick` upon being granted, because if the `function-permission-level` was previously too low, then the `tickAdvancement` was granted to all online players with no means of being revoked.
+// If not for this, the `tickTag` would have no means of running if the `#minecraft:load` and `#minecraft:tick` tags have always been broken, unless a new player who was not online when the `function-permission-level` was too low joins the server.
+// This isn't foolproof, but the chance that it fails given the `function-permission-level` is fixed within a few minutes after seeing the error message is extremely low.
+for (let i = 0; i < 5; i++) {
+	// TODO: Use template tag here.
+	const randomTickAdvancement = Advancement(loadTagNotLoaded.getResourceName(`tick/${i + 1}`), {
+		criteria: {
+			tick: {
+				trigger: 'minecraft:tick',
+				conditions: {
+					player: [{
+						condition: 'minecraft:entity_properties',
+						entity: 'this',
+						predicate: {
+							player: {
+								advancements: {
+									[fplTooLowAdvancement.toString()]: true
+								}
+							}
+						}
+					}, {
+						condition: 'minecraft:value_check',
+						value: {
+							type: 'minecraft:uniform',
+							min: 0,
+							// Set the chance that each of these advancements goes off to 1 in this value.
+							max: 12000
+						},
+						range: 0
+					// TODO: Remove `as any`.
+					} as any]
+				}
+			}
+		},
+		rewards: tickAdvancement.advancementJSON.rewards
+	});
+
+	tickAdvancements.push(randomTickAdvancement);
+}
+
+for (const someTickAdvancement of tickAdvancements) {
+	onPlayerJoinOrLoad(loadTagNotLoaded, () => {
+		// If this runs, then `#minecraft:load` is working now.
+		// Thus, optimize by granting the ticking advancement so it stops running its checks.
+		advancement.grant('@s').only(someTickAdvancement);
+	});
+
+	onUninstall(loadTagNotLoaded, () => {
+		// Revoke the advancement from everyone online, to maximize the chance of one of them initiating the `tickTag` schedule again after a reload.
+		advancement.revoke('@a').only(someTickAdvancement);
+	});
+}
