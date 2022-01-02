@@ -1,18 +1,55 @@
 // Creates a few advancements and functions to warn the server when the `function-permission-level` is too low.
 
-import { Advancement, MCFunction, me } from 'sandstone';
+import { advancement, Advancement, MCFunction, me } from 'sandstone';
 import vt from 'lib/datapacks/vt';
 import internalBasePath from 'lib/datapacks/internalBasePath';
 import revokeOnPlayerLoadOrJoin from 'lib/datapacks/revokeOnPlayerLoadOrJoin';
-import { fallbackTickAdvancement } from 'lib/datapacks/pseudoEvents/onFallbackTick';
+import loadStatusOf from 'lib/datapacks/lanternLoad/loadStatusOf';
 
 const functionPermissionLevel = vt.child({ directory: 'function_permission_level' });
 const functionPermissionLevel_ = internalBasePath(functionPermissionLevel);
 
-/** An advancement which is only granted when the `function-permission-level` is too low for the first time that the player is online for. */
-const warnAdvancement = Advancement(functionPermissionLevel`warn`, {
+const $vtLoadStatus = loadStatusOf(vt);
+
+/** An advancement granted to all players and immediately revoked every tick, unless the `function-permission-level` is too low, in which case it will not be revoked. */
+const tickAdvancement = Advancement(functionPermissionLevel`tick`, {
 	criteria: {
 		tick: {
+			trigger: 'minecraft:tick',
+			conditions: {
+				player: [{
+					condition: 'minecraft:inverted',
+					term: {
+						condition: 'minecraft:value_check',
+						value: {
+							type: 'minecraft:score',
+							target: {
+								type: 'minecraft:fixed',
+								name: $vtLoadStatus.target.toString()
+							},
+							score: $vtLoadStatus.objective
+						},
+						// Ensure VT is not uninstalled, since otherwise the `warn` function could run even after everything is supposed to be uninstalled.
+						range: -1
+					// TODO: Remove `as any`.
+					} as any
+				}]
+			}
+		}
+	},
+	rewards: {
+		function: MCFunction(functionPermissionLevel_`tick_advancement_reward`, () => {
+			// Revoke immediately so that no player can ever have this advancement for a full tick as long as the `function-permission-level` isn't too low.
+			advancement.revoke('@s').only(tickAdvancement);
+		})
+	}
+});
+revokeOnPlayerLoadOrJoin(functionPermissionLevel, tickAdvancement);
+
+/** An advancement which is only granted when the `function-permission-level` is too low. */
+const warnAdvancement = Advancement<string>(functionPermissionLevel`warn`, {
+	criteria: {
+		has_tick_advancement: {
 			trigger: 'minecraft:tick',
 			conditions: {
 				player: [{
@@ -21,7 +58,7 @@ const warnAdvancement = Advancement(functionPermissionLevel`warn`, {
 					predicate: {
 						player: {
 							advancements: {
-								[fallbackTickAdvancement.toString()]: true
+								[tickAdvancement.toString()]: true
 							}
 						}
 					}
