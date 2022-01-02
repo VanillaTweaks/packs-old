@@ -32,7 +32,8 @@ const setLoadStatus = (
 	});
 
 	onUninstall(basePath, () => {
-		scoreboard.players.set($basePathLoadStatus.target, $basePathLoadStatus.objective, 0);
+		// Set to -1 instead of 0 so predicates can distinguish between uninstalled and not installed.
+		scoreboard.players.set($basePathLoadStatus.target, $basePathLoadStatus.objective, -1);
 	});
 
 	if (basePath.version) {

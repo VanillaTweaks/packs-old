@@ -7,8 +7,11 @@ import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
 import { addTempObjective } from 'lib/datapacks/temp';
 import { scheduleFixMaxCommandChainLength } from 'lib/datapacks/faultChecking/fixMaxCommandChainLength';
 import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';
+import loadStatusOf from 'lib/datapacks/lanternLoad/loadStatusOf';
 
 const advancementTick = vt.child({ directory: 'advancement_tick' });
+
+const $vtLoadStatus = loadStatusOf(vt);
 
 const advancementTickTag = Tag('functions', vt_`advancement_tick`, [
 	addTempObjective,
@@ -19,7 +22,28 @@ const advancementTickTag = Tag('functions', vt_`advancement_tick`, [
 /** An advancement granted to all players every tick, unless the `function-permission-level` is too low, in which case the advancement will be granted and then never revoked. */
 export const tickAdvancement = Advancement(advancementTick`tick`, {
 	criteria: {
-		tick: { trigger: 'minecraft:tick' }
+		tick: {
+			trigger: 'minecraft:tick',
+			conditions: {
+				player: [{
+					condition: 'minecraft:inverted',
+					term: {
+						condition: 'minecraft:value_check',
+						value: {
+							type: 'minecraft:score',
+							target: {
+								type: 'minecraft:fixed',
+								name: $vtLoadStatus.target.toString()
+							},
+							score: $vtLoadStatus.objective
+						},
+						// Ensure VT was not uninstalled, since otherwise the reward function would add objectives even after the `uninstall` function was run.
+						range: -1
+					// TODO: Remove `as any`.
+					} as any
+				}]
+			}
+		}
 	},
 	rewards: {
 		function: MCFunction(vt_`advancement_tick`, () => {
@@ -27,7 +51,7 @@ export const tickAdvancement = Advancement(advancementTick`tick`, {
 			schedule.function(advancementTickTag, '1t');
 
 			// Revoke the advancement so it can be granted again the next tick.
-			// If the `maxCommandChainLength` is too low for this to run, it will eventually run `onPlayerLoadOrJoin`, assuming the warning messages are obeyed.
+			// If the `maxCommandChainLength` is too low for this to run, it will eventually run `onPlayerLoadOrJoin` anyway, assuming the warning messages are obeyed.
 			advancement.revoke('@s').only(tickAdvancement);
 		})
 	}
