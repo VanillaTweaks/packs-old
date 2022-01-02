@@ -1,4 +1,4 @@
-// A faithful implementation of https://github.com/LanternMC/load for Vanilla Tweaks.
+// A faithful implementation of https://github.com/LanternMC/load.
 
 import { MCFunction, Objective, scoreboard, Tag } from 'sandstone';
 import VTBasePath from 'lib/datapacks/VTBasePath';

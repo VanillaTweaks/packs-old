@@ -2,7 +2,10 @@ import internalBasePath from 'lib/datapacks/internalBasePath';
 import VTBasePath from 'lib/datapacks/VTBasePath';
 
 /** The `BasePath` for the `vanillatweaks` namespace. */
-const vt = VTBasePath({ namespace: 'vanillatweaks' });
+const vt = VTBasePath({
+	namespace: 'vanillatweaks',
+	title: 'Vanilla Tweaks'
+});
 
 export default vt;
 

@@ -56,7 +56,7 @@ const metaAdvancementsJSON = {
 	} as MetaAdvancementJSON
 } as const;
 
-/** Sets the info for the pack listed in the advancements under a Vanilla Tweaks section. */
+/** Sets the info for the pack listed in the advancements under a VT advancement tab. */
 const setMetaAdvancements = (options: {
 	root: MetaAdvancementOptions & {
 		icon: AdvancementIcon
@@ -94,11 +94,11 @@ const setMetaAdvancements = (options: {
 						}
 					})
 				},
-				title: 'Vanilla Tweaks',
+				title: vt.title,
 				frame: 'challenge',
 				description: [
 					'',
-					{ text: 'All loaded Vanilla Tweaks data packs\n', color: 'gold' },
+					{ text: `All loaded ${vt.title} data packs\n`, color: 'gold' },
 					{ text: 'vanillatweaks.net', color: 'yellow' }
 				],
 				background: 'minecraft:textures/block/black_concrete.png',

@@ -1,23 +1,25 @@
+import pack from 'lib/datapacks/pack';
 import center from 'lib/datapacks/textComponents/center';
 import columns from 'lib/datapacks/textComponents/columns';
 import minify from 'lib/datapacks/textComponents/minify';
 import setContainer, { BOOK } from 'lib/datapacks/textComponents/setContainer';
+import vt from 'lib/datapacks/vt';
 import type { RootNBT } from 'sandstone';
 import { PAGE_TITLE_COLOR, DETAILS_COLOR, HEADING_COLOR, CLICKABLE_COLOR, CLICKABLE_COLOR_2, NEGATIVE_NUMBER_COLOR, POSITIVE_NUMBER_COLOR, NUMBER_COLOR } from '../book/colors';
 import page from '../book/page';
 
 const bookNBT: RootNBT = setContainer(BOOK, () => (
 	{
-		title: 'Custom Armor Stands',
-		author: 'Vanilla Tweaks',
+		title: pack.title,
+		author: vt.title,
 		display: {
 			Name: JSON.stringify(
-				{ text: 'Custom Armor Stands', color: 'gold', italic: false }
+				{ text: pack.title, color: 'gold', italic: false }
 			)
 		},
 		pages: [
 			center([
-				{ text: 'Custom Armor Stands', color: PAGE_TITLE_COLOR },
+				{ text: pack.title, color: PAGE_TITLE_COLOR },
 				'\n\n',
 				{ text: 'To proceed, first\nselect the armor\nstand you want to\ncustomize.', color: DETAILS_COLOR },
 				'\n\n',
@@ -29,7 +31,7 @@ const bookNBT: RootNBT = setContainer(BOOK, () => (
 			]),
 			[
 				center([
-					{ text: 'Custom Armor Stands', color: PAGE_TITLE_COLOR },
+					{ text: pack.title, color: PAGE_TITLE_COLOR },
 					'\n',
 					{ text: '⤺', color: CLICKABLE_COLOR, bold: true },
 					' ',
