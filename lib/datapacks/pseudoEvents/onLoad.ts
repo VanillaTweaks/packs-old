@@ -13,20 +13,17 @@ const onLoad = (
 	basePath: VTBasePathInstance,
 	callback: () => void
 ) => {
+	setLoadStatus(vt);
+	setLoadStatus(basePath);
+
 	const basePath_ = internalBasePath(basePath);
 
 	const loadFunction = MCFunction(basePath_`load`, callback, {
 		onConflict: 'append'
 	});
 
-	/** Whether this is the first time `onLoad` has been called on this `basePath`. */
-	// TODO: Set this to `!loadTag.has(loadFunction)` instead.
-	const firstOnLoad = !loadTag.values.some(value => value.toString() === loadFunction.toString());
-
-	if (firstOnLoad) {
-		setLoadStatus(vt);
-		setLoadStatus(basePath);
-
+	// TODO: Use `!loadTag.has(loadFunction)` instead.
+	if (!loadTag.values.some(value => value.toString() === loadFunction.toString())) {
 		// TODO: Remove `as any`.
 		loadTag.add(loadFunction as any);
 
