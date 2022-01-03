@@ -4,12 +4,10 @@ import { advancement, Advancement, MCFunction, me } from 'sandstone';
 import vt from 'lib/datapacks/vt';
 import internalBasePath from 'lib/datapacks/internalBasePath';
 import revokeOnPlayerLoadOrJoin from 'lib/datapacks/revokeOnPlayerLoadOrJoin';
-import loadStatusOf from 'lib/datapacks/lanternLoad/loadStatusOf';
+import vtNotUninstalled from 'lib/datapacks/faultChecking/vtNotUninstalled';
 
 const functionPermissionLevel = vt.child({ directory: 'function_permission_level' });
 const functionPermissionLevel_ = internalBasePath(functionPermissionLevel);
-
-const $vtLoadStatus = loadStatusOf(vt);
 
 /** An advancement granted to all players and immediately revoked every tick, unless the `function-permission-level` is too low, in which case it will not be revoked. */
 export const fplTooLowAdvancement = Advancement(functionPermissionLevel`too_low`, {
@@ -17,23 +15,7 @@ export const fplTooLowAdvancement = Advancement(functionPermissionLevel`too_low`
 		tick: {
 			trigger: 'minecraft:tick',
 			conditions: {
-				player: [{
-					condition: 'minecraft:inverted',
-					term: {
-						condition: 'minecraft:value_check',
-						value: {
-							type: 'minecraft:score',
-							target: {
-								type: 'minecraft:fixed',
-								name: $vtLoadStatus.target.toString()
-							},
-							score: $vtLoadStatus.objective
-						},
-						// Ensure VT is not uninstalled, since otherwise the `warn` function could run even after everything is supposed to be uninstalled.
-						range: -1
-					// TODO: Remove `as any`.
-					} as any
-				}]
+				player: [vtNotUninstalled]
 			}
 		}
 	},
@@ -52,7 +34,7 @@ const warnAdvancement = Advancement(functionPermissionLevel`warn`, {
 		has_too_low_advancement: {
 			trigger: 'minecraft:tick',
 			conditions: {
-				player: [{
+				player: [vtNotUninstalled, {
 					condition: 'minecraft:entity_properties',
 					entity: 'this',
 					predicate: {
