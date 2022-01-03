@@ -1,6 +1,6 @@
 // This checks for a common error where data packs add a missing function reference to their `#minecraft:load` tag, causing the entire `#minecraft:load` tag to break and become empty for all data packs.
 
-import type { PredicateCondition } from 'sandstone';
+import type { AdvancementInstance, PredicateCondition } from 'sandstone';
 import { advancement, Advancement, execute, MCFunction, Predicate, schedule, scoreboard, Tag, tellraw } from 'sandstone';
 import vt from 'lib/datapacks/vt';
 import internalBasePath from 'lib/datapacks/internalBasePath';
@@ -114,9 +114,9 @@ onUninstall(loadTagNotLoaded, () => {
 	scheduleClearWarnTag();
 });
 
-/** The number of tick trialing advancements to add. */
+/** The number of tick trial advancements to add. */
 const ADVANCEMENT_TRIALS = 8;
-/** The chance that each tick trialing advancement is granted each tick is 1 in this value. */
+/** The chance that each tick trial advancement is granted each tick is 1 in this value. */
 const INVERSE_CHANCE = 12000;
 
 const tickTrialAdvancementChance: PredicateCondition = {
@@ -148,14 +148,19 @@ const tickTrialAdvancementChance: PredicateCondition = {
 	]).toString()
 };
 
+let rootTickTrialAdvancement: AdvancementInstance;
+
 for (let i = 0; i <= ADVANCEMENT_TRIALS; i++) {
 	// TODO: Use template tag here.
-	const tickTrialAdvancement = Advancement(loadTagNotLoaded.getResourceName(`tick_trials/${i}`), {
+	const tickTrialAdvancement = Advancement(loadTagNotLoaded.getResourceName(`tick_trials/${i === 0 ? 'root' : i}`), {
+		...i !== 0 && {
+			parent: rootTickTrialAdvancement!
+		},
 		criteria: {
 			tick: {
 				trigger: 'minecraft:tick',
 				conditions: {
-					// Add randomized time delays to all tick trialing advancements but the first, because if the `function-permission-level` was previously too low, then the first tick trialing advancement would have been granted to all online players with no means of being revoked.
+					// Add randomized time delays to all tick trial advancements but the root, because if the `function-permission-level` was previously too low, then the root tick trial advancement would have been granted to all online players with no means of being revoked.
 					// If not for this, the `tickTag` would have no means of running if the `#minecraft:load` and `#minecraft:tick` tags have always been broken, unless a new player who was not online when the `function-permission-level` was too low joins the server.
 					// This isn't foolproof, but the chance that it fails given the `function-permission-level` is fixed within several minutes after seeing the error message is very low.
 					player: i === 0 ? [vtNotUninstalled] : [tickTrialAdvancementChance]
@@ -169,22 +174,26 @@ for (let i = 0; i <= ADVANCEMENT_TRIALS; i++) {
 		}
 	});
 
-	onPlayerJoinOrLoad(loadTagNotLoaded, () => {
-		// If this runs, then `#minecraft:load` is working now.
-		// Thus, optimize by granting the tick trialing advancement so it stops running its checks.
-		advancement.grant('@s').only(tickTrialAdvancement);
-	});
-
-	onUninstall(loadTagNotLoaded, () => {
-		// Revoke the advancement from everyone online, to maximize the chance of one of them initiating the `tickTag` schedule again after a reload.
-		advancement.revoke('@a').only(tickTrialAdvancement);
-	});
+	if (i === 0) {
+		rootTickTrialAdvancement = tickTrialAdvancement;
+	}
 }
 
-/** Given `ADVANCEMENT_TRIALS` and `INVERSE_CHANCE`, simulates and logs the average times in minutes that it takes for a randomized tick trialing advancement to be granted after the `fplTooLowAdvancement` is granted. */
+onPlayerJoinOrLoad(loadTagNotLoaded, () => {
+	// If this runs, then `#minecraft:load` is working now.
+	// Thus, optimize by granting the tick trial advancements so they stops running their checks.
+	advancement.grant('@s').from(rootTickTrialAdvancement);
+});
+
+onUninstall(loadTagNotLoaded, () => {
+	// Revoke the tick trial advancements from everyone online, to maximize the chance of one of them initiating the `tickTag` schedule again after a reload.
+	advancement.revoke('@a').from(rootTickTrialAdvancement);
+});
+
+/** Given `ADVANCEMENT_TRIALS` and `INVERSE_CHANCE`, simulates and logs the average times in minutes that it takes for a randomized tick trial advancement to be granted after the `fplTooLowAdvancement` is granted. */
 const logAverageTickTrialGrantTimes = () => {
 	const TRIALS = 1000;
-	/** The chance that each tick trialing advancement is granted each tick. */
+	/** The chance that each tick trial advancement is granted each tick. */
 	const CHANCE = 1 / INVERSE_CHANCE;
 
 	let firstGrantTimeSum = 0;
