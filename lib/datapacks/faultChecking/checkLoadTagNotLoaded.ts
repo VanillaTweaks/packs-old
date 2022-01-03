@@ -149,9 +149,9 @@ const tickAdvancement = Advancement(loadTagNotLoaded`tick`, {
 const tickAdvancements: AdvancementInstance[] = [tickAdvancement];
 
 /** The number of random ticking advancements to add. */
-const ADVANCEMENT_TRIALS = 5;
+const ADVANCEMENT_TRIALS = 8;
 /** The chance that each random ticking advancement is granted each tick is 1 in this value. */
-const INVERSE_CHANCE = 15000;
+const INVERSE_CHANCE = 12000;
 
 // Add a couple advancements with randomized time delays that call `scheduleTick` upon being granted, because if the `function-permission-level` was previously too low, then the `tickAdvancement` was granted to all online players with no means of being revoked.
 // If not for this, the `tickTag` would have no means of running if the `#minecraft:load` and `#minecraft:tick` tags have always been broken, unless a new player who was not online when the `function-permission-level` was too low joins the server.
