@@ -3,14 +3,23 @@
 import { advancement, Advancement, MCFunction, me } from 'sandstone';
 import vt from 'lib/datapacks/vt';
 import internalBasePath from 'lib/datapacks/internalBasePath';
-import revokeOnPlayerLoadOrJoin from 'lib/datapacks/revokeOnPlayerLoadOrJoin';
+import onPlayerJoinOrLoad from 'lib/datapacks/pseudoEvents/onPlayerLoadOrJoin';
 import vtNotUninstalled from 'lib/datapacks/faultChecking/vtNotUninstalled';
 
 const functionPermissionLevel = vt.child({ directory: 'function_permission_level' });
 const functionPermissionLevel_ = internalBasePath(functionPermissionLevel);
 
+const rootAdvancement = Advancement(functionPermissionLevel`root`, {
+	criteria: {
+		impossible: {
+			trigger: 'minecraft:impossible'
+		}
+	}
+});
+
 /** An advancement granted to all players and immediately revoked every tick, unless the `function-permission-level` is too low, in which case it will not be revoked. */
 export const fplTooLowAdvancement = Advancement(functionPermissionLevel`too_low`, {
+	parent: rootAdvancement,
 	criteria: {
 		tick: {
 			trigger: 'minecraft:tick',
@@ -26,10 +35,10 @@ export const fplTooLowAdvancement = Advancement(functionPermissionLevel`too_low`
 		})
 	}
 });
-revokeOnPlayerLoadOrJoin(functionPermissionLevel, fplTooLowAdvancement);
 
 /** An advancement which is only granted when the `function-permission-level` is too low. */
-const warnAdvancement = Advancement(functionPermissionLevel`warn`, {
+Advancement(functionPermissionLevel`warn`, {
+	parent: rootAdvancement,
 	criteria: {
 		has_too_low_advancement: {
 			trigger: 'minecraft:tick',
@@ -57,4 +66,8 @@ const warnAdvancement = Advancement(functionPermissionLevel`warn`, {
 		})
 	}
 });
-revokeOnPlayerLoadOrJoin(functionPermissionLevel, warnAdvancement);
+
+// If not for this, a player could keep these advancements forever if they were granted them while the `function-permission-level` was too low for its reward function to revoke it, leading the advancement to never trigger for that player again.
+onPlayerJoinOrLoad(functionPermissionLevel, () => {
+	advancement.revoke('@s').from(rootAdvancement);
+});

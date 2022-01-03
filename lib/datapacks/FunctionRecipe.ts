@@ -7,7 +7,7 @@ import objective from 'lib/datapacks/objective';
 import every from 'lib/datapacks/every';
 import temp from 'lib/datapacks/temp';
 import type { UnionOmit } from 'lib/types';
-import revokeOnPlayerLoadOrJoin from 'lib/datapacks/revokeOnPlayerLoadOrJoin';
+import checkLoadStatus from 'lib/datapacks/lanternLoad/checkLoadStatus';
 
 const vtFunctionRecipes = vt.child({ directory: 'function_recipes' });
 const vtFunctionRecipes_ = internalBasePath(vtFunctionRecipes);
@@ -62,6 +62,7 @@ const FunctionRecipe = (
 			recipe_unlocked: {
 				trigger: 'minecraft:recipe_unlocked',
 				conditions: {
+					player: [checkLoadStatus()],
 					// TODO: Remove `.toString()`.
 					recipe: functionRecipe.toString()
 				}
@@ -118,7 +119,6 @@ const FunctionRecipe = (
 			})
 		}
 	});
-	revokeOnPlayerLoadOrJoin(basePath, recipeUnlockedAdvancement);
 };
 
 export default FunctionRecipe;

@@ -2,9 +2,7 @@ import pack, { pack_ } from 'lib/datapacks/pack';
 import { Advancement, advancement, data, execute, MCFunction, NBT, schedule, tag } from 'sandstone';
 import setMetaAdvancements from 'lib/datapacks/setMetaAdvancements';
 import setConfigFunction from 'lib/datapacks/setConfigFunction';
-import onLoad from 'lib/datapacks/pseudoEvents/onLoad';
-import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';
-import revokeOnPlayerLoadOrJoin from 'lib/datapacks/revokeOnPlayerLoadOrJoin';
+import checkLoadStatus from 'lib/datapacks/lanternLoad/checkLoadStatus';
 
 setMetaAdvancements({
 	root: {
@@ -69,6 +67,7 @@ const interactWithGraveAdvancement = Advancement(pack`interact_with_grave`, {
 		interact_with_grave: {
 			trigger: 'minecraft:player_interacted_with_entity',
 			conditions: {
+				player: [checkLoadStatus()],
 				entity: {
 					type: 'minecraft:armor_stand',
 					nbt: NBT.stringify({
@@ -92,4 +91,3 @@ const interactWithGraveAdvancement = Advancement(pack`interact_with_grave`, {
 		)
 	}
 });
-revokeOnPlayerLoadOrJoin(pack, interactWithGraveAdvancement);
