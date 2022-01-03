@@ -148,10 +148,15 @@ const tickAdvancement = Advancement(loadTagNotLoaded`tick`, {
 
 const tickAdvancements: AdvancementInstance[] = [tickAdvancement];
 
+/** The number of random ticking advancements to add. */
+const ADVANCEMENT_TRIALS = 5;
+/** The chance that each random ticking advancement is granted each tick is 1 in this value. */
+const INVERSE_CHANCE = 15000;
+
 // Add a couple advancements with randomized time delays that call `scheduleTick` upon being granted, because if the `function-permission-level` was previously too low, then the `tickAdvancement` was granted to all online players with no means of being revoked.
 // If not for this, the `tickTag` would have no means of running if the `#minecraft:load` and `#minecraft:tick` tags have always been broken, unless a new player who was not online when the `function-permission-level` was too low joins the server.
 // This isn't foolproof, but the chance that it fails given the `function-permission-level` is fixed within a couple minutes after seeing the error message is very low.
-for (let i = 1; i <= 5; i++) {
+for (let i = 1; i <= ADVANCEMENT_TRIALS; i++) {
 	tickAdvancements.push(
 		// TODO: Use template tag here.
 		Advancement(loadTagNotLoaded.getResourceName(`tick/${i}`), {
@@ -174,8 +179,7 @@ for (let i = 1; i <= 5; i++) {
 							value: {
 								type: 'minecraft:uniform',
 								min: 0,
-								// Set the chance that each of these advancements goes off to 1 in this value.
-								max: 12000
+								max: INVERSE_CHANCE
 							},
 							range: 0
 						// TODO: Remove `as any`.
@@ -199,4 +203,50 @@ for (const someTickAdvancement of tickAdvancements) {
 		// Revoke the advancement from everyone online, to maximize the chance of one of them initiating the `tickTag` schedule again after a reload.
 		advancement.revoke('@a').only(someTickAdvancement);
 	});
+}
+
+/** Given `ADVANCEMENT_TRIALS` and `INVERSE_CHANCE`, simulates and logs the average times in minutes that it takes for a random ticking advancement to be granted after the `fplTooLowAdvancement` is granted. */
+const logAverageGrantTimes = () => {
+	const TRIALS = 1000;
+	/** The chance that each random ticking advancement is granted each tick. */
+	const CHANCE = 1 / INVERSE_CHANCE;
+
+	let firstGrantTimeSum = 0;
+	let lastGrantTimeSum = 0;
+
+	for (let i = 0; i < TRIALS; i++) {
+		let advancementTrialsLeft = ADVANCEMENT_TRIALS;
+		let firstGrantTime: number | undefined;
+		let lastGrantTime: number | undefined;
+
+		for (let t = 1; advancementTrialsLeft; t++) {
+			for (let j = 0; j < advancementTrialsLeft; j++) {
+				if (Math.random() < CHANCE) {
+					if (firstGrantTime === undefined) {
+						firstGrantTime = t;
+					}
+
+					advancementTrialsLeft--;
+					break;
+				}
+			}
+
+			if (advancementTrialsLeft === 0) {
+				lastGrantTime = t;
+			}
+		}
+
+		firstGrantTimeSum += firstGrantTime!;
+		lastGrantTimeSum += lastGrantTime!;
+	}
+
+	console.log({
+		first: firstGrantTimeSum / TRIALS / 20 / 60,
+		last: lastGrantTimeSum / TRIALS / 20 / 60
+	});
+};
+
+const shouldLogAverageGrantTimes = false as boolean;
+if (shouldLogAverageGrantTimes) {
+	logAverageGrantTimes();
 }
