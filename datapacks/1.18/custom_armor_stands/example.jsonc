@@ -1,0 +1,31 @@
+// This is an example of the pack's NBT storage, for developmental use.
+{
+	"book": {
+		"pastStack": [
+			{
+				"id": "copy_rotation"
+			},
+			{
+				"id": "set_rotation",
+				"value": 22.5
+			},
+			{
+				"id": "multiple",
+				"value": [
+					{
+						"id": "set_rotation",
+						"value": 22.5
+					}
+				],
+				"undoActions": {
+					"id": "multiple",
+					"value": []
+				}
+			}
+		],
+		"futureStack": []
+	},
+	"temp": {
+		"id": "copy_rotation"
+	}
+}
