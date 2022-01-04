@@ -35,7 +35,7 @@ const split = (
 
 	if (Array.isArray(component)) {
 		if (component.length === 0) {
-			return [component];
+			return [[]];
 		}
 
 		const outputComponents: JSONTextComponent[] = split(component[0], separatorOrSplitFunction);
@@ -71,7 +71,7 @@ const split = (
 	}
 
 	if ('extra' in component) {
-		throw new TypeError('The `extra` property is not supported when splitting text components.');
+		throw new TypeError('The `extra` property is currently not supported when splitting text components.');
 	}
 
 	if ('text' in component) {
