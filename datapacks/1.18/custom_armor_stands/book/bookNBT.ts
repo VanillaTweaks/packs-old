@@ -1,3 +1,4 @@
+import customModelData from 'lib/customModelData';
 import pack from 'lib/datapacks/pack';
 import center from 'lib/datapacks/textComponents/center';
 import columns from 'lib/datapacks/textComponents/columns';
@@ -10,6 +11,12 @@ import page from '../book/page';
 
 const bookNBT: RootNBT = setContainer(BOOK, () => (
 	{
+		data: {
+			[pack.namespace]: {
+				item: 'armor_stand_book'
+			}
+		},
+		CustomModelData: customModelData(0),
 		title: pack.title,
 		author: vt.title,
 		display: {
