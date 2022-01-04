@@ -6,9 +6,10 @@ import join from 'lib/datapacks/textComponents/join';
 import { containerWidth } from 'lib/datapacks/textComponents/setContainer';
 import minify from 'lib/datapacks/textComponents/minify';
 import trim from 'lib/datapacks/textComponents/trim';
+import wrap from 'lib/datapacks/textComponents/wrap';
 
 /**
- * Adds padding before each of a text component's lines, automatically minified.
+ * Adds padding before each of a text component's trimmed lines (counting lines caused by wrapping), automatically minified.
  *
  * Assumes all arrays in the inputted component have elements which shouldn't inherit special formatting from the first element, so it isn't necessary to avoid special formatting on the first element of any inputted array.
  */
@@ -30,7 +31,7 @@ const padEachLine = (
 	);
 
 	return join(
-		split(component, '\n').map(untrimmedComponentLine => {
+		split(wrap(component), '\n').map(untrimmedComponentLine => {
 			const componentLine = trim(untrimmedComponentLine);
 			const width = getWidth(componentLine);
 

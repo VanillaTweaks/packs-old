@@ -5,7 +5,9 @@ import { containerWidth } from 'lib/datapacks/textComponents/setContainer';
 import minify from 'lib/datapacks/textComponents/minify';
 
 /** Inserts `\n` characters in a text component where there would otherwise be line breaks due to the text overflowing the container, automatically minified. */
-const wrap = (component: JSONTextComponent) => {
+const wrap = <Component extends JSONTextComponent>(
+	component: Component
+): Component extends string ? string : JSONTextComponent => {
 	const output: JSONTextComponent[] = [];
 	let outputLine: JSONTextComponent[] = [];
 	let outputWord: JSONTextComponent[] = [];
@@ -91,7 +93,7 @@ const wrap = (component: JSONTextComponent) => {
 		endLine();
 	}
 
-	return minify(output);
+	return minify(output) as Component extends string ? string : JSONTextComponent;
 };
 
 export default wrap;

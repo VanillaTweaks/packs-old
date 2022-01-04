@@ -28,7 +28,7 @@ const bookNBT: RootNBT = setContainer(BOOK, () => (
 			center([
 				{ text: pack.title, color: PAGE_TITLE_COLOR },
 				'\n\n',
-				{ text: 'To proceed, first\nselect the armor\nstand you want to\ncustomize.', color: DETAILS_COLOR },
+				{ text: 'To proceed, first select the armor stand you want to customize.', color: DETAILS_COLOR },
 				'\n\n',
 				{ text: 'Select', color: HEADING_COLOR },
 				'\n',
