@@ -114,10 +114,12 @@ onUninstall(loadTagNotLoaded, () => {
 	scheduleClearWarnTag();
 });
 
-/** The number of tick trial advancements to add. */
-const TRIAL_ADVANCEMENT_COUNT = 9;
+/** The number of tick trial advancements to add (not counting the root). */
+const TRIAL_ADVANCEMENT_COUNT = 24;
 /** The chance that each tick trial advancement is granted each tick is 1 in this value. */
 const INVERSE_CHANCE = 12000;
+
+let rootTickTrialAdvancement: AdvancementInstance;
 
 const tickTrialAdvancementChance: PredicateCondition = {
 	condition: 'minecraft:reference',
@@ -147,8 +149,6 @@ const tickTrialAdvancementChance: PredicateCondition = {
 		// TODO: Remove `.toString()`.
 	]).toString()
 };
-
-let rootTickTrialAdvancement: AdvancementInstance;
 
 for (let i = 0; i <= TRIAL_ADVANCEMENT_COUNT; i++) {
 	// TODO: Use template tag here.
@@ -193,9 +193,9 @@ onUninstall(loadTagNotLoaded, () => {
 /** Given `TRIAL_ADVANCEMENT_COUNT`, `INVERSE_CHANCE`, `MIN_TIME`, and `MAX_TIME`, simulates and logs the average times in minutes that it takes for a randomized tick trial advancement to be granted after the `fplTooLowAdvancement` is granted, as well as the percentage of players who are granted any tick trial advancement in the specified range of time. */
 const simulateTickTrials = () => {
 	/** The minimum number of ticks while the player is online that it can take for any tick trial advancement to be granted after the `function-permission-level` is fixed in order for a trial to count as successful. */
-	const MIN_TIME = 20 * 60 * 3;
+	const MIN_TIME = 20 * 60 * 5;
 	/** The maximum number of ticks while the player is online that it can take for any tick trial advancement to be granted after the `function-permission-level` is fixed in order for a trial to count as successful. */
-	const MAX_TIME = 20 * 60 * 8;
+	const MAX_TIME = MIN_TIME + 20 * 60 * 3;
 
 	const TRIALS = 1000;
 	/** The chances that each tick trial advancement is granted each tick. */
