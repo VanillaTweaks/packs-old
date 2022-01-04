@@ -2,7 +2,7 @@ import type { loot } from 'sandstone';
 import { execute } from 'sandstone';
 import temp from 'lib/datapacks/temp';
 
-const $lootGiveResult = temp('$lootGiveResult');
+const $lootGiveResult = temp('$loot_give_result');
 
 /**
  * Gives `@s` a loot table, working around https://bugs.mojang.com/browse/MC-154422 by first trying `/loot give` and then falling back to `/loot spawn`.

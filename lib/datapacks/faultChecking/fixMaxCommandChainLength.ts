@@ -9,7 +9,7 @@ const DEFAULT_MAX_COMMAND_CHAIN_LENGTH = 65536;
 const maxCommandChainLength = vt.child({ directory: 'max_command_chain_length' });
 const maxCommandChainLength_ = internalBasePath(maxCommandChainLength);
 
-const $maxCommandChainLength = temp('$maxCommandChainLength');
+const $maxCommandChainLength = temp('$max_command_chain_length');
 
 /** Schedules the `fixMaxCommandChainLengthTag` to run in 1 tick. */
 export const scheduleFixMaxCommandChainLength = MCFunction(maxCommandChainLength_`schedule`, () => {

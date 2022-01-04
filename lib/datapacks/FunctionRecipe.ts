@@ -86,7 +86,7 @@ const FunctionRecipe = (
 
 							// Try to delete the knowledge book.
 							// Clear it from their inventory.
-							const $clearedKnowledgeBook = temp('$clearedKnowledgeBook');
+							const $clearedKnowledgeBook = temp('$cleared_knowledge_book');
 							execute
 								.store.success.score($clearedKnowledgeBook)
 								// I wish we could simply only clear the knowledge books without NBT on them, or at least without the `Recipes` tag on them.
