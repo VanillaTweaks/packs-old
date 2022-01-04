@@ -1,6 +1,7 @@
 import { Advancement, MCFunction, NBT, execute, summon } from 'sandstone';
 import pack from 'lib/datapacks/pack';
 import objective from 'lib/datapacks/objective';
+import checkLoadStatus from 'lib/datapacks/lanternLoad/checkLoadStatus';
 
 const lectern = pack.child({ directory: 'lectern' });
 
@@ -45,6 +46,7 @@ Advancement(lectern`detect`, {
 		requirement: {
 			trigger: 'minecraft:item_used_on_block',
 			conditions: {
+				player: [checkLoadStatus()],
 				location: {
 					block: {
 						nbt: NBT.stringify({
