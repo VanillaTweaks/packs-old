@@ -10,11 +10,20 @@ import type { JSONTextComponent } from 'sandstone';
 const split = (
 	/** The text component to split. */
 	component: JSONTextComponent,
-	/** The pattern on which each split should occur. */
-	separator: string | RegExp
+	/** The pattern on which each split should occur, or a function that takes a string and returns the string split into an array. */
+	separatorOrSplitFunction: string | RegExp | (
+		(
+			/** The string being split. */
+			string: string
+		) => string[]
+	)
 ): JSONTextComponent[] => {
 	if (typeof component === 'string') {
-		const splitString = component.split(separator);
+		const splitString = (
+			typeof separatorOrSplitFunction === 'function'
+				? separatorOrSplitFunction(component)
+				: component.split(separatorOrSplitFunction)
+		);
 
 		// Ensure we never return an empty array.
 		if (splitString.length === 0) {
@@ -29,10 +38,10 @@ const split = (
 			return [component];
 		}
 
-		const outputComponents: JSONTextComponent[] = split(component[0], separator);
+		const outputComponents: JSONTextComponent[] = split(component[0], separatorOrSplitFunction);
 
 		for (let i = 1; i < component.length; i++) {
-			const splitSubComponent = split(component[i], separator);
+			const splitSubComponent = split(component[i], separatorOrSplitFunction);
 
 			// Concatenate the first element of the split subcomponent onto the last component of the output.
 			const lastOutputComponent = outputComponents[outputComponents.length - 1];
@@ -58,7 +67,7 @@ const split = (
 	}
 
 	if (typeof component === 'number' || typeof component === 'boolean') {
-		return split(component.toString(), separator);
+		return split(component.toString(), separatorOrSplitFunction);
 	}
 
 	if ('extra' in component) {
@@ -66,9 +75,10 @@ const split = (
 	}
 
 	if ('text' in component) {
-		return component.text.toString().split(separator).map(substring => ({
+		return split(component.text, separatorOrSplitFunction).map(substring => ({
 			...component,
-			text: substring
+			// `substring` can be asserted `as string` because `split` always returns a `string[]` for any primitive input.
+			text: substring as string
 		}));
 	}
 
