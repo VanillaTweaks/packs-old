@@ -9,11 +9,11 @@ import center from 'lib/datapacks/textComponents/center';
 const tellrawPage = (
 	targets: MultiplePlayersArgument,
 	options: {
-		/** The part of the centered text in the heading line before the slash, minified automatically. Defaults to the name of the pack. */
+		/** The part of the centered text in the heading line before the slash, automatically minified. Defaults to the name of the pack. */
 		title?: string,
-		/** The part of the centered text in the heading line after the slash, minified automatically. */
+		/** The part of the centered text in the heading line after the slash, automatically minified. */
 		subtitle: string,
-		/** An array of text components to overlap onto the heading line, minified automatically. */
+		/** An array of text components to overlap onto the heading line, automatically minified. */
 		overlapHeadingWith?: JSONTextComponent[]
 	},
 	content: () => void
