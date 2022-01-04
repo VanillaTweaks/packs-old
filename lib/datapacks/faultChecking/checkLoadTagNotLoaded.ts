@@ -115,7 +115,7 @@ onUninstall(loadTagNotLoaded, () => {
 });
 
 /** The number of tick trial advancements to add. */
-const ADVANCEMENT_TRIALS = 8;
+const TRIAL_ADVANCEMENT_COUNT = 9;
 /** The chance that each tick trial advancement is granted each tick is 1 in this value. */
 const INVERSE_CHANCE = 12000;
 
@@ -142,15 +142,15 @@ const tickTrialAdvancementChance: PredicateCondition = {
 				max: INVERSE_CHANCE
 			},
 			range: 0
-		// TODO: Remove `as any`.
+			// TODO: Remove `as any`.
 		} as any
-	// TODO: Remove `.toString()`.
+		// TODO: Remove `.toString()`.
 	]).toString()
 };
 
 let rootTickTrialAdvancement: AdvancementInstance;
 
-for (let i = 0; i <= ADVANCEMENT_TRIALS; i++) {
+for (let i = 0; i <= TRIAL_ADVANCEMENT_COUNT; i++) {
 	// TODO: Use template tag here.
 	const tickTrialAdvancement = Advancement(loadTagNotLoaded.getResourceName(`tick_trials/${i === 0 ? 'root' : i}`), {
 		...i !== 0 && {
@@ -190,48 +190,62 @@ onUninstall(loadTagNotLoaded, () => {
 	advancement.revoke('@a').from(rootTickTrialAdvancement);
 });
 
-/** Given `ADVANCEMENT_TRIALS` and `INVERSE_CHANCE`, simulates and logs the average times in minutes that it takes for a randomized tick trial advancement to be granted after the `fplTooLowAdvancement` is granted. */
-const logAverageTickTrialGrantTimes = () => {
+/** Given `TRIAL_ADVANCEMENT_COUNT`, `INVERSE_CHANCE`, `MIN_TIME`, and `MAX_TIME`, simulates and logs the average times in minutes that it takes for a randomized tick trial advancement to be granted after the `fplTooLowAdvancement` is granted, as well as the percentage of players who are granted any tick trial advancement in the specified range of time. */
+const simulateTickTrials = () => {
+	/** The minimum number of ticks while the player is online that it can take for any tick trial advancement to be granted after the `function-permission-level` is fixed in order for a trial to count as successful. */
+	const MIN_TIME = 20 * 60 * 3;
+	/** The maximum number of ticks while the player is online that it can take for any tick trial advancement to be granted after the `function-permission-level` is fixed in order for a trial to count as successful. */
+	const MAX_TIME = 20 * 60 * 8;
+
 	const TRIALS = 1000;
-	/** The chance that each tick trial advancement is granted each tick. */
-	const CHANCE = 1 / INVERSE_CHANCE;
+	/** The chances that each tick trial advancement is granted each tick. */
+	const CHANCES = [...new Array(TRIAL_ADVANCEMENT_COUNT)].map(() => 1 / INVERSE_CHANCE);
 
 	let firstGrantTimeSum = 0;
 	let lastGrantTimeSum = 0;
+	let successes = 0;
 
 	for (let i = 0; i < TRIALS; i++) {
-		let advancementTrialsLeft = ADVANCEMENT_TRIALS;
+		const chances = [...CHANCES];
 		let firstGrantTime: number | undefined;
 		let lastGrantTime: number | undefined;
+		let success = false;
 
-		for (let t = 1; advancementTrialsLeft; t++) {
-			for (let j = 0; j < advancementTrialsLeft; j++) {
-				if (Math.random() < CHANCE) {
+		for (let t = 1; chances.length; t++) {
+			for (let j = 0; j < chances.length; j++) {
+				if (Math.random() < chances[j]) {
 					if (firstGrantTime === undefined) {
 						firstGrantTime = t;
 					}
 
-					advancementTrialsLeft--;
-					break;
+					if (t >= MIN_TIME && t <= MAX_TIME) {
+						success = true;
+					}
+
+					chances.splice(j, 1);
 				}
 			}
 
-			if (advancementTrialsLeft === 0) {
+			if (chances.length === 0) {
 				lastGrantTime = t;
 			}
 		}
 
 		firstGrantTimeSum += firstGrantTime!;
 		lastGrantTimeSum += lastGrantTime!;
+		if (success) {
+			successes++;
+		}
 	}
 
 	console.log({
 		first: firstGrantTimeSum / TRIALS / 20 / 60,
-		last: lastGrantTimeSum / TRIALS / 20 / 60
+		last: lastGrantTimeSum / TRIALS / 20 / 60,
+		successRate: 100 * successes / TRIALS
 	});
 };
 
-const shouldLogAverageTickTrialGrantTimes = false as boolean;
-if (shouldLogAverageTickTrialGrantTimes) {
-	logAverageTickTrialGrantTimes();
+const shouldSimulateLogTickTrials = false as boolean;
+if (shouldSimulateLogTickTrials) {
+	simulateTickTrials();
 }
