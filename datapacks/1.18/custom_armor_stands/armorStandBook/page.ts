@@ -2,14 +2,14 @@ import center from 'lib/datapacks/textComponents/center';
 import overlap from 'lib/datapacks/textComponents/overlap';
 import right from 'lib/datapacks/textComponents/right';
 import type { JSONTextComponent } from 'sandstone';
-import { FIRST_PAGE_LINK_COLOR, PAGE_TITLE_COLOR, INFO_COLOR, DETAILS_COLOR } from '../book/colors';
+import { FIRST_PAGE_LINK_COLOR, PAGE_TITLE_COLOR, INFO_COLOR, DETAILS_COLOR } from '../armorStandBook/colors';
 
 type ContentArgument = [
 	/** A text component placed after a line break following the heading. */
 	content: JSONTextComponent
 ];
 
-/** A page of the book. */
+/** A page of the armor stand book (other than the first). */
 const page = (
 	heading: string,
 	...args: ContentArgument | [

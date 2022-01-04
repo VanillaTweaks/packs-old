@@ -6,10 +6,10 @@ import minify from 'lib/datapacks/textComponents/minify';
 import setContainer, { BOOK } from 'lib/datapacks/textComponents/setContainer';
 import vt from 'lib/datapacks/vt';
 import type { RootNBT } from 'sandstone';
-import { PAGE_TITLE_COLOR, DETAILS_COLOR, HEADING_COLOR, CLICKABLE_COLOR, CLICKABLE_COLOR_2, NEGATIVE_NUMBER_COLOR, POSITIVE_NUMBER_COLOR, NUMBER_COLOR } from '../book/colors';
-import page from '../book/page';
+import { PAGE_TITLE_COLOR, DETAILS_COLOR, HEADING_COLOR, CLICKABLE_COLOR, CLICKABLE_COLOR_2, NEGATIVE_NUMBER_COLOR, POSITIVE_NUMBER_COLOR, NUMBER_COLOR } from '../armorStandBook/colors';
+import page from '../armorStandBook/page';
 
-const bookNBT: RootNBT = setContainer(BOOK, () => (
+const armorStandBookNBT: RootNBT = setContainer(BOOK, () => (
 	{
 		data: {
 			[pack.namespace]: {
@@ -498,4 +498,4 @@ const bookNBT: RootNBT = setContainer(BOOK, () => (
 	}
 ));
 
-export default bookNBT;
+export default armorStandBookNBT;
