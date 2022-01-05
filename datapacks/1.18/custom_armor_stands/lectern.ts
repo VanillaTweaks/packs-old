@@ -20,6 +20,7 @@ const detectLectern = MCFunction(lectern`detect`, () => {
 		.run(lectern`mark`, () => {
 			// Mark the lectern so that it can be associated with the player who clicked it.
 
+			// TODO: Use string coordinates.
 			summon('minecraft:marker', ['~', '~', '~'], {
 				Tags: [lecternTag, newTag]
 			});
