@@ -4,9 +4,9 @@ import { Objective, scoreboard } from 'sandstone';
 import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';
 
 /**
- * Creates a scoreboard objective (by default, namespaced), adds the necessary `scoreboard` commands to the load and uninstall functions, and returns an `Objective` instance.
+ * Creates a scoreboard objective (namespaced by default), adds the necessary `scoreboard` commands to the load and uninstall functions, and returns an `Objective` instance.
  *
- * ⚠️ Not for objectives with the `trigger` criterion. Use `onTrigger` for that instead.
+ * ⚠️ Note that there is an `onTrigger` abstraction for `trigger` objectives instead.
  */
 const objective = (
 	/** The `BasePath` to be used as a prefix to the objective name, and to add to the load and uninstall functions of. */
