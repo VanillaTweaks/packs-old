@@ -1,48 +1,61 @@
-import { Advancement, MCFunction, NBT, execute, summon } from 'sandstone';
+import { Advancement, MCFunction, NBT, execute, summon, scoreboard } from 'sandstone';
 import pack from 'lib/datapacks/pack';
 import objective from 'lib/datapacks/objective';
 import checkLoadStatus from 'lib/datapacks/lanternLoad/checkLoadStatus';
+import temp from 'lib/datapacks/temp';
+import internalBasePath from 'lib/datapacks/internalBasePath';
 
 const lectern = pack.child({ directory: 'lectern' });
+const lectern_ = internalBasePath(pack);
 
-const markerID = objective(pack, 'marker_id');
-const $lastID = markerID('$last_id');
+/** A score of the number of steps which have occurred in the lectern raycast. */
+const $steps = temp('$steps');
+
+const lecternID = objective(pack, 'lectern_id');
+const $lastID = lecternID('$last_id');
 
 // TODO: Replace all `lecternTag` with `` pack`.lectern` ``.
 const lecternTag = 'custom_armor_stands.lectern';
 // TODO: Replace all `newTag` with `` pack`.new` ``.
 const newTag = 'custom_armor_stands.new';
 
-const detectLectern = MCFunction(lectern`detect`, () => {
+const findLectern = MCFunction(lectern_`find`, () => {
 	execute
 		// TODO: Use string coordinates.
 		.if.block(['~', '~', '~'], 'minecraft:lectern')
-		.run(lectern`mark`, () => {
-			// Mark the lectern so that it can be associated with the player who clicked it.
+		.run(lectern_`mark`, () => {
+			// Mark the lectern so that it can be associated with the player who clicked it via a score.
 
 			// TODO: Use string coordinates.
 			summon('minecraft:marker', ['~', '~', '~'], {
 				Tags: [lecternTag, newTag]
 			});
-			execute
-				.as(`@e[tag=${newTag},distance=..0.01,limit=1]`)
-				.run(lectern`initialize_marker`, () => {
-					// Use a score to associate the marker with the player.
 
-					execute
-						.store.result.score(markerID('@s'))
-						// TODO: Replace `$lastID.target, $lastID.objective` with `$lastID`.
-						.run.scoreboard.players.add($lastID.target, $lastID.objective, 1);
-				});
+			execute
+				.store.result.score(lecternID('@s'))
+				// TODO: Replace `$lastID.target, $lastID.objective` with `$lastID`.
+				.run.scoreboard.players.add($lastID.target, $lastID.objective, 1);
+			scoreboard.players.operation(
+				// TODO: Replace first two arguments with an equivalent `lecternID` call.
+				`@e[tag=${newTag},distance=..0.01,limit=1]`,
+				lecternID.toString(),
+				'=',
+				// TODO: Replace last two arguments with `$lastID`.
+				$lastID.target,
+				$lastID.objective
+			);
 		});
+
 	execute
+		.anchored('eyes')
 		// TODO: Use string coordinates.
 		.positioned(['^', '^', '^0.01'])
-		.if.entity('@s[distance=..5]')
-		.run(detectLectern);
+		// TODO: Remove `as any`.
+		.if($steps.matches('..500' as any))
+		.run(findLectern);
 });
 
-Advancement(lectern`detect`, {
+Advancement(lectern`use`, {
 	criteria: {
 		requirement: {
 			trigger: 'minecraft:item_used_on_block',
@@ -63,6 +76,10 @@ Advancement(lectern`detect`, {
 		}
 	},
 	rewards: {
-		function: detectLectern
+		function: MCFunction(lectern_`use`, () => {
+			// TODO: Replace all `$steps.target, $steps.objective` with `$steps`.
+			scoreboard.players.set($steps.target, $steps.objective, 0);
+			findLectern();
+		})
 	}
 });
