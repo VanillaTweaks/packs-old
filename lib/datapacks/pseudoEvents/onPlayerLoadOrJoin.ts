@@ -16,23 +16,23 @@ const playerJoinOrLoadTag = Tag('functions', vt_`player_join_or_load`);
 
 onLoad(playerJoinOrLoad, () => {
 	// Reset all counters (including the global counter) to ensure all players are detected as out of sync next time.
-	// TODO: Remove `.name`.
-	scoreboard.players.reset('*', counter.name);
+	scoreboard.players.reset('*', counter);
 });
 
 every('1t', playerJoinOrLoad, () => {
 	execute
 		.as('@a')
 		// Check if the player's counter is not in sync with the global counter.
-		.unless(counter('@s').equalTo($globalCounter))
+		// TODO: Replace `$globalCounter.target.toString(), $globalCounter.objective` with `$globalCounter`.
+		.unless.score('@s', counter, '=', $globalCounter.target.toString(), $globalCounter.objective)
 		// The player's counter is not in sync, so we can tell they joined the game.
+		// TODO: Remove `.functionCmd`.
 		.run.functionCmd(playerJoinOrLoadTag);
 
 	// Increment the global counter, and sync all players' counters with it.
 	execute
-		.store.result.score(counter('@a'))
-		// TODO: Replace `$globalCounter.target, $globalCounter.objective` with `$globalCounter`.
-		.run.scoreboard.players.add($globalCounter.target, $globalCounter.objective, 1);
+		.store.result.score('@a', counter)
+		.run.scoreboard.players.add($globalCounter, 1);
 
 	// The reason we use counters instead of the `minecraft.custom:minecraft.leave_game` criterion is because that criterion doesn't always detect players leaving due to server crashes.
 });

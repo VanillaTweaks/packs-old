@@ -19,8 +19,7 @@ const $craftedKnowledgeBook = craftedKnowledgeBook('@s');
 every('1t', vtFunctionRecipes, () => {
 	// Reset everyone's `craftedKnowledgeBook` score in case they crafted a knowledge book by external means.
 	// No need to do this for spectators since spectators can't craft.
-	// TODO: Remove `.name`.
-	scoreboard.players.reset('@a[gamemode=!spectator]', craftedKnowledgeBook.name);
+	scoreboard.players.reset('@a[gamemode=!spectator]', craftedKnowledgeBook);
 });
 
 export type FunctionRecipeJSON = UnionOmit<Extract<RecipeJSON, { result: { item: string } }>, 'result'> & {
@@ -63,8 +62,8 @@ const FunctionRecipe = (
 				trigger: 'minecraft:recipe_unlocked',
 				conditions: {
 					player: [checkLoadStatus()],
-					// TODO: Remove `.toString()`.
-					recipe: functionRecipe.toString()
+					// TODO: Remove `.name`.
+					recipe: functionRecipe.name
 				}
 			}
 		},
@@ -73,13 +72,13 @@ const FunctionRecipe = (
 				// This runs `as` and `at` any player who unlocks the recipe (e.g. due to crafting the recipe or using `/recipe give`).
 
 				advancement.revoke('@s').only(recipeUnlockedAdvancement);
-				// TODO: Remove `.toString()`.
-				recipe.take('@s', functionRecipe.toString());
+				// TODO: Remove `.name`.
+				recipe.take('@s', functionRecipe.name);
 
 				execute
 					// Check if they actually crafted a knowledge book and aren't unlocking the recipe by other means.
-					// TODO: Replace all `greaterThan(0)` with `matches('1..')`.
-					.if($craftedKnowledgeBook.greaterThan(0))
+					// TODO: Remove `as any`.
+					.if($craftedKnowledgeBook.matches('1..' as any))
 					.run(functionRecipes_.getResourceName(`${name}/craft`), () => {
 						MCFunction(vtFunctionRecipes_`craft`, () => {
 							// This runs `as` and `at` any player who successfully crafts one of any `FunctionRecipe`.
@@ -110,8 +109,7 @@ const FunctionRecipe = (
 							// Or if they bundled it, just let them have it.
 
 							// Reset the player's `craftedKnowledgeBook` score so it can still be detected as not 1 later in this tick.
-							// TODO: Replace `$craftedKnowledgeBook.target, $craftedKnowledgeBook.objective` with `$craftedKnowledgeBook`.
-							scoreboard.players.reset($craftedKnowledgeBook.target, $craftedKnowledgeBook.objective);
+							scoreboard.players.reset($craftedKnowledgeBook);
 						})();
 
 						recipeJSON.result();

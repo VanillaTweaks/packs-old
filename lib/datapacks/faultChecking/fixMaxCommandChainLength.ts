@@ -27,15 +27,16 @@ export const fixMaxCommandChainLengthTag = Tag('functions', maxCommandChainLengt
 	}),
 	MCFunction(maxCommandChainLength_`fix`, () => {
 		execute
-			// TODO: Replace all `[, DEFAULT_MAX_COMMAND_CHAIN_LENGTH - 1]` with `` `..${DEFAULT_MAX_COMMAND_CHAIN_LENGTH - 1}` ``.
-			.if($maxCommandChainLength.matches([, DEFAULT_MAX_COMMAND_CHAIN_LENGTH - 1]))
+			// TODO: Remove `as any`.
+			.if($maxCommandChainLength.matches(`..${DEFAULT_MAX_COMMAND_CHAIN_LENGTH - 1}` as any))
 			.run.gamerule('maxCommandChainLength', DEFAULT_MAX_COMMAND_CHAIN_LENGTH);
 	}),
 	// The reason `fix` and `warn` are separate despite having the same `execute` condition is that the `function` command counts toward the `maxCommandChainLength`, so running it here is useless if the `maxCommandChainLength` is 1.
 	// Also, changing the `maxCommandChainLength` has no effect for the rest of the function in which it was changed, so the two `execute` commands can't be placed in the same function.
 	MCFunction(maxCommandChainLength_`warn`, () => {
 		execute
-			.if($maxCommandChainLength.matches([, DEFAULT_MAX_COMMAND_CHAIN_LENGTH - 1]))
+			// TODO: Remove `as any`.
+			.if($maxCommandChainLength.matches(`..${DEFAULT_MAX_COMMAND_CHAIN_LENGTH - 1}` as any))
 			.run.tellraw('@a', [
 				'',
 				{ text: 'Do not set the ', color: 'red' },

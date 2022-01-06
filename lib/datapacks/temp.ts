@@ -19,13 +19,12 @@ export default temp;
  */
 export const loadTempObjective = MCFunction(tempObjective_`load`, () => {
 	// Adding the temp objective must be the first command in the function so that it still runs when the `maxCommandChainLength` is 1.
-	// TODO: Replace all `temp.name` with `temp`.
-	scoreboard.objectives.add(temp.name, 'dummy');
+	scoreboard.objectives.add(temp, 'dummy');
 
 	// Reset all temp scores just to periodically keep the scoreboard a bit cleaner.
-	scoreboard.players.reset('*', temp.name);
+	scoreboard.players.reset('*', temp);
 });
 
 onUninstall(tempObjective, () => {
-	scoreboard.objectives.remove(temp.name);
+	scoreboard.objectives.remove(temp);
 });

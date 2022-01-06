@@ -21,9 +21,8 @@ export const loadStatus = Objective.get('load.status');
 Tag('functions', lanternLoad`_private/load`, [
 	Tag('functions', lanternLoad`_private/init`, [
 		MCFunction(lanternLoad`_private/init`, () => {
-			// TODO: Remove both instances of `.name` below.
-			scoreboard.objectives.add(loadStatus.name, 'dummy');
-			scoreboard.players.reset('*', loadStatus.name);
+			scoreboard.objectives.add(loadStatus, 'dummy');
+			scoreboard.players.reset('*', loadStatus);
 		})
 	]),
 	{ id: preLoadTag, required: false },

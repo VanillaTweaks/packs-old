@@ -34,14 +34,13 @@ const tickTag = Tag('functions', loadTagNotLoaded_`tick`, [
 	// In case the `maxCommandChainLength` is 1 (the minimum value), ensure that only the first command of each function in this tag is necessary for `fixMaxCommandChainLength` to work.
 	MCFunction(loadTagNotLoaded_`tick`, () => {
 		// Add the `loadStatus` objective, so that `loadStatus` score checks work for the rest of the `tickTag`.
-		scoreboard.objectives.add(loadStatus.name, 'dummy');
+		scoreboard.objectives.add(loadStatus, 'dummy');
 	}),
 	MCFunction(loadTagNotLoaded_`add_temp_objective`, () => {
 		// Add the `temp` objective if VT isn't uninstalled, so that `temp` score checks work for the rest of the `tickTag`.
 		execute
 			.unless($vtLoadStatus.matches(-1))
-			// TODO: Remove `.name` below.
-			.run.scoreboard.objectives.add(temp.name, 'dummy');
+			.run.scoreboard.objectives.add(temp, 'dummy');
 	}),
 	// We schedule the `fixMaxCommandChainLengthTag` instead of running it directly so it can't run multiple times each tick.
 	scheduleFixMaxCommandChainLength,
@@ -131,7 +130,7 @@ const tickTrialAdvancementChance: PredicateCondition = {
 			predicate: {
 				player: {
 					advancements: {
-						[fplTooLowAdvancement.toString()]: true
+						[fplTooLowAdvancement.name]: true
 					}
 				}
 			}
@@ -144,10 +143,10 @@ const tickTrialAdvancementChance: PredicateCondition = {
 				max: INVERSE_CHANCE
 			},
 			range: 0
-			// TODO: Remove `as any`.
+		// TODO: Remove `as any`.
 		} as any
-		// TODO: Remove `.toString()`.
-	]).toString()
+	// TODO: Remove `.name`.
+	]).name
 };
 
 for (let i = 0; i <= TRIAL_ADVANCEMENT_COUNT; i++) {

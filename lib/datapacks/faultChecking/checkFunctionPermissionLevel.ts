@@ -49,7 +49,7 @@ Advancement(functionPermissionLevel`warn`, {
 					predicate: {
 						player: {
 							advancements: {
-								[fplTooLowAdvancement.toString()]: true
+								[fplTooLowAdvancement.name]: true
 							}
 						}
 					}

@@ -18,8 +18,7 @@ const giveLootTable = (
 	execute
 		.if($lootGiveResult.matches(0))
 		.anchored('eyes')
-		// TODO: Replace `['^', '^', '^']` with `'^ ^ ^'`.
-		.run.loot.spawn(['^', '^', '^']).loot(lootTable);
+		.run.loot.spawn('^ ^ ^').loot(lootTable);
 };
 
 export default giveLootTable;

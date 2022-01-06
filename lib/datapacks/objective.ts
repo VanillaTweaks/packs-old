@@ -28,12 +28,11 @@ const objective = (
 	);
 
 	onLoad(basePath, () => {
-		// TODO: Replace all `objectiveInstance.name` with `objectiveInstance`.
-		scoreboard.objectives.add(objectiveInstance.name, criterion, displayName);
+		scoreboard.objectives.add(objectiveInstance, criterion, displayName);
 	});
 
 	onUninstall(basePath, () => {
-		scoreboard.objectives.remove(objectiveInstance.name);
+		scoreboard.objectives.remove(objectiveInstance);
 	});
 
 	return objectiveInstance;

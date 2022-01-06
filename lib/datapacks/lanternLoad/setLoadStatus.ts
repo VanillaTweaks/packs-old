@@ -27,31 +27,28 @@ const setLoadStatus = (
 	loadStatusTargets.push(basePathLoadStatusTarget);
 
 	onLoad(basePath, () => {
-		// TODO: Replace all `$basePathLoadStatus.target, $basePathLoadStatus.objective` with `$basePathLoadStatus`.
-		scoreboard.players.set($basePathLoadStatus.target, $basePathLoadStatus.objective, 1);
+		scoreboard.players.set($basePathLoadStatus, 1);
 	});
 
 	onUninstall(basePath, () => {
 		// Set to -1 instead of 0 so predicates can distinguish between uninstalled and not loaded.
-		scoreboard.players.set($basePathLoadStatus.target, $basePathLoadStatus.objective, -1);
+		scoreboard.players.set($basePathLoadStatus, -1);
 	});
 
 	if (basePath.version) {
 		for (const versionKey of ['major', 'minor', 'patch'] as const) {
 			onLoad(basePath, () => {
 				scoreboard.players.set(
-					// TODO: Replace `..., loadStatus.name` with `loadStatus(...)`.
 					`${$basePathLoadStatus.target}.${versionKey}`,
-					loadStatus.name,
+					loadStatus,
 					basePath.version![versionKey]
 				);
 			});
 
 			onUninstall(basePath, () => {
 				scoreboard.players.set(
-					// TODO: Replace `..., loadStatus.name` with `loadStatus(...)`.
 					`${$basePathLoadStatus.target}.${versionKey}`,
-					loadStatus.name,
+					loadStatus,
 					0
 				);
 			});
