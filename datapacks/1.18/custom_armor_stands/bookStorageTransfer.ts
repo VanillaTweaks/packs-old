@@ -9,7 +9,7 @@ export const copyStorageToBook = ItemModifier(pack`copy_storage_to_book`, {
 	function: 'minecraft:copy_nbt' as 'copy_nbt',
 	source: {
 		type: 'minecraft:storage',
-		source: pack`storage`
+		source: pack`main`
 	},
 	ops: [{
 		source: 'book',
@@ -19,5 +19,5 @@ export const copyStorageToBook = ItemModifier(pack`copy_storage_to_book`, {
 });
 
 export const copyBookToStorage = MCFunction(pack`copy_book_to_storage`, () => {
-	// data.modify.storage(pack`storage`, itemData``).set.from
+	// data.modify.storage(pack`main`, itemData``).set.from
 });
