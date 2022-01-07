@@ -14,7 +14,7 @@ export type VTBasePathOptions<
 	BasePathVersion extends VersionString | undefined = VersionString | undefined
 > = BasePathOptions<string, Directory> & {
 	title?: Title,
-	/** The version to set for this `BasePath` in Lantern Load's status objective, if this `BasePath` has a `load` function. */
+	/** The version to set for this `BasePath`'s `loadStatus` scores, if this `BasePath` has a `load` function. */
 	version?: BasePathVersion
 };
 
