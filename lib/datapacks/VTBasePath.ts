@@ -46,7 +46,7 @@ type ExclusiveVTBasePathInstanceProperties<
 	version: BasePathVersion extends string ? Version : undefined
 };
 
-/** A `BasePathInstace` with some extra properties. */
+/** A `BasePathInstance` with some extra properties. */
 export type VTBasePathInstance<
 	Directory extends string | undefined = string | undefined,
 	Title extends string | undefined = string | undefined,
