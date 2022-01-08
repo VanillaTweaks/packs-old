@@ -1,6 +1,6 @@
 import type { JSONTextComponent } from 'sandstone';
 import getWidth, { SPACE_WIDTH } from 'lib/datapacks/textComponents/getWidth';
-import { containerWidth } from 'lib/datapacks/textComponents/setContainer';
+import { containerWidth } from 'lib/datapacks/textComponents/withContainer';
 import padding from 'lib/datapacks/textComponents/padding';
 import padEachLine from 'lib/datapacks/textComponents/padEachLine';
 import overlap from 'lib/datapacks/textComponents/overlap';

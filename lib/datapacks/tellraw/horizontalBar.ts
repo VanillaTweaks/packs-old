@@ -1,6 +1,6 @@
 import type { MultiplePlayersArgument } from 'sandstone';
 import { tellraw } from 'sandstone';
-import { containerWidth } from 'lib/datapacks/textComponents/setContainer';
+import { containerWidth } from 'lib/datapacks/textComponents/withContainer';
 import padding from 'lib/datapacks/textComponents/padding';
 
 /** Runs a `tellraw` command to display a horizontal bar in chat. */

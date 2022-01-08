@@ -3,13 +3,13 @@ import pack from 'lib/datapacks/pack';
 import center from 'lib/datapacks/textComponents/center';
 import columns from 'lib/datapacks/textComponents/columns';
 import minify from 'lib/datapacks/textComponents/minify';
-import setContainer, { BOOK } from 'lib/datapacks/textComponents/setContainer';
+import withContainer, { BOOK } from 'lib/datapacks/textComponents/withContainer';
 import vt from 'lib/datapacks/vt';
 import type { RootNBT } from 'sandstone';
 import { PAGE_TITLE_COLOR, DETAILS_COLOR, HEADING_COLOR, CLICKABLE_COLOR, CLICKABLE_COLOR_2, NEGATIVE_NUMBER_COLOR, POSITIVE_NUMBER_COLOR, NUMBER_COLOR } from '../armorStandBook/colors';
 import page from '../armorStandBook/page';
 
-const armorStandBookNBT: RootNBT = setContainer(BOOK, () => (
+const armorStandBookNBT: RootNBT = withContainer(BOOK, () => (
 	{
 		data: {
 			[pack.namespace]: {

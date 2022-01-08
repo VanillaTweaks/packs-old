@@ -4,11 +4,11 @@ export const CHAT = 320;
 /** The maximum width of a line of text in a book in in-game pixels. */
 export const BOOK = 114;
 
-/** The maximum width of a line of text in the container in in-game pixels. Defaults to `CHAT` when not set by `setContainer`. */
+/** The maximum width of a line of text in the container in in-game pixels. Defaults to `CHAT` when not set by `withContainer`. */
 export let containerWidth = CHAT;
 
 /** Sets the width of the container for the duration of the callback. */
-const setContainer = <Return>(
+const withContainer = <Return>(
 	width: number,
 	callback: () => Return
 ) => {
@@ -22,4 +22,4 @@ const setContainer = <Return>(
 	return callbackReturn;
 };
 
-export default setContainer;
+export default withContainer;

@@ -1,7 +1,7 @@
 import type { JSONTextComponent } from 'sandstone';
 import split from 'lib/datapacks/textComponents/split';
 import getWidth from 'lib/datapacks/textComponents/getWidth';
-import { containerWidth } from 'lib/datapacks/textComponents/setContainer';
+import { containerWidth } from 'lib/datapacks/textComponents/withContainer';
 import minify from 'lib/datapacks/textComponents/minify';
 
 /** Inserts `\n` characters in a text component where there would otherwise be line breaks due to the text overflowing the container, automatically minified. */

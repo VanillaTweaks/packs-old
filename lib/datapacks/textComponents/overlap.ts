@@ -4,7 +4,7 @@ import getWidth from 'lib/datapacks/textComponents/getWidth';
 import minify from 'lib/datapacks/textComponents/minify';
 import join from 'lib/datapacks/textComponents/join';
 import padding from 'lib/datapacks/textComponents/padding';
-import { containerWidth } from 'lib/datapacks/textComponents/setContainer';
+import { containerWidth } from 'lib/datapacks/textComponents/withContainer';
 
 type JSONTextComponentRange = {
 	/** The component in the range. Should not contain whitespace. */

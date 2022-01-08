@@ -1,6 +1,6 @@
 import type { JSONTextComponent } from 'sandstone';
 import padEachLine from 'lib/datapacks/textComponents/padEachLine';
-import { containerWidth } from 'lib/datapacks/textComponents/setContainer';
+import { containerWidth } from 'lib/datapacks/textComponents/withContainer';
 
 /**
  * Centers a text component, automatically minified.
