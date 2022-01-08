@@ -12,10 +12,15 @@ import page from '../armorStandBook/page';
 const armorStandBookNBT: RootNBT = withContainer(BOOK, () => (
 	{
 		data: {
-			[pack.namespace]: {
+			[vt.namespace]: {
 				item: 'armor_stand_book'
+			},
+			[pack.namespace]: {
+				pastActions: [],
+				futureActions: []
 			}
-		},
+		// TODO: Remove `as any`.
+		} as any,
 		CustomModelData: customModelData(0),
 		title: pack.title,
 		author: vt.title,
