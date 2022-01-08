@@ -1,6 +1,14 @@
 import type { VersionString } from 'lib/datapacks/ResourceLocation/Version';
 import type Version from 'lib/datapacks/ResourceLocation/Version';
 
+type GetPath<ResourceLocationString extends string> = (
+	ResourceLocationString extends `${string}:${infer Path}`
+		? Path
+		: string extends ResourceLocationString
+			? string | undefined
+			: undefined
+);
+
 export type ResourceLocationOptions<
 	Title extends string | undefined = string | undefined,
 	GenericVersion extends VersionString | undefined = VersionString | undefined
@@ -22,16 +30,12 @@ type ResourceLocationInstanceFunction = (
 ) => string;
 
 type ResourceLocationInstanceProperties<
-	Base extends string = string,
+	Path extends string | undefined = string | undefined,
 	Title extends string | undefined = string | undefined,
 	GenericVersion extends VersionString | undefined = VersionString | undefined
 > = Readonly<{
 	namespace: string,
-	path: (
-		Base extends `${string}:${string}`
-			? string
-			: string | undefined
-	),
+	path: Path,
 	/** Creates a new `ResourceLocation` with a base path relative to the parent resource location. */
 	child: <
 		ChildTitle extends string | undefined = string | undefined,
@@ -47,16 +51,16 @@ type ResourceLocationInstanceProperties<
 		 */
 		relativePath: string,
 		options?: ResourceLocationOptions<ChildTitle, ChildVersion>
-	) => ResourceLocationInstance<`${string}:${string}`, ChildTitle, ChildVersion>,
+	) => ResourceLocationInstance<string, ChildTitle, ChildVersion>,
 	title: Title,
 	version: GenericVersion extends string ? Version : undefined
 }>;
 
 export type ResourceLocationInstance<
-	Base extends string = string,
+	Path extends string | undefined = string | undefined,
 	Title extends string | undefined = string | undefined,
 	GenericVersion extends VersionString | undefined = VersionString | undefined
-> = ResourceLocationInstanceFunction & ResourceLocationInstanceProperties<Base, Title, GenericVersion>;
+> = ResourceLocationInstanceFunction & ResourceLocationInstanceProperties<Path, Title, GenericVersion>;
 
 /** A resource location path named to discourage players from running functions and function tags under it. */
 const PRIVATE_PATH = 'zz/do_not_run_or_packs_may_break';
@@ -106,7 +110,7 @@ const ResourceLocation = <
 	 */
 	base: Base,
 	options: ResourceLocationOptions<Title, GenericVersion> = {}
-): ResourceLocationInstance<Base, Title, GenericVersion> => {
+): ResourceLocationInstance<GetPath<Base>, Title, GenericVersion> => {
 	const nameTest = (
 		options.external
 			// Accepts anything that Minecraft accepts (except empty string).
@@ -159,7 +163,7 @@ const ResourceLocation = <
 		});
 	}
 
-	const resourceLocation: ResourceLocationInstance<Base, Title, GenericVersion> = Object.assign<ResourceLocationInstanceFunction, ResourceLocationInstanceProperties<Base, Title, GenericVersion>>(
+	const resourceLocation: ResourceLocationInstance<GetPath<Base>, Title, GenericVersion> = Object.assign<ResourceLocationInstanceFunction, ResourceLocationInstanceProperties<GetPath<Base>, Title, GenericVersion>>(
 		(template, ...substitutions) => {
 			const input = template.map((string, i) => string + (i in substitutions ? substitutions[i] : '')).join('');
 
