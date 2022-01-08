@@ -2,7 +2,7 @@ import getItemDataPath from 'lib/datapacks/getItemDataPath';
 import pack from 'lib/datapacks/pack';
 import { ItemModifier, MCFunction } from 'sandstone';
 
-const itemData = getItemDataPath(pack);
+const itemData = getItemDataPath();
 
 export const copyStorageToBook = ItemModifier(pack`copy_storage_to_book`, {
 	// TODO: Remove `as 'copy_nbt'`.
