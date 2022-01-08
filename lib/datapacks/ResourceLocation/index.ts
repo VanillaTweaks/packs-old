@@ -19,7 +19,7 @@ export type ResourceLocationOptions<
 	/**
 	 * Whether the `ResourceLocation` represents an outside namespace rather than one originating from Vanilla Tweaks.
 	 *
-	 * Setting this to `true` disables the `PRIVATE_PATH` shorthand and strict name checks.
+	 * If `true`, disables strict name checks.
 	 */
 	external?: boolean
 };
@@ -50,7 +50,7 @@ type ResourceLocationInstanceProperties<
 		 * * `'some/path'`
 		 */
 		relativePath: string,
-		options?: ResourceLocationOptions<ChildTitle, ChildVersion>
+		options?: Omit<ResourceLocationOptions<ChildTitle, ChildVersion>, 'external'>
 	) => ResourceLocationInstance<string, ChildTitle, ChildVersion>,
 	title: Title,
 	version: GenericVersion extends string ? Version : undefined
@@ -93,6 +93,13 @@ const PRIVATE_PATH = 'zz/do_not_run_or_packs_may_break';
  *
  * namespace`.thing_1` === 'namespace.thing_1'
  * path`.thing_2` === 'namespace.path.thing_2'
+ *
+ * const externalAPI = path.child('external:api', { external: true });
+ *
+ * externalAPI`_test` === `external:${PRIVATE_PATH}/api/test`
+ * externalAPI`\_test` === 'external:api/_test'
+ * externalAPI`.test` === 'external.api.test'
+ * externalAPI`\.test` === 'external:api/.test'
  * ```
  */
 const ResourceLocation = <
@@ -111,22 +118,18 @@ const ResourceLocation = <
 	base: Base,
 	options: ResourceLocationOptions<Title, GenericVersion> = {}
 ): ResourceLocationInstance<GetPath<Base>, Title, GenericVersion> => {
-	const nameTest = (
-		options.external
-			// Accepts anything that Minecraft accepts (except empty string).
-			? /^[a-z0-9_.-]+$/
-			// Accepts only names which follow our naming conventions.
-			: /^[a-z0-9]+(?:_[a-z0-9]+)*$/
-	);
-
 	/**
 	 * Ensures a namespace, directory, or resource name is valid and conventional.
 	 *
 	 * Unless the `external` option is `true`, this is intentionally more restrictive than Minecraft's requirements for namespace or directory names.
 	 */
 	const checkName = (name: string) => {
-		if (!nameTest.test(name)) {
-			throw new TypeError(`The following name is invalid or unconventional: ${JSON.stringify(name)}`);
+		if (!/^[a-z0-9_.-]+$/.test(name)) {
+			throw new TypeError(`The following name is invalid: ${JSON.stringify(name)}`);
+		}
+
+		if (!options.external && !/^[a-z0-9]+(?:_[a-z0-9]+)*$/.test(name)) {
+			throw new TypeError(`The following name is unconventional: ${JSON.stringify(name)}`);
 		}
 	};
 
@@ -165,48 +168,57 @@ const ResourceLocation = <
 
 	const resourceLocation: ResourceLocationInstance<GetPath<Base>, Title, GenericVersion> = Object.assign<ResourceLocationInstanceFunction, ResourceLocationInstanceProperties<GetPath<Base>, Title, GenericVersion>>(
 		(template, ...substitutions) => {
-			const input = template.map((string, i) => string + (i in substitutions ? substitutions[i] : '')).join('');
+			let input = template.map((string, i) => string + (i in substitutions ? substitutions[i] : '')).join('');
+			/**
+			 * Same as `input` but includes escape characters.
+			 *
+			 * Check this for special characters rather than `input` to ensure the special characters aren't escaped.
+			 */
+			let rawInput = template.raw.map((string, i) => string + (i in substitutions ? substitutions[i] : '')).join('');
 
-			if (input.startsWith('.')) {
+			if (rawInput.startsWith('.')) {
 				const inputSegments = input.slice(1).split('.');
 				inputSegments.forEach(checkName);
 
-				if (input.startsWith('.')) {
-					return [
-						namespace,
-						...pathSegments,
-						...inputSegments
-					].join('.');
-				}
+				return [
+					namespace,
+					...pathSegments,
+					...inputSegments
+				].join('.');
 			}
 
-			if (input.startsWith('#')) {
-				return '#' + resourceLocation`${input.slice(1)}`;
+			let startsWithHash = false;
+			if (rawInput.startsWith('#')) {
+				startsWithHash = true;
+				rawInput = rawInput.slice(1);
+				input = input.slice(1);
 			}
 
 			const inputSegments = input.split('/');
-			const lastInputSegment = inputSegments[inputSegments.length - 1];
-
 			const outputSegments = [...pathSegments];
 
-			if (!options.external && lastInputSegment.startsWith('_')) {
-				inputSegments[inputSegments.length - 1] = lastInputSegment.slice(1);
+			if (rawInput[rawInput.lastIndexOf('/') + 1] === '_') {
+				inputSegments[inputSegments.length - 1] = inputSegments[inputSegments.length - 1].slice(1);
 				outputSegments.unshift(PRIVATE_PATH);
 			}
 
 			inputSegments.forEach(checkName);
 			outputSegments.push(...inputSegments);
 
-			return `${namespace}:` + outputSegments.join('/');
+			return (
+				(startsWithHash ? '#' : '')
+				+ `${namespace}:`
+				+ outputSegments.join('/')
+			);
 		},
 		{
 			namespace,
 			path: path as any,
 			child: (relativePath, childOptions) => (
-				ResourceLocation(
-					resourceLocation`${relativePath}` as `${string}:${string}`,
-					childOptions
-				)
+				ResourceLocation(resourceLocation`${relativePath}` as `${string}:${string}`, {
+					external: options.external,
+					...childOptions
+				})
 			),
 			title: options.title as any,
 			version: version as any
