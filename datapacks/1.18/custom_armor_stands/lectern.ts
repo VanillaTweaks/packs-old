@@ -9,11 +9,6 @@ const lectern = pack.child('lectern');
 export const lecternID = objective(pack, 'lectern_id');
 const $lastValue = lecternID('$last_value');
 
-// TODO: Replace all `lecternTag` with `` pack`.lectern` ``.
-const lecternTag = 'custom_armor_stands.lectern';
-// TODO: Replace all `newTag` with `` pack`.new` ``.
-const newTag = 'custom_armor_stands.new';
-
 Advancement(lectern`use`, {
 	criteria: {
 		requirement: {
@@ -48,11 +43,11 @@ Advancement(lectern`use`, {
 						// Mark the lectern so that it can be associated with the player who clicked it via a score.
 
 						summon('minecraft:marker', '~ ~ ~', {
-							Tags: [lecternTag, newTag]
+							Tags: [pack`.lectern`, pack`.new`]
 						});
 
 						execute
-							.store.result.score(`@e[tag=${newTag},distance=..0.01,limit=1]`, lecternID)
+							.store.result.score(`@e[tag=${pack`.new`},distance=..0.01,limit=1]`, lecternID)
 							.run.scoreboard.players.add($lastValue, 1);
 						scoreboard.players.operation('@s', lecternID, '=', $lastValue);
 					});
