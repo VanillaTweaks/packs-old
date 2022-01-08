@@ -1,18 +1,17 @@
 import type { MCFunctionInstance, TagInstance } from 'sandstone';
 import { execute, MCFunction, scoreboard, Tag } from 'sandstone';
 import every from 'lib/datapacks/every';
-import vt, { vt_ } from 'lib/datapacks/vt';
+import vt from 'lib/datapacks/vt';
 import objective from 'lib/datapacks/objective';
 import onLoad from 'lib/datapacks/pseudoEvents/onLoad';
-import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
-import internalBasePath from 'lib/datapacks/internalBasePath';
+import type { ResourceLocationInstance } from 'lib/datapacks/ResourceLocation';
 
-const playerJoinOrLoad = vt.child({ directory: 'player_join_or_load' });
+const playerJoinOrLoad = vt.child('player_join_or_load');
 
 const counter = objective(playerJoinOrLoad, 'counter');
 const $globalCounter = counter('$global');
 
-const playerJoinOrLoadTag = Tag('functions', vt_`player_join_or_load`);
+const playerJoinOrLoadTag = Tag('functions', vt`_player_join_or_load`);
 
 onLoad(playerJoinOrLoad, () => {
 	// Reset all counters (including the global counter) to ensure all players are detected as out of sync next time.
@@ -40,8 +39,8 @@ every('1t', playerJoinOrLoad, () => {
 /** Runs something as any player who joins the game and as `@a` on load. */
 const onPlayerJoinOrLoad = (
 	...args: [
-		/** The `BasePath` to put the `player_join_or_load` function under. */
-		basePath: VTBasePathInstance,
+		/** The `ResourceLocation` to put the `player_join_or_load` function under. */
+		resourceLocation: ResourceLocationInstance,
 		callback: () => void
 	] | [
 		/** The function or function tag to add to the `playerJoinOrLoadTag`. */
@@ -53,10 +52,9 @@ const onPlayerJoinOrLoad = (
 	if (args.length === 1) {
 		[functionOrFunctionTag] = args;
 	} else {
-		const [basePath, callback] = args;
-		const basePath_ = internalBasePath(basePath);
+		const [resourceLocation, callback] = args;
 
-		functionOrFunctionTag = MCFunction(basePath_`player_join_or_load`, callback, {
+		functionOrFunctionTag = MCFunction(resourceLocation`_player_join_or_load`, callback, {
 			onConflict: 'append'
 		});
 	}

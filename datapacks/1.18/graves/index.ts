@@ -1,4 +1,4 @@
-import pack, { pack_ } from 'lib/datapacks/pack';
+import pack from 'lib/datapacks/pack';
 import { Advancement, advancement, data, execute, MCFunction, NBT, schedule, tag } from 'sandstone';
 import setMetaAdvancements from 'lib/datapacks/setMetaAdvancements';
 import setConfigFunction from 'lib/datapacks/setConfigFunction';
@@ -34,7 +34,7 @@ setConfigFunction(pack, () => {
 
 });
 
-const activateGrave = MCFunction(pack_`activate_grave`, () => {
+const activateGrave = MCFunction(pack`_activate_grave`, () => {
 	advancement.revoke('@s').only(interactWithGraveAdvancement);
 	tag('@s').add('graves.subject');
 
@@ -44,7 +44,7 @@ const activateGrave = MCFunction(pack_`activate_grave`, () => {
 		.run.data.get.entity('@s', 'Inventory[{tag:{gravesData:{activator:1b}}}].tag.gravesData.id');
 
 	// Check which grave matches that ID and tag it as activated.
-	execute.as('@e[type=minecraft:armor_stand,tag=graves.hitbox]').run(pack_`check_hitbox`, () => {
+	execute.as('@e[type=minecraft:armor_stand,tag=graves.hitbox]').run(pack`_check_hitbox`, () => {
 		execute
 			.store.result.score('@s', 'graves.id')
 			.run.data.get.entity('@s', 'HandItems[1].tag.gravesData.id');
@@ -54,7 +54,7 @@ const activateGrave = MCFunction(pack_`activate_grave`, () => {
 	});
 
 	// If grave robbing is disabled and they didn't use a grave key,
-	execute.if.score('$robbing', 'graves.config', 'matches', 0).unless.data.entity('@e[type=minecraft:armor_stand,tag=graves.activated,limit=1]', 'ArmorItems[{tag:{gravesKey:1b}}]').run(pack_`check_owner`, () => {
+	execute.if.score('$robbing', 'graves.config', 'matches', 0).unless.data.entity('@e[type=minecraft:armor_stand,tag=graves.activated,limit=1]', 'ArmorItems[{tag:{gravesKey:1b}}]').run(pack`_check_owner`, () => {
 		data.modify.storage('graves:storage', 'temp').set.from.entity('@s', 'UUID');
 		execute
 			.store.success.score('$success', 'graves.dummy')
@@ -79,9 +79,9 @@ const interactWithGraveAdvancement = Advancement(pack`interact_with_grave`, {
 	},
 	rewards: {
 		function: (
-			MCFunction(pack_`interact_with_grave`, () => {
+			MCFunction(pack`_interact_with_grave`, () => {
 				activateGrave();
-				schedule.function(pack_`activate_graves`, () => {
+				schedule.function(pack`_activate_graves`, () => {
 					execute
 						.as(`@a[advancements={${interactWithGraveAdvancement}=true}]`)
 						.at('@s')

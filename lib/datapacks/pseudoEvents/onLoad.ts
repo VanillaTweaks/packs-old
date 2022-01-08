@@ -1,5 +1,4 @@
-import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
-import internalBasePath from 'lib/datapacks/internalBasePath';
+import type { ResourceLocationInstance } from 'lib/datapacks/ResourceLocation';
 import { loadTag } from 'lib/datapacks/lanternLoad';
 import { MCFunction } from 'sandstone';
 import pack from 'lib/datapacks/pack';
@@ -7,18 +6,16 @@ import beforeSave from 'lib/beforeSave';
 import setLoadStatus from 'lib/datapacks/lanternLoad/setLoadStatus';
 import vt from 'lib/datapacks/vt';
 
-/** Adds to a `BasePath`'s `load` function, which is (indirectly) called by `#minecraft:load`. */
+/** Adds to a `ResourceLocation`'s `load` function, which is (indirectly) called by `#minecraft:load`. */
 const onLoad = (
-	/** The `BasePath` to put the `load` function under. */
-	basePath: VTBasePathInstance,
+	/** The `ResourceLocation` to put the `load` function under. */
+	resourceLocation: ResourceLocationInstance,
 	callback: () => void
 ) => {
 	setLoadStatus(vt);
-	setLoadStatus(basePath);
+	setLoadStatus(resourceLocation);
 
-	const basePath_ = internalBasePath(basePath);
-
-	const loadFunction = MCFunction(basePath_`load`, callback, {
+	const loadFunction = MCFunction(resourceLocation`_load`, callback, {
 		onConflict: 'append'
 	});
 
@@ -27,7 +24,7 @@ const onLoad = (
 		// TODO: Remove `as any`.
 		loadTag.add(loadFunction as any);
 
-		if (basePath === pack) {
+		if (resourceLocation === pack) {
 			beforeSave(import('lib/datapacks/faultChecking/checkLoadTagNotLoaded'));
 		}
 	}

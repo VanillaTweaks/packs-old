@@ -3,10 +3,9 @@
 import type { AdvancementInstance, PredicateCondition } from 'sandstone';
 import { advancement, Advancement, execute, MCFunction, Predicate, schedule, scoreboard, Tag, tellraw } from 'sandstone';
 import vt from 'lib/datapacks/vt';
-import internalBasePath from 'lib/datapacks/internalBasePath';
 import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';
 import loadStatusOf from 'lib/datapacks/lanternLoad/loadStatusOf';
-import pack, { pack_ } from 'lib/datapacks/pack';
+import pack from 'lib/datapacks/pack';
 import { loadStatus } from 'lib/datapacks/lanternLoad';
 import onLoad from 'lib/datapacks/pseudoEvents/onLoad';
 import temp from 'lib/datapacks/temp';
@@ -15,28 +14,27 @@ import { fplTooLowAdvancement } from 'lib/datapacks/faultChecking/checkFunctionP
 import onPlayerJoinOrLoad from 'lib/datapacks/pseudoEvents/onPlayerLoadOrJoin';
 import vtNotUninstalled from 'lib/datapacks/faultChecking/vtNotUninstalled';
 
-const loadTagNotLoaded = vt.child({ directory: 'load_tag_not_loaded' });
-const loadTagNotLoaded_ = internalBasePath(loadTagNotLoaded);
+const loadTagNotLoaded = vt.child('load_tag_not_loaded');
 
 const $vtLoadStatus = loadStatusOf(vt);
 const $packLoadStatus = loadStatusOf(pack);
 
 /** A score set to 1 when the `warn` is currently `schedule`d. */
-const $warnScheduled = temp(`$${loadTagNotLoaded.directory}.warnScheduled`);
+const $warnScheduled = temp(`$${loadTagNotLoaded.path}.warnScheduled`);
 
 /** Schedules the `tickTag` to run after 1 tick. */
-const scheduleTick = MCFunction(loadTagNotLoaded_`schedule_tick`, () => {
+const scheduleTick = MCFunction(loadTagNotLoaded`_schedule_tick`, () => {
 	schedule.function(tickTag, '1t');
 });
 
 /** A function tag which runs as close as possible to every tick in case `#minecraft:load` isn't working, using advancement reward functions and `#minecraft:tick`. */
-const tickTag = Tag('functions', loadTagNotLoaded_`tick`, [
+const tickTag = Tag('functions', loadTagNotLoaded`_tick`, [
 	// In case the `maxCommandChainLength` is 1 (the minimum value), ensure that only the first command of each function in this tag is necessary for `fixMaxCommandChainLength` to work.
-	MCFunction(loadTagNotLoaded_`tick`, () => {
+	MCFunction(loadTagNotLoaded`_tick`, () => {
 		// Add the `loadStatus` objective, so that `loadStatus` score checks work for the rest of the `tickTag`.
 		scoreboard.objectives.add(loadStatus, 'dummy');
 	}),
-	MCFunction(loadTagNotLoaded_`add_temp_objective`, () => {
+	MCFunction(loadTagNotLoaded`_add_temp_objective`, () => {
 		// Add the `temp` objective if VT isn't uninstalled, so that `temp` score checks work for the rest of the `tickTag`.
 		execute
 			.unless($vtLoadStatus.matches(-1))
@@ -46,7 +44,7 @@ const tickTag = Tag('functions', loadTagNotLoaded_`tick`, [
 	scheduleFixMaxCommandChainLength,
 	// The reason `tickTag` is scheduled after `fixMaxCommandChainLengthTag` rather than before is so that, when `tickTag` runs in the next tick, the `maxCommandChainLength` will already have been fixed since `fixMaxCommandChainLengthTag` was scheduled first.
 	scheduleTick,
-	MCFunction(pack_`load_tag_not_loaded/check`, () => {
+	MCFunction(pack`load_tag_not_loaded/_check`, () => {
 		// This method is unfortunately not foolproof, since it's possible that every pack's `loadStatus` could have been set by a past load despite the `#minecraft:load` tag currently being broken, but it covers most practical cases.
 		execute
 			// Don't warn if the pack's `loadStatus` is -1 (uninstalled) or 1 (loaded). We want to detect when it's installed but not loaded.
@@ -72,7 +70,7 @@ onUninstall(loadTagNotLoaded, () => {
 
 const HELP_URL = 'https://vanillatweaks.net/help/load-tag-not-loaded';
 
-const warn = MCFunction(loadTagNotLoaded_`warn`, () => {
+const warn = MCFunction(loadTagNotLoaded`_warn`, () => {
 	schedule.function(warn, `${60 * 2}s`);
 	// Replace all `$warnScheduled.target, $warnScheduled.objective` with `$warnScheduled`.
 	scoreboard.players.set($warnScheduled.target, $warnScheduled.objective, 1);
@@ -150,8 +148,7 @@ const tickTrialAdvancementChance: PredicateCondition = {
 };
 
 for (let i = 0; i <= TRIAL_ADVANCEMENT_COUNT; i++) {
-	// TODO: Use template tag here.
-	const tickTrialAdvancement = Advancement(loadTagNotLoaded.getResourceName(`tick_trials/${i === 0 ? 'root' : i}`), {
+	const tickTrialAdvancement = Advancement(loadTagNotLoaded`tick_trials/${i === 0 ? 'root' : i}`, {
 		...i !== 0 && {
 			parent: rootTickTrialAdvancement!
 		},

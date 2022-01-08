@@ -1,53 +1,53 @@
-import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
+import type { ResourceLocationInstance } from 'lib/datapacks/ResourceLocation';
 import { scoreboard } from 'sandstone';
 import { loadStatus } from 'lib/datapacks/lanternLoad';
 import onLoad from 'lib/datapacks/pseudoEvents/onLoad';
 import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';
 import loadStatusOf from 'lib/datapacks/lanternLoad/loadStatusOf';
 
-/** An array of the targets of `loadStatus` scores for the `BasePath`s which `setLoadStatus` has already been called on. */
+/** An array of the targets of `loadStatus` scores for the `ResourceLocation`s which `setLoadStatus` has already been called on. */
 const loadStatusTargets: string[] = [];
 
 /**
- * Sets a `BasePath`'s `loadStatus` score(s) `onLoad` and `onUninstall`.
+ * Sets a `ResourceLocation`'s `loadStatus` score(s) `onLoad` and `onUninstall`.
  *
- * ⚠️ This already runs automatically for any `BasePath` which `onLoad` is called on.
+ * ⚠️ This already runs automatically for any `ResourceLocation` which `onLoad` is called on.
  */
 const setLoadStatus = (
-	/** The `BasePath` to set the `loadStatus` score(s) of `onLoad` and `onUninstall`. */
-	basePath: VTBasePathInstance
+	/** The `ResourceLocation` to set the `loadStatus` score(s) of `onLoad` and `onUninstall`. */
+	resourceLocation: ResourceLocationInstance
 ) => {
-	const $basePathLoadStatus = loadStatusOf(basePath);
+	const $resourceLocationLoadStatus = loadStatusOf(resourceLocation);
 
-	const basePathLoadStatusTarget = $basePathLoadStatus.target.toString();
-	if (loadStatusTargets.includes(basePathLoadStatusTarget)) {
-		// Don't allow `setLoadStatus` to be called multiple times on the same `BasePath`.
+	const resourceLocationLoadStatusTarget = $resourceLocationLoadStatus.target.toString();
+	if (loadStatusTargets.includes(resourceLocationLoadStatusTarget)) {
+		// Don't allow `setLoadStatus` to be called multiple times on the same `ResourceLocation`.
 		return;
 	}
-	loadStatusTargets.push(basePathLoadStatusTarget);
+	loadStatusTargets.push(resourceLocationLoadStatusTarget);
 
-	onLoad(basePath, () => {
-		scoreboard.players.set($basePathLoadStatus, 1);
+	onLoad(resourceLocation, () => {
+		scoreboard.players.set($resourceLocationLoadStatus, 1);
 	});
 
-	onUninstall(basePath, () => {
+	onUninstall(resourceLocation, () => {
 		// Set to -1 instead of 0 so predicates can distinguish between uninstalled and not loaded.
-		scoreboard.players.set($basePathLoadStatus, -1);
+		scoreboard.players.set($resourceLocationLoadStatus, -1);
 	});
 
-	if (basePath.version) {
+	if (resourceLocation.version) {
 		for (const versionKey of ['major', 'minor', 'patch'] as const) {
-			onLoad(basePath, () => {
+			onLoad(resourceLocation, () => {
 				scoreboard.players.set(
-					`${$basePathLoadStatus.target}.${versionKey}`,
+					`${$resourceLocationLoadStatus.target}.${versionKey}`,
 					loadStatus,
-					basePath.version![versionKey]
+					resourceLocation.version![versionKey]
 				);
 			});
 
-			onUninstall(basePath, () => {
+			onUninstall(resourceLocation, () => {
 				scoreboard.players.set(
-					`${$basePathLoadStatus.target}.${versionKey}`,
+					`${$resourceLocationLoadStatus.target}.${versionKey}`,
 					loadStatus,
 					0
 				);

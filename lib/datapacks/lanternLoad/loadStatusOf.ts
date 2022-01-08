@@ -1,15 +1,15 @@
-import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
+import type { ResourceLocationInstance } from 'lib/datapacks/ResourceLocation';
 import { loadStatus } from 'lib/datapacks/lanternLoad';
 
-/** Gets the `loadStatus` score of a `BasePath`. */
+/** Gets the `loadStatus` score of a `ResourceLocation`. */
 const loadStatusOf = (
-	/** The `BasePath` to get the `loadStatus` score of. */
-	basePath: VTBasePathInstance
+	/** The `ResourceLocation` to get the `loadStatus` score of. */
+	resourceLocation: ResourceLocationInstance
 ) => (
 	loadStatus(
-		'$' + basePath.namespace + (
-			basePath.directory
-				? `.${basePath.directory.replace(/\//g, '.')}`
+		'$' + resourceLocation.namespace + (
+			resourceLocation.path
+				? `.${resourceLocation.path.replace(/\//g, '.')}`
 				: ''
 		)
 	)

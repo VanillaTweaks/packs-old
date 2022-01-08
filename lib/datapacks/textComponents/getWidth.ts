@@ -21,7 +21,7 @@ const MAX_LOW_SURROGATE_CHAR_CODE = 0xdfff;
 /** Gets the width in in-game pixels of the specified text component. */
 const getWidth = (
 	component: JSONTextComponent,
-	{ bold = false }: { bold?: boolean } = {}
+	{ bold = false } = {}
 ): number => {
 	const componentLines = split(component, '\n');
 

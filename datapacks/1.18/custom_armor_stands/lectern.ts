@@ -3,10 +3,8 @@ import pack from 'lib/datapacks/pack';
 import objective from 'lib/datapacks/objective';
 import checkLoadStatus from 'lib/datapacks/lanternLoad/checkLoadStatus';
 import temp from 'lib/datapacks/temp';
-import internalBasePath from 'lib/datapacks/internalBasePath';
 
-const lectern = pack.child({ directory: 'lectern' });
-const lectern_ = internalBasePath(pack);
+const lectern = pack.child('lectern');
 
 export const lecternID = objective(pack, 'lectern_id');
 const $lastValue = lecternID('$last_value');
@@ -37,16 +35,16 @@ Advancement(lectern`use`, {
 		}
 	},
 	rewards: {
-		function: MCFunction(lectern_`use`, () => {
+		function: MCFunction(lectern`_use`, () => {
 			/** A score of the number of steps which have occurred in the lectern raycast. */
 			const $steps = temp('$steps');
 
 			scoreboard.players.set($steps, 0);
 
-			MCFunction(lectern_`find`, function () {
+			MCFunction(lectern`_find`, function () {
 				execute
 					.if.block('~ ~ ~', 'minecraft:lectern')
-					.run(lectern_`mark`, () => {
+					.run(lectern`_mark`, () => {
 						// Mark the lectern so that it can be associated with the player who clicked it via a score.
 
 						summon('minecraft:marker', '~ ~ ~', {

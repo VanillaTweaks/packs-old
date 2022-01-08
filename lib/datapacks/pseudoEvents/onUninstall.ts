@@ -1,33 +1,30 @@
-import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
+import type { ResourceLocationInstance } from 'lib/datapacks/ResourceLocation';
 import pack from 'lib/datapacks/pack';
 import { Tag, MCFunction, functionCmd } from 'sandstone';
-import vt, { vt_ } from 'lib/datapacks/vt';
-import internalBasePath from 'lib/datapacks/internalBasePath';
+import vt from 'lib/datapacks/vt';
 import { setHasUninstallFunction } from 'lib/datapacks/setMetaAdvancements';
 
-const uninstallTag = Tag('functions', vt_`uninstall`);
+const uninstallTag = Tag('functions', vt`_uninstall`);
 
 MCFunction(vt`uninstall`, () => {
 	// TODO: Use `uninstallTag()` instead.
 	functionCmd(uninstallTag);
 });
 
-/** Adds to a `BasePath`'s uninstall function. */
+/** Adds to a `ResourceLocation`'s uninstall function. */
 const onUninstall = (
-	basePath: VTBasePathInstance,
+	resourceLocation: ResourceLocationInstance,
 	callback: () => void
 ) => {
 	let uninstallFunctionName;
 
-	if (basePath === pack) {
+	if (resourceLocation === pack) {
 		setHasUninstallFunction(true);
 
-		uninstallFunctionName = basePath`uninstall`;
+		uninstallFunctionName = resourceLocation`uninstall`;
 	} else {
-		const basePath_ = internalBasePath(basePath);
-
-		// If this uninstall function is for a `BasePath` other than `pack`, then it should not be publicly accessible, because that would allow people to run it despite other packs still depending on the `BasePath` being fully installed and running.
-		uninstallFunctionName = basePath_`uninstall`;
+		// If this uninstall function is for a `ResourceLocation` other than `pack`, then it should not be publicly accessible, because that would allow people to run it despite other packs still depending on the `ResourceLocation` being fully installed and running.
+		uninstallFunctionName = resourceLocation`_uninstall`;
 	}
 
 	const uninstallFunction = MCFunction(uninstallFunctionName, callback, {

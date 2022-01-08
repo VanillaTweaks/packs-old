@@ -1,4 +1,4 @@
-import { vt_ } from 'lib/datapacks/vt';
+import vt from 'lib/datapacks/vt';
 import { execute, gamerule, schedule } from 'sandstone';
 import temp from 'lib/datapacks/temp';
 
@@ -11,10 +11,10 @@ const hideCommandFeedback = () => {
 		.run.gamerule('sendCommandFeedback');
 	execute
 		.if($sendCommandFeedback.matches(1))
-		.run(vt_`hide_command_feedback`, () => {
+		.run(vt`_hide_command_feedback`, () => {
 			gamerule('sendCommandFeedback', false);
 
-			schedule.function(vt_`restore_command_feedback`, () => {
+			schedule.function(vt`_restore_command_feedback`, () => {
 				gamerule('sendCommandFeedback', true);
 			}, '1t');
 		});

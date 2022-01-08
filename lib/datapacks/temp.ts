@@ -1,14 +1,11 @@
 import { MCFunction, Objective, scoreboard } from 'sandstone';
 import vt from 'lib/datapacks/vt';
-import internalBasePath from 'lib/datapacks/internalBasePath';
 import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';
 
-const tempObjective = vt.child({ directory: 'temp_objective' });
-const tempObjective_ = internalBasePath(tempObjective);
+const tempObjective = vt.child('temp_objective');
 
 /** An objective only for temporary scores that can safely be reset anytime. */
-// TODO: Use `` vt`.temp` `` instead of `'vanillatweaks.temp'`.
-const temp = Objective.get('vanillatweaks.temp');
+const temp = Objective.get(vt`.temp`);
 
 export default temp;
 
@@ -17,7 +14,7 @@ export default temp;
  *
  * ⚠️ Should only ever be called from `preLoadTag`.
  */
-export const loadTempObjective = MCFunction(tempObjective_`load`, () => {
+export const loadTempObjective = MCFunction(tempObjective`_load`, () => {
 	// Adding the temp objective must be the first command in the function so that it still runs when the `maxCommandChainLength` is 1.
 	scoreboard.objectives.add(temp, 'dummy');
 

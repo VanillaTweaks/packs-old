@@ -2,12 +2,10 @@
 
 import { advancement, Advancement, MCFunction, me } from 'sandstone';
 import vt from 'lib/datapacks/vt';
-import internalBasePath from 'lib/datapacks/internalBasePath';
 import onPlayerJoinOrLoad from 'lib/datapacks/pseudoEvents/onPlayerLoadOrJoin';
 import vtNotUninstalled from 'lib/datapacks/faultChecking/vtNotUninstalled';
 
-const functionPermissionLevel = vt.child({ directory: 'function_permission_level' });
-const functionPermissionLevel_ = internalBasePath(functionPermissionLevel);
+const functionPermissionLevel = vt.child('function_permission_level');
 
 const rootAdvancement = Advancement(functionPermissionLevel`root`, {
 	criteria: {
@@ -29,7 +27,7 @@ export const fplTooLowAdvancement = Advancement(functionPermissionLevel`too_low`
 		}
 	},
 	rewards: {
-		function: MCFunction(functionPermissionLevel_`tick_advancement_reward`, () => {
+		function: MCFunction(functionPermissionLevel`_tick_advancement_reward`, () => {
 			// Revoke immediately so that no player can ever have this advancement for a full tick as long as the `function-permission-level` isn't too low.
 			advancement.revoke('@s').only(fplTooLowAdvancement);
 		})
@@ -58,7 +56,7 @@ Advancement(functionPermissionLevel`warn`, {
 		}
 	},
 	rewards: {
-		function: MCFunction(functionPermissionLevel_`warn`, () => {
+		function: MCFunction(functionPermissionLevel`_warn`, () => {
 			// This function must only use commands that don't require any permission level, such as `/me`.
 			// Additionally, since `fixMaxCommandChainLength` doesn't work when the `function-permission-level` is too low, this function ideally should only have one command.
 

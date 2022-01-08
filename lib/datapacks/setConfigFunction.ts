@@ -1,18 +1,18 @@
 import pack from 'lib/datapacks/pack';
-import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
+import type { ResourceLocationInstance } from 'lib/datapacks/ResourceLocation';
 import { MCFunction } from 'sandstone';
 import { setHasConfigFunction } from 'lib/datapacks/setMetaAdvancements';
 
-/** Sets a `BasePath`'s config function. */
+/** Sets a `ResourceLocation`'s config function. */
 const setConfigFunction = (
-	basePath: VTBasePathInstance,
+	resourceLocation: ResourceLocationInstance,
 	callback: () => void
 ) => {
-	if (basePath === pack) {
+	if (resourceLocation === pack) {
 		setHasConfigFunction(true);
 	}
 
-	return MCFunction(basePath`config`, callback);
+	return MCFunction(resourceLocation`config`, callback);
 };
 
 export default setConfigFunction;

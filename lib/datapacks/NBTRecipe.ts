@@ -2,7 +2,7 @@ import { LootTable, NBT } from 'sandstone';
 import type { RecipeJSON, RootNBT } from 'sandstone';
 import type { FunctionRecipeJSON } from 'lib/datapacks/FunctionRecipe';
 import FunctionRecipe from 'lib/datapacks/FunctionRecipe';
-import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
+import type { ResourceLocationInstance } from 'lib/datapacks/ResourceLocation';
 import giveLootTable from 'lib/datapacks/giveLootTable';
 
 export type NBTRecipeJSON = Extract<RecipeJSON, { type: FunctionRecipeJSON['type'] }> & {
@@ -13,16 +13,15 @@ export type NBTRecipeJSON = Extract<RecipeJSON, { type: FunctionRecipeJSON['type
 
 /** A crafting recipe that outputs a knowledge book which gives the player an item with custom NBT when taken from the crafting output. */
 const NBTRecipe = (
-	/** The `BasePath` under which to create the necessary directories and resources. */
-	basePath: VTBasePathInstance,
+	/** The `ResourceLocation` under which to create the necessary directories and resources. */
+	resourceLocation: ResourceLocationInstance,
 	/** The non-namespaced name of the recipe. */
 	name: string,
 	recipeJSON: NBTRecipeJSON
 ) => {
-	const items = basePath.child({ directory: 'items' });
+	const items = resourceLocation.child('items');
 
-	// TODO: Replace `.getResourceName(name)` with `` `${name}` ``.
-	const itemLootTable = LootTable(items.getResourceName(name), {
+	const itemLootTable = LootTable(items`${name}`, {
 		type: 'minecraft:command',
 		pools: [{
 			rolls: 1,
@@ -38,7 +37,7 @@ const NBTRecipe = (
 		}]
 	});
 
-	FunctionRecipe(basePath, name, {
+	FunctionRecipe(resourceLocation, name, {
 		...recipeJSON,
 		result: () => {
 			const count = recipeJSON.result.count ?? 1;

@@ -1,16 +1,14 @@
-import type { VTBasePathInstance } from 'lib/datapacks/VTBasePath';
+import type { ResourceLocationInstance } from 'lib/datapacks/ResourceLocation';
 import { advancement, Advancement, execute, kill, MCFunction, NBT, recipe, Recipe, scoreboard } from 'sandstone';
 import type { RecipeJSON } from 'sandstone';
 import vt from 'lib/datapacks/vt';
-import internalBasePath from 'lib/datapacks/internalBasePath';
 import objective from 'lib/datapacks/objective';
 import every from 'lib/datapacks/every';
 import temp from 'lib/datapacks/temp';
 import type { UnionOmit } from 'lib/types';
 import checkLoadStatus from 'lib/datapacks/lanternLoad/checkLoadStatus';
 
-const vtFunctionRecipes = vt.child({ directory: 'function_recipes' });
-const vtFunctionRecipes_ = internalBasePath(vtFunctionRecipes);
+const vtFunctionRecipes = vt.child('function_recipes');
 
 const craftedKnowledgeBook = objective(vtFunctionRecipes, 'crafted_knowledge_book', 'minecraft.crafted:minecraft.knowledge_book');
 /** `@s`'s `craftedKnowledgeBook` score. */
@@ -29,27 +27,24 @@ export type FunctionRecipeJSON = UnionOmit<Extract<RecipeJSON, { result: { item:
 
 /** A crafting recipe that outputs a knowledge book which runs a specified callback `as` and `at` the player when taken from the crafting output. */
 const FunctionRecipe = (
-	/** The `BasePath` under which to create the necessary directories and resources. */
-	basePath: VTBasePathInstance,
+	/** The `ResourceLocation` under which to create the necessary directories and resources. */
+	resourceLocation: ResourceLocationInstance,
 	/** The non-namespaced name of the recipe. */
 	name: string,
 	recipeJSON: FunctionRecipeJSON
 ) => {
 	/** The crafting recipe that outputs a knowledge book. */
-	// TODO: Replace all `.getResourceName` with template tagging.
-	const functionRecipe = Recipe(basePath.getResourceName(name), {
+	const functionRecipe = Recipe(resourceLocation`${name}`, {
 		...recipeJSON,
 		result: {
 			item: 'minecraft:knowledge_book'
 		}
 	});
 
-	const recipes = basePath.child({ directory: 'recipes' });
+	const recipes = resourceLocation.child('recipes');
+	const functionRecipes = resourceLocation.child('function_recipes');
 
-	const functionRecipes = basePath.child({ directory: 'function_recipes' });
-	const functionRecipes_ = internalBasePath(functionRecipes);
-
-	const recipeUnlockedAdvancement = Advancement(recipes.getResourceName(name), {
+	const recipeUnlockedAdvancement = Advancement(recipes`${name}`, {
 		parent: Advancement(recipes`root`, {
 			criteria: {
 				impossible: {
@@ -68,7 +63,7 @@ const FunctionRecipe = (
 			}
 		},
 		rewards: {
-			function: MCFunction(functionRecipes_.getResourceName(`${name}/unlock`), () => {
+			function: MCFunction(functionRecipes`${name}/_unlock`, () => {
 				// This runs `as` and `at` any player who unlocks the recipe (e.g. due to crafting the recipe or using `/recipe give`).
 
 				advancement.revoke('@s').only(recipeUnlockedAdvancement);
@@ -79,8 +74,8 @@ const FunctionRecipe = (
 					// Check if they actually crafted a knowledge book and aren't unlocking the recipe by other means.
 					// TODO: Remove `as any`.
 					.if($craftedKnowledgeBook.matches('1..' as any))
-					.run(functionRecipes_.getResourceName(`${name}/craft`), () => {
-						MCFunction(vtFunctionRecipes_`craft`, () => {
+					.run(functionRecipes`${name}/_craft`, () => {
+						MCFunction(vtFunctionRecipes`_craft`, () => {
 							// This runs `as` and `at` any player who successfully crafts one of any `FunctionRecipe`.
 
 							// Try to delete the knowledge book.
@@ -94,7 +89,7 @@ const FunctionRecipe = (
 							execute
 								.if($clearedKnowledgeBook.matches(0))
 								// TODO: Don't wrap these arguments in `MCFunction`.
-								.run.schedule.function(MCFunction(vtFunctionRecipes_`kill_knowledge_book`, () => {
+								.run.schedule.function(MCFunction(vtFunctionRecipes`_kill_knowledge_book`, () => {
 									kill(`@e[type=item,limit=1,nbt=${
 										NBT.stringify({
 											Item: { id: 'minecraft:knowledge_book' }

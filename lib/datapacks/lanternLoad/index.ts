@@ -1,11 +1,11 @@
 // A faithful implementation of https://github.com/LanternMC/load.
 
 import { MCFunction, Objective, scoreboard, Tag } from 'sandstone';
-import VTBasePath from 'lib/datapacks/VTBasePath';
+import ResourceLocation from 'lib/datapacks/ResourceLocation';
 import { loadTempObjective } from 'lib/datapacks/temp';
 import { fixMaxCommandChainLengthTag } from 'lib/datapacks/faultChecking/fixMaxCommandChainLength';
 
-const lanternLoad = VTBasePath({ namespace: 'load' });
+const lanternLoad = ResourceLocation('load', { external: true });
 
 const preLoadTag = Tag('functions', lanternLoad`pre_load`, [
 	loadTempObjective,
@@ -15,8 +15,7 @@ const preLoadTag = Tag('functions', lanternLoad`pre_load`, [
 export const loadTag = Tag('functions', lanternLoad`load`);
 
 /** The [Lantern Load `load.status` objective](https://github.com/LanternMC/load#pack-versioning-specification). */
-// TODO: Replace `'load.status'` with `` lanternLoad`.status` ``.
-export const loadStatus = Objective.get('load.status');
+export const loadStatus = Objective.get(lanternLoad`.status`);
 
 Tag('functions', lanternLoad`_private/load`, [
 	Tag('functions', lanternLoad`_private/init`, [
@@ -27,8 +26,7 @@ Tag('functions', lanternLoad`_private/load`, [
 	]),
 	{ id: preLoadTag, required: false },
 	{ id: loadTag, required: false },
-	// TODO: Remove `'#' + ` and change `post_load` to `#post_load`.
-	{ id: '#' + lanternLoad`post_load`, required: false }
+	{ id: lanternLoad`#post_load`, required: false }
 ], {
 	runOnLoad: true
 });

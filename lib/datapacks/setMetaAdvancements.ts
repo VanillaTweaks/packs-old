@@ -67,8 +67,7 @@ const setMetaAdvancements = (options: {
 }) => {
 	let advancementIndex = 1;
 
-	// TODO: Use `pack` as a template tag.
-	let lastAdvancement = pack.Advancement(`meta/${advancementIndex++}`, {
+	let lastAdvancement = Advancement(pack`meta/${advancementIndex++}`, {
 		display: {
 			icon: options.root.icon,
 			title: minify([
@@ -165,8 +164,7 @@ const setMetaAdvancements = (options: {
 			if (advancementOptions) {
 				const metaAdvancementType = metaAdvancementsJSON[metaAdvancementKey];
 
-				// TODO: Use `pack` as a template tag.
-				lastAdvancement = pack.Advancement(`meta/${advancementIndex++}`, {
+				lastAdvancement = Advancement(pack`meta/${advancementIndex++}`, {
 					display: {
 						icon: metaAdvancementType.icon,
 						title: minify([
