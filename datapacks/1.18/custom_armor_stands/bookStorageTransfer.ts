@@ -1,8 +1,5 @@
-import getItemDataPath from 'lib/datapacks/getItemDataPath';
 import pack from 'lib/datapacks/pack';
 import { ItemModifier, MCFunction } from 'sandstone';
-
-const itemData = getItemDataPath();
 
 export const copyStorageToBook = ItemModifier(pack`copy_storage_to_book`, {
 	// TODO: Remove `as 'copy_nbt'`.
@@ -13,11 +10,11 @@ export const copyStorageToBook = ItemModifier(pack`copy_storage_to_book`, {
 	},
 	ops: [{
 		source: 'book',
-		target: itemData``,
+		target: `data.${pack.namespace}`,
 		op: 'replace'
 	}]
 });
 
 export const copyBookToStorage = MCFunction(pack`copy_book_to_storage`, () => {
-	// data.modify.storage(pack`main`, itemData``).set.from
+	// data.modify.storage(pack`main`, 'book').set.from
 });
