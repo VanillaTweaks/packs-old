@@ -94,7 +94,7 @@ const PRIVATE_PATH = 'zz/do_not_run_or_packs_may_break';
  * namespace`.thing_1` === 'namespace.thing_1'
  * path`.thing_2` === 'namespace.path.thing_2'
  *
- * const externalAPI = path.child('external:api', { external: true });
+ * const externalAPI = ResourceLocation('external:api', { external: true });
  *
  * externalAPI`_test` === `external:${PRIVATE_PATH}/api/test`
  * externalAPI`\_test` === 'external:api/_test'
