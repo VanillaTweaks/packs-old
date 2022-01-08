@@ -1,6 +1,9 @@
 import type { VersionString } from 'lib/datapacks/ResourceLocation/Version';
 import type Version from 'lib/datapacks/ResourceLocation/Version';
 
+/** A resource location path named to discourage players from running functions and function tags under it. */
+const PRIVATE_PATH = 'zz/do_not_run_or_packs_may_break';
+
 type GetPath<ResourceLocationString extends string> = (
 	ResourceLocationString extends `${string}:${infer Path}`
 		? Path
@@ -61,9 +64,6 @@ export type ResourceLocationInstance<
 	Title extends string | undefined = string | undefined,
 	GenericVersion extends VersionString | undefined = VersionString | undefined
 > = ResourceLocationInstanceFunction & ResourceLocationInstanceProperties<Path, Title, GenericVersion>;
-
-/** A resource location path named to discourage players from running functions and function tags under it. */
-const PRIVATE_PATH = 'zz/do_not_run_or_packs_may_break';
 
 /**
  * A constructor for a representation of a Minecraft resource location (namespaced path).
