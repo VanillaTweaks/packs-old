@@ -4,14 +4,6 @@ import type Version from 'lib/datapacks/ResourceLocation/Version';
 /** A resource location path named to discourage players from running functions and function tags under it. */
 const PRIVATE_PATH = 'zz/do_not_run_or_packs_may_break';
 
-type GetPath<ResourceLocationString extends string> = (
-	ResourceLocationString extends `${string}:${infer Path}`
-		? Path
-		: string extends ResourceLocationString
-			? string | undefined
-			: undefined
-);
-
 export type ResourceLocationOptions<
 	Title extends string | undefined = string | undefined,
 	GenericVersion extends VersionString | undefined = VersionString | undefined
@@ -29,15 +21,16 @@ export type ResourceLocationOptions<
 
 type ResourceLocationInstanceFunction = (
 	template: TemplateStringsArray,
-	...substitutions: any[]
+	...substitutions: unknown[]
 ) => string;
 
 type ResourceLocationInstanceProperties<
+	Namespace extends string = string,
 	Path extends string | undefined = string | undefined,
 	Title extends string | undefined = string | undefined,
 	GenericVersion extends VersionString | undefined = VersionString | undefined
 > = Readonly<{
-	namespace: string,
+	namespace: Namespace,
 	path: Path,
 	/** Creates a new `ResourceLocation` with a base path relative to the parent resource location. */
 	child: <
@@ -54,16 +47,17 @@ type ResourceLocationInstanceProperties<
 		 */
 		relativePath: string,
 		options?: Omit<ResourceLocationOptions<ChildTitle, ChildVersion>, 'external'>
-	) => ResourceLocationInstance<string, ChildTitle, ChildVersion>,
+	) => ResourceLocationInstance<Namespace, string, ChildTitle, ChildVersion>,
 	title: Title,
 	version: GenericVersion extends string ? Version : undefined
 }>;
 
 export type ResourceLocationInstance<
+	Namespace extends string = string,
 	Path extends string | undefined = string | undefined,
 	Title extends string | undefined = string | undefined,
 	GenericVersion extends VersionString | undefined = VersionString | undefined
-> = ResourceLocationInstanceFunction & ResourceLocationInstanceProperties<Path, Title, GenericVersion>;
+> = ResourceLocationInstanceFunction & ResourceLocationInstanceProperties<Namespace, Path, Title, GenericVersion>;
 
 /**
  * A constructor for a representation of a Minecraft resource location (namespaced path).
@@ -103,9 +97,10 @@ export type ResourceLocationInstance<
  * ```
  */
 const ResourceLocation = <
-	Base extends string = string,
-	Title extends string | undefined = string | undefined,
-	GenericVersion extends VersionString | undefined = VersionString | undefined
+	Namespace extends string = string,
+	Path extends string | undefined = undefined,
+	Title extends string | undefined = undefined,
+	GenericVersion extends VersionString | undefined = undefined
 >(
 	/**
 	 * The start of a Minecraft resource location string.
@@ -115,9 +110,9 @@ const ResourceLocation = <
 	 * * `'namespace'`
 	 * * `'namespace:some/path'`
 	 */
-	base: Base,
+	base: Namespace | `${Namespace}:${Path}`,
 	options: ResourceLocationOptions<Title, GenericVersion> = {}
-): ResourceLocationInstance<GetPath<Base>, Title, GenericVersion> => {
+): ResourceLocationInstance<Namespace, Path, Title, GenericVersion> => {
 	/**
 	 * Ensures a namespace, directory, or resource name is valid and conventional.
 	 *
@@ -139,14 +134,14 @@ const ResourceLocation = <
 		colonIndex === -1
 			? base
 			: base.slice(0, colonIndex)
-	);
+	) as Namespace;
 	checkName(namespace);
 
 	const path = (
 		colonIndex === -1
 			? undefined
 			: base.slice(colonIndex + 1)
-	);
+	) as Path;
 	let pathSegments: string[];
 	if (path) {
 		pathSegments = path.split('/');
@@ -166,7 +161,7 @@ const ResourceLocation = <
 		});
 	}
 
-	const resourceLocation: ResourceLocationInstance<GetPath<Base>, Title, GenericVersion> = Object.assign<ResourceLocationInstanceFunction, ResourceLocationInstanceProperties<GetPath<Base>, Title, GenericVersion>>(
+	const resourceLocation: ResourceLocationInstance<Namespace, Path, Title, GenericVersion> = Object.assign<ResourceLocationInstanceFunction, ResourceLocationInstanceProperties<Namespace, Path, Title, GenericVersion>>(
 		(template, ...substitutions) => {
 			let input = template.map((string, i) => string + (i in substitutions ? substitutions[i] : '')).join('');
 			/**
@@ -213,12 +208,15 @@ const ResourceLocation = <
 		},
 		{
 			namespace,
-			path: path as any,
+			path,
 			child: (relativePath, childOptions) => (
-				ResourceLocation(resourceLocation`${relativePath}` as `${string}:${string}`, {
-					external: options.external,
-					...childOptions
-				})
+				ResourceLocation(
+					`${namespace}:` + [...pathSegments, relativePath].join('/'),
+					{
+						external: options.external,
+						...childOptions
+					}
+				) as any
 			),
 			title: options.title as any,
 			version: version as any
