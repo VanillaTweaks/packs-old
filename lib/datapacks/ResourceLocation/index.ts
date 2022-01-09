@@ -4,6 +4,17 @@ import type Version from 'lib/datapacks/ResourceLocation/Version';
 /** A resource location path named to discourage players from running functions and function tags under it. */
 const PRIVATE_PATH = 'zz/do_not_run_or_packs_may_break';
 
+/** A type for invalid or unconventional snake case names which `ResourceLocationInstance` should not be mapped to a `string`. Unfortunately not comprehensive. */
+type InvalidNameString = (
+	`_${string}`
+	| `${string}_`
+	| `${string}__${string}`
+	| `${string}${'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z' | '$'}${string}`
+);
+
+/** Checks for a valid and conventional snake case name. */
+const nameTest = /^[a-z0-9]+(?:_[a-z0-9]+)*$/;
+
 export type ResourceLocationOptions<
 	Title extends string | undefined = string | undefined,
 	GenericVersion extends VersionString | undefined = VersionString | undefined
@@ -29,12 +40,12 @@ type ResourceLocationProperties<
 	Path extends string | undefined = string | undefined,
 	Title extends string | undefined = string | undefined,
 	GenericVersion extends VersionString | undefined = VersionString | undefined
-> = Readonly<{
+> = Readonly<Record<string, string> & Partial<Record<InvalidNameString, never>> & {
 	toString: () => string,
-	namespace: Namespace,
-	path: Path,
+	NAMESPACE: Namespace,
+	PATH: Path,
 	/** Creates a new `ResourceLocation` with a base path relative to the parent resource location. */
-	child: <
+	getChild: <
 		ChildTitle extends string | undefined = string | undefined,
 		ChildVersion extends VersionString | undefined = VersionString | undefined
 	>(
@@ -49,8 +60,8 @@ type ResourceLocationProperties<
 		relativePath: string,
 		options?: Omit<ResourceLocationOptions<ChildTitle, ChildVersion>, 'external'>
 	) => ResourceLocationInstance<Namespace, string, ChildTitle, ChildVersion>,
-	title: Title,
-	version: GenericVersion extends string ? Version : undefined
+	TITLE: Title,
+	VERSION: GenericVersion extends string ? Version : undefined
 }>;
 
 export type ResourceLocationInstance<
@@ -71,9 +82,9 @@ export type ResourceLocationInstance<
  * ```
  * const namespace = ResourceLocation('namespace');
  * const somethingElse = ResourceLocation('something:else');
- * const path = namespace.child('path');
- * const anotherPath = namespace.child('another/path');
- * const subpath = path.child('subpath');
+ * const path = namespace.getChild('path');
+ * const anotherPath = namespace.getChild('another/path');
+ * const subpath = path.getChild('subpath');
  *
  * namespace`resource` === 'namespace:resource'
  * path`resource` === 'namespace:path/resource'
@@ -89,15 +100,13 @@ export type ResourceLocationInstance<
  * namespace`#path/function_tag` === '#namespace:path/function_tag'
  * namespace`#path/_function_tag` === `#namespace:${PRIVATE_PATH}/path/function_tag`
  *
- * namespace`.thing_1` === 'namespace.thing_1'
- * path`.thing_2` === 'namespace.path.thing_2'
+ * namespace.thing_1 === 'namespace.thing_1'
+ * path.thing_2 === 'namespace.path.thing_2'
  *
  * const externalAPI = ResourceLocation('external:api', { external: true });
  *
  * externalAPI`_test` === `external:${PRIVATE_PATH}/api/test`
  * externalAPI`\_test` === 'external:api/_test'
- * externalAPI`.test` === 'external.api.test'
- * externalAPI`\.test` === 'external:api/.test'
  *
  * ResourceLocation(base).toString() === base
  * ```
@@ -133,7 +142,7 @@ const ResourceLocation = <
 			throw new TypeError(`The following name is invalid: ${JSON.stringify(name)}`);
 		}
 
-		if (!options.external && !/^[a-z0-9]+(?:_[a-z0-9]+)*$/.test(name)) {
+		if (!options.external && !nameTest.test(name)) {
 			throw new TypeError(`The following name is unconventional: ${JSON.stringify(name)}`);
 		}
 	};
@@ -180,17 +189,6 @@ const ResourceLocation = <
 		 */
 		let rawInput = template.raw.map((string, i) => string + (i in substitutions ? substitutions[i] : '')).join('');
 
-		if (rawInput.startsWith('.')) {
-			const inputSegments = input.slice(1).split('.');
-			inputSegments.forEach(checkName);
-
-			return [
-				namespace,
-				...pathSegments,
-				...inputSegments
-			].join('.');
-		}
-
 		let startsWithHash = false;
 		if (rawInput.startsWith('#')) {
 			startsWithHash = true;
@@ -216,28 +214,37 @@ const ResourceLocation = <
 		);
 	};
 
-	const properties: ResourceLocationProperties<Namespace, Path, Title, GenericVersion> = {
+	const properties = {
 		toString: () => base,
-		namespace,
-		path,
-		child: (relativePath, childOptions) => (
+		NAMESPACE: namespace,
+		PATH: path,
+		getChild: (relativePath, childOptions) => (
 			ResourceLocation(
 				`${namespace}:` + [...pathSegments, relativePath].join('/'),
 				{
 					external: options.external,
 					...childOptions
 				}
-			) as any
+			)
 		),
-		title: options.title as any,
-		version: version as any
-	};
+		TITLE: options.title,
+		VERSION: version
+	} as ResourceLocationProperties<Namespace, Path, Title, GenericVersion>;
 
-	const resourceLocation: ResourceLocationInstance<Namespace, Path, Title, GenericVersion> = (
-		Object.assign(templateTag, properties)
+	const instance: ResourceLocationInstance<Namespace, Path, Title, GenericVersion> = new Proxy(
+		Object.assign(templateTag, properties),
+		{
+			get(target, key) {
+				if (typeof key === 'string' && nameTest.test(key)) {
+					return [namespace, ...pathSegments, key].join('.');
+				}
+
+				return target[key as any];
+			}
+		}
 	);
 
-	return resourceLocation;
+	return instance;
 };
 
 export default ResourceLocation;

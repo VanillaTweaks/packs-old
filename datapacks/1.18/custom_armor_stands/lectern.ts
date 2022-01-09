@@ -5,7 +5,7 @@ import checkLoadStatus from 'lib/datapacks/lanternLoad/checkLoadStatus';
 import temp from 'lib/datapacks/temp';
 import vt from 'lib/datapacks/vt';
 
-const lectern = pack.child('lectern');
+const lectern = pack.getChild('lectern');
 
 export const lecternID = objective(pack, 'lectern_id');
 const $lastValue = lecternID('$last_value');
@@ -20,7 +20,7 @@ Advancement(lectern`use`, {
 					block: {
 						nbt: NBT.stringify({
 							data: {
-								[vt.namespace]: {
+								[vt.NAMESPACE]: {
 									item: 'armor_stand_book'
 								}
 							}
@@ -44,11 +44,11 @@ Advancement(lectern`use`, {
 						// Mark the lectern so that it can be associated with the player who clicked it via a score.
 
 						summon('minecraft:marker', '~ ~ ~', {
-							Tags: [pack`.lectern`, pack`.new`]
+							Tags: [pack.lectern, pack.new]
 						});
 
 						execute
-							.store.result.score(`@e[tag=${pack`.new`},distance=..0.01,limit=1]`, lecternID)
+							.store.result.score(`@e[tag=${pack.new},distance=..0.01,limit=1]`, lecternID)
 							.run.scoreboard.players.add($lastValue, 1);
 						scoreboard.players.operation('@s', lecternID, '=', $lastValue);
 					});

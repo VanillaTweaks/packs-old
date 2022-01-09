@@ -12,26 +12,26 @@ import page from '../armorStandBook/page';
 const armorStandBookNBT: RootNBT = withContainer(BOOK, () => (
 	{
 		data: {
-			[vt.namespace]: {
+			[vt.NAMESPACE]: {
 				item: 'armor_stand_book'
 			},
-			[pack.namespace]: {
+			[pack.NAMESPACE]: {
 				pastActions: [],
 				futureActions: []
 			}
 		// TODO: Remove `as any`.
 		} as any,
 		CustomModelData: customModelData(0),
-		title: pack.title,
-		author: vt.title,
+		title: pack.TITLE,
+		author: vt.TITLE,
 		display: {
 			Name: JSON.stringify(
-				{ text: pack.title, color: 'gold', italic: false }
+				{ text: pack.TITLE, color: 'gold', italic: false }
 			)
 		},
 		pages: [
 			center([
-				{ text: pack.title, color: PAGE_TITLE_COLOR },
+				{ text: pack.TITLE, color: PAGE_TITLE_COLOR },
 				'\n\n',
 				{ text: 'To proceed, first select the armor stand you want to customize.', color: DETAILS_COLOR },
 				'\n\n',
@@ -43,7 +43,7 @@ const armorStandBookNBT: RootNBT = withContainer(BOOK, () => (
 			]),
 			[
 				center([
-					{ text: pack.title, color: PAGE_TITLE_COLOR },
+					{ text: pack.TITLE, color: PAGE_TITLE_COLOR },
 					'\n',
 					{ text: '⤺', color: CLICKABLE_COLOR, bold: true },
 					' ',

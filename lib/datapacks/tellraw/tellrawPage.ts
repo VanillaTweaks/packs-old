@@ -21,7 +21,7 @@ const tellrawPage = (
 	horizontalBar(targets);
 	tellraw(targets, overlap(
 		center([
-			options.title || pack.title,
+			options.title || pack.TITLE,
 			{ text: ' / ', color: 'gray' },
 			options.subtitle
 		]),

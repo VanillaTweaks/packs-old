@@ -41,7 +41,7 @@ NBTRecipe(pack, 'armor_stand_book', {
 	}
 });
 
-onTrigger(pack, pack.namespace, pack.title, trigger => {
+onTrigger(pack, pack.NAMESPACE, pack.TITLE, trigger => {
 	const $trigger = trigger('@s');
 
 

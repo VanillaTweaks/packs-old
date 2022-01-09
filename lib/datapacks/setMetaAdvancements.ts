@@ -71,7 +71,7 @@ const setMetaAdvancements = (options: {
 		display: {
 			icon: options.root.icon,
 			title: minify([
-				pack.title,
+				pack.TITLE,
 				padding(options.root.titlePadding || 0)
 			]),
 			description: options.root.description,
@@ -93,11 +93,11 @@ const setMetaAdvancements = (options: {
 						}
 					})
 				},
-				title: vt.title,
+				title: vt.TITLE,
 				frame: 'challenge',
 				description: [
 					'',
-					{ text: `All loaded ${vt.title} data packs\n`, color: 'gold' },
+					{ text: `All loaded ${vt.TITLE} data packs\n`, color: 'gold' },
 					{ text: 'vanillatweaks.net', color: 'yellow' }
 				],
 				background: 'minecraft:textures/block/black_concrete.png',

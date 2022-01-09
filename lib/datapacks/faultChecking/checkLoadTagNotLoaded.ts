@@ -14,7 +14,7 @@ import { fplTooLowAdvancement } from 'lib/datapacks/faultChecking/checkFunctionP
 import onPlayerJoinOrLoad from 'lib/datapacks/pseudoEvents/onPlayerLoadOrJoin';
 import vtNotUninstalled from 'lib/datapacks/faultChecking/vtNotUninstalled';
 
-const loadTagNotLoaded = vt.child('load_tag_not_loaded');
+const loadTagNotLoaded = vt.getChild('load_tag_not_loaded');
 
 const $vtLoadStatus = loadStatusOf(vt);
 const $packLoadStatus = loadStatusOf(pack);
@@ -77,7 +77,7 @@ const warn = MCFunction(loadTagNotLoaded`_warn`, () => {
 
 	tellraw('@a', [
 		'',
-		{ text: `At least one of this world's data packs has errors interfering with ${vt.title}. To fix this, `, color: 'red' },
+		{ text: `At least one of this world's data packs has errors interfering with ${vt.TITLE}. To fix this, `, color: 'red' },
 		{
 			text: 'click here',
 			color: 'gold',

@@ -15,7 +15,7 @@ const preLoadTag = Tag('functions', lanternLoad`pre_load`, [
 export const loadTag = Tag('functions', lanternLoad`load`);
 
 /** The [Lantern Load `load.status` objective](https://github.com/LanternMC/load#pack-versioning-specification). */
-export const loadStatus = Objective.get(lanternLoad`.status`);
+export const loadStatus = Objective.get(lanternLoad.status);
 
 Tag('functions', lanternLoad`_private/load`, [
 	Tag('functions', lanternLoad`_private/init`, [

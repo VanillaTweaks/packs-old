@@ -22,7 +22,7 @@ const objective = (
 ) => {
 	const objectiveInstance = Objective.get(
 		namespaced
-			? resourceLocation`.${objectiveName}`
+			? resourceLocation[objectiveName]
 			: objectiveName
 	);
 

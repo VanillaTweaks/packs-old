@@ -35,13 +35,13 @@ const setLoadStatus = (
 		scoreboard.players.set($resourceLocationLoadStatus, -1);
 	});
 
-	if (resourceLocation.version) {
+	if (resourceLocation.VERSION) {
 		for (const versionKey of ['major', 'minor', 'patch'] as const) {
 			onLoad(resourceLocation, () => {
 				scoreboard.players.set(
 					`${$resourceLocationLoadStatus.target}.${versionKey}`,
 					loadStatus,
-					resourceLocation.version![versionKey]
+					resourceLocation.VERSION![versionKey]
 				);
 			});
 

@@ -8,7 +8,7 @@ import temp from 'lib/datapacks/temp';
 import type { UnionOmit } from 'lib/types';
 import checkLoadStatus from 'lib/datapacks/lanternLoad/checkLoadStatus';
 
-const vtFunctionRecipes = vt.child('function_recipes');
+const vtFunctionRecipes = vt.getChild('function_recipes');
 
 const craftedKnowledgeBook = objective(vtFunctionRecipes, 'crafted_knowledge_book', 'minecraft.crafted:minecraft.knowledge_book');
 /** `@s`'s `craftedKnowledgeBook` score. */
@@ -41,8 +41,8 @@ const FunctionRecipe = (
 		}
 	});
 
-	const recipes = resourceLocation.child('recipes');
-	const functionRecipes = resourceLocation.child('function_recipes');
+	const recipes = resourceLocation.getChild('recipes');
+	const functionRecipes = resourceLocation.getChild('function_recipes');
 
 	const recipeUnlockedAdvancement = Advancement(recipes`${name}`, {
 		parent: Advancement(recipes`root`, {
