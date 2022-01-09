@@ -19,12 +19,12 @@ export type ResourceLocationOptions<
 	external?: boolean
 };
 
-type ResourceLocationInstanceFunction = (
+type ResourceLocationTemplateTag = (
 	template: TemplateStringsArray,
 	...substitutions: unknown[]
 ) => string;
 
-type ResourceLocationInstanceProperties<
+type ResourceLocationProperties<
 	Namespace extends string = string,
 	Path extends string | undefined = string | undefined,
 	Title extends string | undefined = string | undefined,
@@ -57,7 +57,7 @@ export type ResourceLocationInstance<
 	Path extends string | undefined = string | undefined,
 	Title extends string | undefined = string | undefined,
 	GenericVersion extends VersionString | undefined = VersionString | undefined
-> = ResourceLocationInstanceFunction & ResourceLocationInstanceProperties<Namespace, Path, Title, GenericVersion>;
+> = ResourceLocationTemplateTag & ResourceLocationProperties<Namespace, Path, Title, GenericVersion>;
 
 /**
  * A constructor for a representation of a Minecraft resource location (namespaced path).
@@ -161,66 +161,70 @@ const ResourceLocation = <
 		});
 	}
 
-	const resourceLocation: ResourceLocationInstance<Namespace, Path, Title, GenericVersion> = Object.assign<ResourceLocationInstanceFunction, ResourceLocationInstanceProperties<Namespace, Path, Title, GenericVersion>>(
-		(template, ...substitutions) => {
-			let input = template.map((string, i) => string + (i in substitutions ? substitutions[i] : '')).join('');
-			/**
-			 * Same as `input` but includes escape characters.
-			 *
-			 * Check this for special characters rather than `input` to ensure the special characters aren't escaped.
-			 */
-			let rawInput = template.raw.map((string, i) => string + (i in substitutions ? substitutions[i] : '')).join('');
+	const templateTag: ResourceLocationTemplateTag = (template, ...substitutions) => {
+		let input = template.map((string, i) => string + (i in substitutions ? substitutions[i] : '')).join('');
+		/**
+		 * Same as `input` but includes escape characters.
+		 *
+		 * Check this for special characters rather than `input` to ensure the special characters aren't escaped.
+		 */
+		let rawInput = template.raw.map((string, i) => string + (i in substitutions ? substitutions[i] : '')).join('');
 
-			if (rawInput.startsWith('.')) {
-				const inputSegments = input.slice(1).split('.');
-				inputSegments.forEach(checkName);
-
-				return [
-					namespace,
-					...pathSegments,
-					...inputSegments
-				].join('.');
-			}
-
-			let startsWithHash = false;
-			if (rawInput.startsWith('#')) {
-				startsWithHash = true;
-				rawInput = rawInput.slice(1);
-				input = input.slice(1);
-			}
-
-			const inputSegments = input.split('/');
-			const outputSegments = [...pathSegments];
-
-			if (rawInput[rawInput.lastIndexOf('/') + 1] === '_') {
-				inputSegments[inputSegments.length - 1] = inputSegments[inputSegments.length - 1].slice(1);
-				outputSegments.unshift(PRIVATE_PATH);
-			}
-
+		if (rawInput.startsWith('.')) {
+			const inputSegments = input.slice(1).split('.');
 			inputSegments.forEach(checkName);
-			outputSegments.push(...inputSegments);
 
-			return (
-				(startsWithHash ? '#' : '')
-				+ `${namespace}:`
-				+ outputSegments.join('/')
-			);
-		},
-		{
-			namespace,
-			path,
-			child: (relativePath, childOptions) => (
-				ResourceLocation(
-					`${namespace}:` + [...pathSegments, relativePath].join('/'),
-					{
-						external: options.external,
-						...childOptions
-					}
-				) as any
-			),
-			title: options.title as any,
-			version: version as any
+			return [
+				namespace,
+				...pathSegments,
+				...inputSegments
+			].join('.');
 		}
+
+		let startsWithHash = false;
+		if (rawInput.startsWith('#')) {
+			startsWithHash = true;
+			rawInput = rawInput.slice(1);
+			input = input.slice(1);
+		}
+
+		const inputSegments = input.split('/');
+		const outputSegments = [...pathSegments];
+
+		if (rawInput[rawInput.lastIndexOf('/') + 1] === '_') {
+			inputSegments[inputSegments.length - 1] = inputSegments[inputSegments.length - 1].slice(1);
+			outputSegments.unshift(PRIVATE_PATH);
+		}
+
+		inputSegments.forEach(checkName);
+		outputSegments.push(...inputSegments);
+
+		return (
+			(startsWithHash ? '#' : '')
+			+ `${namespace}:`
+			+ outputSegments.join('/')
+		);
+	};
+
+	const resourceLocation: ResourceLocationInstance<Namespace, Path, Title, GenericVersion> = (
+		Object.assign<ResourceLocationTemplateTag, ResourceLocationProperties<Namespace, Path, Title, GenericVersion>>(
+			templateTag,
+			{
+				namespace,
+				path,
+				child: (relativePath, childOptions) => (
+					ResourceLocation(
+						`${namespace}:` + [...pathSegments, relativePath].join('/'),
+						{
+							external: options.external,
+							...childOptions
+						}
+					) as any
+				),
+				title: options.title as any,
+				version: version as any
+			}
+		)
 	);
 
 	return resourceLocation;
