@@ -14,7 +14,7 @@ import { fplTooLowAdvancement } from 'lib/datapacks/faultChecking/checkFunctionP
 import onPlayerJoinOrLoad from 'lib/datapacks/pseudoEvents/onPlayerLoadOrJoin';
 import vtNotUninstalled from 'lib/datapacks/faultChecking/vtNotUninstalled';
 
-const loadTagNotLoaded = vt.child('load_tag_not_loaded');
+const loadTagNotLoaded = vt('load_tag_not_loaded');
 
 const $vtLoadStatus = loadStatusOf(vt);
 const $packLoadStatus = loadStatusOf(pack);

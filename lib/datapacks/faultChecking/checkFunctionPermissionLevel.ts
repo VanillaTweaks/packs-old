@@ -5,7 +5,7 @@ import vt from 'lib/datapacks/vt';
 import onPlayerJoinOrLoad from 'lib/datapacks/pseudoEvents/onPlayerLoadOrJoin';
 import vtNotUninstalled from 'lib/datapacks/faultChecking/vtNotUninstalled';
 
-const functionPermissionLevel = vt.child('function_permission_level');
+const functionPermissionLevel = vt('function_permission_level');
 
 const rootAdvancement = Advancement(functionPermissionLevel`root`, {
 	criteria: {

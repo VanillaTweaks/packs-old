@@ -2,7 +2,7 @@ import { MCFunction, Objective, scoreboard } from 'sandstone';
 import vt from 'lib/datapacks/vt';
 import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';
 
-const tempObjective = vt.child('temp_objective');
+const tempObjective = vt('temp_objective');
 
 /** An objective only for temporary scores that can safely be reset anytime. */
 const temp = Objective.get(vt`.temp`);

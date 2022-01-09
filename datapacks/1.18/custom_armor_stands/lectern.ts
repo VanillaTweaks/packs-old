@@ -5,7 +5,7 @@ import checkLoadStatus from 'lib/datapacks/lanternLoad/checkLoadStatus';
 import temp from 'lib/datapacks/temp';
 import vt from 'lib/datapacks/vt';
 
-const lectern = pack.child('lectern');
+const lectern = pack('lectern');
 
 export const lecternID = objective(pack, 'lectern_id');
 const $lastValue = lecternID('$last_value');

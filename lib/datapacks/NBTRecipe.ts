@@ -19,7 +19,7 @@ const NBTRecipe = (
 	name: string,
 	recipeJSON: NBTRecipeJSON
 ) => {
-	const items = resourceLocation.child('items');
+	const items = resourceLocation('items');
 
 	const itemLootTable = LootTable(items`${name}`, {
 		type: 'minecraft:command',
