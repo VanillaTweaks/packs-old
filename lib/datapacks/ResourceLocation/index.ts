@@ -98,6 +98,8 @@ export type ResourceLocationInstance<
  * externalAPI`\_test` === 'external:api/_test'
  * externalAPI`.test` === 'external.api.test'
  * externalAPI`\.test` === 'external:api/.test'
+ *
+ * ResourceLocation(base).toString() === base
  * ```
  */
 const ResourceLocation = <
