@@ -7,17 +7,17 @@ const PRIVATE_PATH = 'zz/do_not_run_or_packs_may_break';
 export type ResourceLocationOptions<
 	Title extends string | undefined = string | undefined,
 	GenericVersion extends VersionString | undefined = VersionString | undefined
-> = {
-	title?: Title,
+> = Partial<{
+	title: Title,
 	/** The version to set for this `ResourceLocation`'s `loadStatus` scores, if this `ResourceLocation` has a `load` function. */
-	version?: GenericVersion,
+	version: GenericVersion,
 	/**
 	 * Whether the `ResourceLocation` represents an outside namespace rather than one originating from Vanilla Tweaks.
 	 *
 	 * If `true`, disables strict name checks.
 	 */
-	external?: boolean
-};
+	external: boolean
+}>;
 
 type ResourceLocationTemplateTag = (
 	template: TemplateStringsArray,
