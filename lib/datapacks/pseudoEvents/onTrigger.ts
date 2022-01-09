@@ -6,7 +6,7 @@ import objective from 'lib/datapacks/objective';
 
 /** Creates a scoreboard objective with the `trigger` criterion, adds the necessary `scoreboard` commands to the load and uninstall functions, and runs a function as any player who sets the trigger to 1 or greater. */
 const onTrigger = (
-	/** The `ResourceLocation` to be used as a prefix to the objective name, and to add to the load and uninstall functions of. */
+	/** The `ResourceLocation` to create functions under. */
 	resourceLocation: ResourceLocationInstance,
 	/** The name of the scoreboard objective to create. Must contain only lowercase letters and underscores. */
 	objectiveName: string,
