@@ -30,6 +30,7 @@ type ResourceLocationProperties<
 	Title extends string | undefined = string | undefined,
 	GenericVersion extends VersionString | undefined = VersionString | undefined
 > = Readonly<{
+	toString: () => string,
 	namespace: Namespace,
 	path: Path,
 	/** Creates a new `ResourceLocation` with a base path relative to the parent resource location. */
@@ -214,6 +215,7 @@ const ResourceLocation = <
 	};
 
 	const properties: ResourceLocationProperties<Namespace, Path, Title, GenericVersion> = {
+		toString: () => base,
 		namespace,
 		path,
 		child: (relativePath, childOptions) => (

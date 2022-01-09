@@ -10,7 +10,7 @@ export const copyStorageToBook = ItemModifier(pack`copy_storage_to_book`, {
 	},
 	ops: [{
 		source: 'book',
-		target: `data.${pack.namespace}`,
+		target: `data.${pack}`,
 		op: 'replace'
 	}]
 });
