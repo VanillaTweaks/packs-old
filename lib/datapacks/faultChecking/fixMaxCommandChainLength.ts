@@ -5,7 +5,7 @@ import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';
 
 const DEFAULT_MAX_COMMAND_CHAIN_LENGTH = 65536;
 
-const maxCommandChainLength = vt('max_command_chain_length');
+const maxCommandChainLength = vt.child('max_command_chain_length');
 
 const $maxCommandChainLength = temp('$max_command_chain_length');
 

@@ -6,7 +6,7 @@ import objective from 'lib/datapacks/objective';
 import onLoad from 'lib/datapacks/pseudoEvents/onLoad';
 import type { ResourceLocationInstance } from 'lib/datapacks/ResourceLocation';
 
-const playerJoinOrLoad = vt('player_join_or_load');
+const playerJoinOrLoad = vt.child('player_join_or_load');
 
 const counter = objective(playerJoinOrLoad, 'counter');
 const $globalCounter = counter('$global');
