@@ -57,7 +57,10 @@ export type ResourceLocationInstance<
 	Path extends string | undefined = string | undefined,
 	Title extends string | undefined = string | undefined,
 	GenericVersion extends VersionString | undefined = VersionString | undefined
-> = ResourceLocationTemplateTag & ResourceLocationProperties<Namespace, Path, Title, GenericVersion>;
+> = (
+	ResourceLocationTemplateTag
+	& ResourceLocationProperties<Namespace, Path, Title, GenericVersion>
+);
 
 /**
  * A constructor for a representation of a Minecraft resource location (namespaced path).
@@ -98,7 +101,11 @@ export type ResourceLocationInstance<
  */
 const ResourceLocation = <
 	Namespace extends string = string,
-	Path extends string | undefined = undefined,
+	Path extends string | undefined = (
+		string extends Namespace
+			? string | undefined
+			: undefined
+	),
 	Title extends string | undefined = undefined,
 	GenericVersion extends VersionString | undefined = undefined
 >(
@@ -110,7 +117,7 @@ const ResourceLocation = <
 	 * * `'namespace'`
 	 * * `'namespace:some/path'`
 	 */
-	base: Namespace | `${Namespace}:${Path}`,
+	base: `${Namespace}:${Path}` | Namespace,
 	options: ResourceLocationOptions<Title, GenericVersion> = {}
 ): ResourceLocationInstance<Namespace, Path, Title, GenericVersion> => {
 	/**
@@ -206,25 +213,24 @@ const ResourceLocation = <
 		);
 	};
 
+	const properties: ResourceLocationProperties<Namespace, Path, Title, GenericVersion> = {
+		namespace,
+		path,
+		child: (relativePath, childOptions) => (
+			ResourceLocation(
+				`${namespace}:` + [...pathSegments, relativePath].join('/'),
+				{
+					external: options.external,
+					...childOptions
+				}
+			) as any
+		),
+		title: options.title as any,
+		version: version as any
+	};
+
 	const resourceLocation: ResourceLocationInstance<Namespace, Path, Title, GenericVersion> = (
-		Object.assign<ResourceLocationTemplateTag, ResourceLocationProperties<Namespace, Path, Title, GenericVersion>>(
-			templateTag,
-			{
-				namespace,
-				path,
-				child: (relativePath, childOptions) => (
-					ResourceLocation(
-						`${namespace}:` + [...pathSegments, relativePath].join('/'),
-						{
-							external: options.external,
-							...childOptions
-						}
-					) as any
-				),
-				title: options.title as any,
-				version: version as any
-			}
-		)
+		Object.assign(templateTag, properties)
 	);
 
 	return resourceLocation;
