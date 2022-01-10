@@ -31,7 +31,7 @@ export const setHasConfigFunction = (newValue: boolean) => {
 type MetaAdvancementOptions = {
 	/** The number of spaces after the title, so the advancement's description isn't so squished. */
 	titlePadding?: number,
-	description: JSONTextComponent & ['', ...unknown[]]
+	description: JSONTextComponent
 };
 
 type AdvancementIcon = NonNullable<AdvancementJSON['display']>['icon'];
@@ -74,7 +74,7 @@ const setMetaAdvancements = (options: {
 				pack.TITLE,
 				padding(options.root.titlePadding || 0)
 			]),
-			description: options.root.description,
+			description: minify(options.root.description),
 			show_toast: false,
 			announce_to_chat: false
 		},
@@ -96,7 +96,6 @@ const setMetaAdvancements = (options: {
 				title: vt.TITLE,
 				frame: 'challenge',
 				description: [
-					'',
 					{ text: `All loaded ${vt.TITLE} data packs\n`, color: 'gold' },
 					{ text: 'vanillatweaks.net', color: 'yellow' }
 				],
@@ -125,9 +124,12 @@ const setMetaAdvancements = (options: {
 				options.opUsage = {};
 			}
 
-			if (!options.opUsage.description) {
+			if (!Array.isArray(options.opUsage.description)) {
 				options.opUsage.description = [
-					''
+					'',
+					...options.opUsage.description === undefined ? [] : [
+						options.opUsage.description
+					]
 				];
 			}
 
@@ -171,7 +173,7 @@ const setMetaAdvancements = (options: {
 							metaAdvancementType.title,
 							padding(advancementOptions.titlePadding || 0)
 						]),
-						description: advancementOptions.description,
+						description: minify(advancementOptions.description),
 						show_toast: false,
 						announce_to_chat: false
 					},

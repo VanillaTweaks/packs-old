@@ -10,20 +10,18 @@ setMetaAdvancements({
 		icon: {
 			item: 'minecraft:armor_stand'
 		},
-		titlePadding: 36,
-		description: [
-			'',
+		description: (
 			{ text: 'Lets you customize armor stands, their poses, and all of their properties in survival or creative mode.', color: 'gold' }
-		]
+		)
 	},
 	usage: {
-		titlePadding: 40,
-		description: [
-			''
-		]
+		titlePadding: 24,
+		description: (
+			{ text: 'Put a book and an armor stand in a crafting table to get a magic book that lets you customize armor stands.', color: 'gold' }
+		)
 	},
 	opUsage: {
-		titlePadding: 56
+		titlePadding: 76
 	}
 });
 
