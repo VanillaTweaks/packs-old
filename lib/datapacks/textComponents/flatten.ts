@@ -1,76 +1,74 @@
-import type { JSONTextComponent } from 'sandstone';
+import type { JSONTextComponent, TextComponentObject } from 'sandstone';
 import type { HeritableProperties } from 'lib/datapacks/textComponents/getHeritableProperties';
 import getHeritableProperties from 'lib/datapacks/textComponents/getHeritableProperties';
 import { ComponentClass } from 'sandstone/variables';
 
-export type FlatJSONTextComponentArray = [
-	'',
-	...Array<Exclude<JSONTextComponent, any[]> & { extra?: never }>
-];
+export type FlatJSONTextComponent = TextComponentObject & { extra?: never };
+
+/**
+ * Generates the series of `TextComponentObject`s needed to recursively spread all arrays and `extra` properties of a text component into one big array.
+ *
+ * Does not transform `with` properties at all.
+ */
+export const generateFlat = function* (
+	component: JSONTextComponent,
+	/** Properties for the component and its children to inherit. */
+	properties: HeritableProperties = {}
+): Generator<FlatJSONTextComponent, undefined> {
+	if (component instanceof ComponentClass) {
+		throw new Error('TODO: Handle `ComponentClass`.');
+	}
+
+	if (
+		typeof component === 'string'
+		|| typeof component === 'number'
+		|| typeof component === 'boolean'
+	) {
+		yield {
+			text: component,
+			...properties
+		};
+		return;
+	}
+
+	if (Array.isArray(component)) {
+		if (component.length) {
+			const heritableProperties = getHeritableProperties(component[0]);
+			for (const element of component) {
+				yield* generateFlat(element, heritableProperties);
+			}
+		}
+
+		return;
+	}
+
+	const { extra, ...subcomponentWithoutExtra } = component;
+
+	yield {
+		...properties,
+		...subcomponentWithoutExtra
+	};
+
+	if (extra !== undefined) {
+		properties = {
+			...properties,
+			...getHeritableProperties(component)
+		};
+		for (const element of extra) {
+			yield* generateFlat(element, properties);
+		}
+	}
+};
 
 /**
  * Recursively spreads all arrays and `extra` properties of a text component into one big array.
  *
- * Necessarily returns an array with `''` as the first element, not minified.
+ * Necessarily returns an array with `''` as the first element.
  *
  * Does not transform `with` properties at all.
  */
-const flatten = (component: JSONTextComponent): FlatJSONTextComponentArray => {
-	const flatArray: FlatJSONTextComponentArray = [''];
-
-	const processSubcomponent = (
-		subcomponent: JSONTextComponent,
-		/** Properties for the subcomponent and its children to inherit. */
-		properties: HeritableProperties = {}
-	) => {
-		if (
-			typeof subcomponent === 'string'
-			|| typeof subcomponent === 'number'
-			|| typeof subcomponent === 'boolean'
-		) {
-			flatArray.push({
-				text: subcomponent,
-				...properties
-			});
-			return;
-		}
-
-		if (Array.isArray(subcomponent)) {
-			if (subcomponent.length) {
-				const heritableProperties = getHeritableProperties(subcomponent[0]);
-				for (const element of subcomponent) {
-					processSubcomponent(element, heritableProperties);
-				}
-			}
-
-			return;
-		}
-
-		if (subcomponent instanceof ComponentClass) {
-			throw new Error('TODO: Handle `ComponentClass`.');
-		}
-
-		const { extra, ...subcomponentWithoutExtra } = subcomponent;
-
-		flatArray.push({
-			...properties,
-			...subcomponentWithoutExtra
-		});
-
-		if (extra !== undefined) {
-			properties = {
-				...properties,
-				...getHeritableProperties(subcomponent)
-			};
-			for (const element of extra) {
-				processSubcomponent(element, properties);
-			}
-		}
-	};
-
-	processSubcomponent(component);
-
-	return flatArray;
-};
+const flatten = (component: JSONTextComponent): ['', ...FlatJSONTextComponent[]] => (
+	['', ...generateFlat(component)]
+);
 
 export default flatten;
