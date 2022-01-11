@@ -1,6 +1,7 @@
 import type { JSONTextComponent } from 'sandstone';
-import hasSpecialFormatting, { specialFormattingKeys } from 'lib/datapacks/textComponents/hasSpecialFormatting';
+import hasHeritableProperties from 'lib/datapacks/textComponents/hasHeritableProperties';
 import { ComponentClass } from 'sandstone/variables';
+import heritableKeys from 'lib/datapacks/textComponents/heritableKeys';
 
 const lineBreaks = /^\n*$/;
 const whitespace = /^\s*$/;
@@ -24,7 +25,7 @@ const canMergeComponents = (source: JSONTextComponent, target: JSONTextComponent
 			&& !('extra' in target && toLeft)
 		) {
 			if (!lineBreaks.test(source.text.toString())) {
-				const keysWhichMustMatch: Array<keyof typeof source> = [...specialFormattingKeys];
+				const keysWhichMustMatch: Array<keyof typeof source> = [...heritableKeys];
 
 				if (!whitespace.test(source.text.toString())) {
 					keysWhichMustMatch.push('color');
@@ -49,7 +50,7 @@ const canMergeComponents = (source: JSONTextComponent, target: JSONTextComponent
 
 	return typeof target === 'object' && 'text' in target && (
 		lineBreaks.test(source.toString()) || (
-			!hasSpecialFormatting(target) && (
+			!hasHeritableProperties(target) && (
 				!target.color || whitespace.test(source.toString())
 			)
 		)
