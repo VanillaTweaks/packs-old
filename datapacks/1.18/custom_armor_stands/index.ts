@@ -7,9 +7,7 @@ import NBTRecipe from 'lib/datapacks/NBTRecipe';
 
 setMetaAdvancements({
 	root: {
-		icon: {
-			item: 'minecraft:armor_stand'
-		},
+		icon: { item: 'minecraft:armor_stand' },
 		description: (
 			{ text: 'Lets you customize armor stands, their poses, and all of their properties in survival or creative mode.', color: 'gold' }
 		)

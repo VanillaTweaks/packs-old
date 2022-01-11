@@ -54,21 +54,30 @@ const canMergeComponents = (source: JSONTextComponent, target: JSONTextComponent
 	);
 };
 
-/** Concatenates line breaks and spaces into their siblings, spreads unnecessary arrays, and merges sibling components which have equivalent properties. */
-export default function minify(component: JSONTextComponent, options?: {
-	mustReturnArray?: false,
-	modifiedCallback?: () => void
-}): JSONTextComponent;
+/** Concatenates line breaks and spaces into their siblings, flattens unnecessary arrays, and merges sibling components which have equivalent properties. */
+export default function minify(
+	component: JSONTextComponent,
+	options?: {
+		mustReturnArray?: false,
+		modifiedCallback?: () => void
+	}
+): JSONTextComponent;
 
-export default function minify(component: JSONTextComponent, options: {
-	mustReturnArray: true,
-	modifiedCallback?: () => void
-}): JSONTextComponent[];
+export default function minify(
+	component: JSONTextComponent,
+	options: {
+		mustReturnArray: true,
+		modifiedCallback?: () => void
+	}
+): JSONTextComponent[];
 
-export default function minify(component: JSONTextComponent, options: {
-	mustReturnArray?: boolean,
-	modifiedCallback?: () => void
-} = {}): JSONTextComponent {
+export default function minify(
+	component: JSONTextComponent,
+	options: {
+		mustReturnArray?: boolean,
+		modifiedCallback?: () => void
+	} = {}
+): JSONTextComponent {
 	let modified = false;
 
 	if (component instanceof Array) {
