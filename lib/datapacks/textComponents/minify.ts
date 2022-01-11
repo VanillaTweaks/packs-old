@@ -38,6 +38,7 @@ const canMergeComponents = (source: JSONTextComponent, target: JSONTextComponent
 			}
 
 			// If this point is reached, either the source text is line breaks or all necessary keys match.
+
 			return true;
 		}
 
@@ -45,6 +46,7 @@ const canMergeComponents = (source: JSONTextComponent, target: JSONTextComponent
 	}
 
 	// If this point is reached, the source is primitive.
+
 	return typeof target === 'object' && 'text' in target && (
 		lineBreaks.test(source.toString()) || (
 			!hasSpecialFormatting(target) && (
