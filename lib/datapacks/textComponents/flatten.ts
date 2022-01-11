@@ -3,7 +3,7 @@ import type { HeritableProperties } from 'lib/datapacks/textComponents/getHerita
 import getHeritableProperties from 'lib/datapacks/textComponents/getHeritableProperties';
 import { ComponentClass } from 'sandstone/variables';
 
-type FlatJSONTextComponentArray = [
+export type FlatJSONTextComponentArray = [
 	'',
 	...Array<Exclude<JSONTextComponent, any[]> & { extra?: never }>
 ];
@@ -12,6 +12,8 @@ type FlatJSONTextComponentArray = [
  * Recursively spreads all arrays and `extra` properties of a text component into one big array.
  *
  * Necessarily returns an array with `''` as the first element, not minified.
+ *
+ * Does not transform `with` properties at all.
  */
 const flatten = (component: JSONTextComponent): FlatJSONTextComponentArray => {
 	const flatArray: FlatJSONTextComponentArray = [''];
@@ -27,8 +29,8 @@ const flatten = (component: JSONTextComponent): FlatJSONTextComponentArray => {
 			|| typeof subcomponent === 'boolean'
 		) {
 			flatArray.push({
-				...properties,
-				text: subcomponent
+				text: subcomponent,
+				...properties
 			});
 			return;
 		}
