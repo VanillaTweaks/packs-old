@@ -15,49 +15,52 @@ export const generateFlat = function* (
 	/** Properties for the component and its children to inherit. */
 	properties: HeritableProperties = {}
 ): Generator<FlatJSONTextComponent, undefined> {
-	if (
-		typeof component === 'string'
-		|| typeof component === 'number'
-		|| typeof component === 'boolean'
-	) {
-		yield {
-			text: component,
-			...properties
-		};
-		return;
-	}
+	if (typeof component === 'object') {
+		if (Array.isArray(component)) {
+			if (component.length) {
+				const heritableProperties = getHeritableProperties(component[0]);
+				for (const subcomponent of component) {
+					yield* generateFlat(subcomponent, heritableProperties);
+				}
+			}
 
-	if (Array.isArray(component)) {
-		if (component.length) {
-			const heritableProperties = getHeritableProperties(component[0]);
-			for (const subcomponent of component) {
-				yield* generateFlat(subcomponent, heritableProperties);
+			return;
+		}
+
+		if (component instanceof ComponentClass) {
+			throw new Error('TODO: Handle `ComponentClass`.');
+		}
+
+		const { extra, ...subcomponentWithoutExtra } = component;
+
+		yield {
+			...properties,
+			...subcomponentWithoutExtra
+		};
+
+		if (extra !== undefined) {
+			properties = {
+				...properties,
+				...getHeritableProperties(component)
+			};
+			for (const subcomponent of extra) {
+				yield* generateFlat(subcomponent, properties);
 			}
 		}
 
 		return;
 	}
 
-	if (component instanceof ComponentClass) {
-		throw new Error('TODO: Handle `ComponentClass`.');
-	}
+	// If this point is reached, `component` is primitive.
 
-	const { extra, ...subcomponentWithoutExtra } = component;
+	if (component === '') {
+		return;
+	}
 
 	yield {
-		...properties,
-		...subcomponentWithoutExtra
+		text: component,
+		...properties
 	};
-
-	if (extra !== undefined) {
-		properties = {
-			...properties,
-			...getHeritableProperties(component)
-		};
-		for (const subcomponent of extra) {
-			yield* generateFlat(subcomponent, properties);
-		}
-	}
 };
 
 /**

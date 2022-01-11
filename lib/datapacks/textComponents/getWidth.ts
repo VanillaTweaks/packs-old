@@ -2,6 +2,7 @@ import type { JSONTextComponent } from 'sandstone';
 import nonLegacyUnicodeCodePoints from 'lib/datapacks/textComponents/nonLegacyUnicodeCodePoints.json';
 import codePointWidths from 'lib/datapacks/textComponents/codePointWidths.json';
 import split from 'lib/datapacks/textComponents/split';
+import { ComponentClass } from 'sandstone/variables';
 
 /** The width of an unknown code point in in-game pixels. */
 const UNKNOWN_CODE_POINT_WIDTH = 6;
@@ -18,129 +19,131 @@ const MAX_HIGH_SURROGATE_CHAR_CODE = 0xdbff;
 const MIN_LOW_SURROGATE_CHAR_CODE = 0xdc00;
 const MAX_LOW_SURROGATE_CHAR_CODE = 0xdfff;
 
-/** Gets the width in in-game pixels of the specified text component. */
+/** Gets the width in in-game pixels that a `JSONTextComponent` takes up. */
 const getWidth = (
 	component: JSONTextComponent,
 	{ bold = false } = {}
 ): number => {
-	const componentLines = split(component, '\n');
-
-	if (componentLines.length > 1) {
-		// The width of the text component is the width of its longest line.
+	const lines = split(component, '\n');
+	if (lines.length > 1) {
 		return Math.max(
-			...componentLines.map(componentLine => getWidth(componentLine))
+			...lines.map(line => getWidth(line))
 		);
 	}
 
-	if (typeof component === 'string') {
-		let width = 0;
-
-		for (let i = 0; i < component.length; i++) {
-			let codePoint: string = component[i];
-			const charCode = component.charCodeAt(i);
-
-			let invalidSurrogate = false;
+	if (typeof component === 'object') {
+		if (Array.isArray(component)) {
+			if (component.length === 0) {
+				return 0;
+			}
 
 			if (
-				charCode >= MIN_HIGH_SURROGATE_CHAR_CODE
-				&& charCode <= MAX_LOW_SURROGATE_CHAR_CODE
+				typeof component[0] === 'object'
+				&& 'bold' in component[0]
+				&& component[0].bold !== undefined
 			) {
-				// This character is a surrogate.
-
-				invalidSurrogate = true;
-
-				if (charCode <= MAX_HIGH_SURROGATE_CHAR_CODE) {
-					// This character is a high surrogate.
-
-					const nextCharCode = component.charCodeAt(i + 1);
-					if (
-						nextCharCode >= MIN_LOW_SURROGATE_CHAR_CODE
-						&& nextCharCode <= MAX_LOW_SURROGATE_CHAR_CODE
-					) {
-						// This character is a high surrogate followed by a low surrogate.
-
-						invalidSurrogate = false;
-
-						codePoint += component[i + 1];
-
-						// Move past the low surrogate to the next code point.
-						i++;
-					}
-				}
+				bold = component[0].bold;
 			}
 
-			const knownCodePoint = codePoint in codePointWidths;
+			let width = 0;
 
-			width += (
-				invalidSurrogate
-					? INVALID_SURROGATE_WIDTH
-					: knownCodePoint
-						? codePointWidths[codePoint as keyof typeof codePointWidths]
-						: UNKNOWN_CODE_POINT_WIDTH
-			);
-
-			if (bold) {
-				const nonLegacyUnicode = (
-					invalidSurrogate
-					|| !knownCodePoint
-					|| nonLegacyUnicodeCodePoints[codePoint.length as 1 | 2].includes(codePoint)
-				);
-
-				width += (
-					nonLegacyUnicode
-						? BOLD_CODE_POINT_EXTRA_WIDTH
-						: BOLD_LEGACY_UNICODE_CODE_POINT_EXTRA_WIDTH
-				);
+			for (let i = 0; i < component.length; i++) {
+				width += getWidth(component[i], { bold });
 			}
+
+			return width;
 		}
 
-		return width;
+		if (component instanceof ComponentClass) {
+			throw new Error('TODO: Handle `ComponentClass`.');
+		}
+
+		if ('bold' in component && component.bold !== undefined) {
+			bold = component.bold;
+		}
+
+		if ('text' in component) {
+			let width = getWidth(component.text, { bold });
+
+			if ('extra' in component && component.extra) {
+				width += getWidth(component.extra, { bold });
+			}
+
+			return width;
+		}
+
+		throw new TypeError(
+			'The width of the following text component cannot be determined:\n'
+			+ JSON.stringify(component)
+		);
 	}
 
-	if (Array.isArray(component)) {
-		if (component.length === 0) {
-			return 0;
-		}
+	// If this point is reached, `component` is primitive.
+
+	component = component.toString();
+
+	let width = 0;
+
+	for (let i = 0; i < component.length; i++) {
+		let codePoint: string = component[i];
+		const charCode = component.charCodeAt(i);
+
+		let invalidSurrogate = false;
 
 		if (
-			typeof component[0] === 'object'
-			&& 'bold' in component[0]
-			&& component[0].bold !== undefined
+			charCode >= MIN_HIGH_SURROGATE_CHAR_CODE
+			&& charCode <= MAX_LOW_SURROGATE_CHAR_CODE
 		) {
-			bold = component[0].bold;
+			// This character is a surrogate.
+
+			invalidSurrogate = true;
+
+			if (charCode <= MAX_HIGH_SURROGATE_CHAR_CODE) {
+				// This character is a high surrogate.
+
+				const nextCharCode = component.charCodeAt(i + 1);
+				if (
+					nextCharCode >= MIN_LOW_SURROGATE_CHAR_CODE
+					&& nextCharCode <= MAX_LOW_SURROGATE_CHAR_CODE
+				) {
+					// This character is a high surrogate followed by a low surrogate.
+
+					invalidSurrogate = false;
+
+					codePoint += component[i + 1];
+
+					// Move past the low surrogate to the next code point.
+					i++;
+				}
+			}
 		}
 
-		let width = 0;
+		const knownCodePoint = codePoint in codePointWidths;
 
-		for (let i = 0; i < component.length; i++) {
-			width += getWidth(component[i], { bold });
+		width += (
+			invalidSurrogate
+				? INVALID_SURROGATE_WIDTH
+				: knownCodePoint
+					? codePointWidths[codePoint as keyof typeof codePointWidths]
+					: UNKNOWN_CODE_POINT_WIDTH
+		);
+
+		if (bold) {
+			const nonLegacyUnicode = (
+				invalidSurrogate
+				|| !knownCodePoint
+				|| nonLegacyUnicodeCodePoints[codePoint.length as 1 | 2].includes(codePoint)
+			);
+
+			width += (
+				nonLegacyUnicode
+					? BOLD_CODE_POINT_EXTRA_WIDTH
+					: BOLD_LEGACY_UNICODE_CODE_POINT_EXTRA_WIDTH
+			);
 		}
-
-		return width;
 	}
 
-	if (typeof component === 'number' || typeof component === 'boolean') {
-		return getWidth(component.toString(), { bold });
-	}
-
-	if ('bold' in component && component.bold !== undefined) {
-		bold = component.bold;
-	}
-
-	if ('text' in component) {
-		let width = getWidth(component.text, { bold });
-
-		if ('extra' in component && component.extra) {
-			width += getWidth(component.extra, { bold });
-		}
-
-		return width;
-	}
-
-	throw new TypeError(
-		'The width of the following text component cannot be determined:\n'
-		+ JSON.stringify(component)
-	);
+	return width;
 };
 
 export default getWidth;

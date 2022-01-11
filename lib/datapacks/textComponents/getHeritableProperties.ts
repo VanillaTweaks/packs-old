@@ -10,17 +10,17 @@ export type HeritableProperties = {
 
 /** Gets an object of only the properties of a `JSONTextComponent` which can be inherited by other text components, or `undefined` if it has no such properties. */
 const getHeritableProperties = (component: JSONTextComponent): HeritableProperties | undefined => {
-	if (Array.isArray(component)) {
-		return getHeritableProperties(component[0]);
-	}
-
-	if (component instanceof ComponentClass) {
-		throw new Error('TODO: Handle `ComponentClass`.');
-	}
-
-	let heritableProperties: HeritableProperties | undefined;
-
 	if (typeof component === 'object') {
+		if (Array.isArray(component)) {
+			return getHeritableProperties(component[0]);
+		}
+
+		if (component instanceof ComponentClass) {
+			throw new Error('TODO: Handle `ComponentClass`.');
+		}
+
+		let heritableProperties: HeritableProperties | undefined;
+
 		for (const key of heritableKeys) {
 			if (component[key] !== undefined) {
 				if (heritableProperties === undefined) {
@@ -30,9 +30,9 @@ const getHeritableProperties = (component: JSONTextComponent): HeritableProperti
 				heritableProperties[key] = component[key] as any;
 			}
 		}
-	}
 
-	return heritableProperties;
+		return heritableProperties;
+	}
 };
 
 export default getHeritableProperties;
