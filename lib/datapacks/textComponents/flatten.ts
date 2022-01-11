@@ -15,10 +15,6 @@ export const generateFlat = function* (
 	/** Properties for the component and its children to inherit. */
 	properties: HeritableProperties = {}
 ): Generator<FlatJSONTextComponent, undefined> {
-	if (component instanceof ComponentClass) {
-		throw new Error('TODO: Handle `ComponentClass`.');
-	}
-
 	if (
 		typeof component === 'string'
 		|| typeof component === 'number'
@@ -40,6 +36,10 @@ export const generateFlat = function* (
 		}
 
 		return;
+	}
+
+	if (component instanceof ComponentClass) {
+		throw new Error('TODO: Handle `ComponentClass`.');
 	}
 
 	const { extra, ...subcomponentWithoutExtra } = component;
