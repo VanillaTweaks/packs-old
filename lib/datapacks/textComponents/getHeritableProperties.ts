@@ -8,7 +8,7 @@ export type HeritableProperties = {
 	[Key in HeritableTextComponentKey]?: TextComponentObject[Key]
 };
 
-/** Gets the properties of a `JSONTextComponent` which can be inherited by other text components, or `undefined` if the text component has no such properties. */
+/** Gets an object of only the properties of a `JSONTextComponent` which can be inherited by other text components, or `undefined` if it has no such properties. */
 const getHeritableProperties = (component: JSONTextComponent): HeritableProperties | undefined => {
 	if (Array.isArray(component)) {
 		return getHeritableProperties(component[0]);
