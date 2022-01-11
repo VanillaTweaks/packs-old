@@ -30,8 +30,8 @@ export const generateFlat = function* (
 	if (Array.isArray(component)) {
 		if (component.length) {
 			const heritableProperties = getHeritableProperties(component[0]);
-			for (const element of component) {
-				yield* generateFlat(element, heritableProperties);
+			for (const subcomponent of component) {
+				yield* generateFlat(subcomponent, heritableProperties);
 			}
 		}
 
@@ -54,8 +54,8 @@ export const generateFlat = function* (
 			...properties,
 			...getHeritableProperties(component)
 		};
-		for (const element of extra) {
-			yield* generateFlat(element, properties);
+		for (const subcomponent of extra) {
+			yield* generateFlat(subcomponent, properties);
 		}
 	}
 };

@@ -2,10 +2,10 @@ import type { JSONTextComponent, TextComponentObject } from 'sandstone';
 import heritableKeys from 'lib/datapacks/textComponents/heritableKeys';
 import { ComponentClass } from 'sandstone/variables';
 
-type HeritableTextComponentKey = typeof heritableKeys[number];
+export type HeritableKey = typeof heritableKeys[number];
 
 export type HeritableProperties = {
-	[Key in HeritableTextComponentKey]?: TextComponentObject[Key]
+	[Key in HeritableKey]?: TextComponentObject[Key]
 };
 
 /** Gets an object of only the properties of a `JSONTextComponent` which can be inherited by other text components, or `undefined` if it has no such properties. */
