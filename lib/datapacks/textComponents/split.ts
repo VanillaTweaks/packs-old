@@ -1,7 +1,6 @@
 import type { JSONTextComponent } from 'sandstone';
 import type { FlatJSONTextComponent } from 'lib/datapacks/textComponents/flatten';
 import { generateFlat } from 'lib/datapacks/textComponents/flatten';
-import disableArrayInheritance from 'lib/datapacks/textComponents/disableArrayInheritance';
 
 type SeparatorOrSplitFunction = string | RegExp | (
 	(
