@@ -30,7 +30,7 @@ const columns = (...components: JSONTextComponent[]) => {
 	let columnSpacing = freeSpace / (components.length + 1);
 
 	if (
-		// This check is only useful if there are more than one columns, because if there's only one column, it doesn't need any spacing.
+		// The below `columnSpacing` check is only useful if there's more than one column, because if there's only one column, it doesn't need any spacing.
 		components.length > 1
 		&& columnSpacing < SPACE_WIDTH
 	) {
