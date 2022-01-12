@@ -53,7 +53,7 @@ const split = (
 		}
 
 		if (component instanceof ComponentClass) {
-			throw Error('TODO: Handle `ComponentClass`.');
+			throw new Error('TODO: Handle `ComponentClass`.');
 		}
 
 		if ('extra' in component) {
