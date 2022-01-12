@@ -39,7 +39,7 @@ export const generateFlat = function* (
 		const { extra, ...subcomponentWithoutExtra } = component;
 
 		yield {
-			// Add the content-related properties first, just to be conventional (along with the original formatting-related properties).
+			// Add the content-related properties first, just to be conventional about the property order (along with the original formatting-related properties).
 			...subcomponentWithoutExtra,
 			// Add the inherited formatting-related properties.
 			...properties,
