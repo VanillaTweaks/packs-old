@@ -1,22 +1,14 @@
 import type { JSONTextComponent, TextComponentObject } from 'sandstone';
-import type { HeritableProperties } from 'lib/datapacks/textComponents/getHeritableProperties';
 import getHeritableProperties from 'lib/datapacks/textComponents/getHeritableProperties';
 import type { HeritableKey } from 'lib/datapacks/textComponents/heritableKeys';
 import heritableKeys, { whitespaceAffectedByKeys, whitespaceUnaffectedByKeys } from 'lib/datapacks/textComponents/heritableKeys';
 import { generateFlat } from 'lib/datapacks/textComponents/flatten';
+import whitespaceUnaffectedBy from 'lib/datapacks/textComponents/whitespaceUnaffectedBy';
 
 type TextComponentObjectWithText = Extract<TextComponentObject, { text: any }>;
 
 const notLineBreaks = /[^\n]/;
 const notWhitespace = /[^\s]/;
-
-/** Checks whether a `TextComponentObject` with only whitespace as its `text` would be indistinguishable with or without the specified properties. */
-const whitespaceUnaffectedBy = (properties: HeritableProperties) => (
-	// Check whether none of the properties affect whitespace.
-	whitespaceAffectedByKeys.every(key => (
-		properties[key] === undefined
-	))
-);
 
 /** Transforms a `JSONTextComponent` to be as short and simplified as possible while keeping it indistinguishable in-game. */
 const minify = (component: JSONTextComponent) => {
