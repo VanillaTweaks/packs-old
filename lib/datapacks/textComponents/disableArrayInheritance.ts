@@ -1,4 +1,4 @@
-import type { JSONTextComponent } from 'sandstone';
+import type { JSONTextComponent, TextComponentObject } from 'sandstone';
 import { ComponentClass } from 'sandstone/variables';
 
 /** Recursively transforms every raw array in the specified component to have `''` as its first element, preventing other elements in the array from inheriting anything from it. */
@@ -13,18 +13,19 @@ const disableArrayInheritance = (component: JSONTextComponent): JSONTextComponen
 			return component;
 		}
 
-		if ('extra' in component) {
-			return {
+		if (component.extra) {
+			component = {
 				...component,
-				extra: component.extra?.map(disableArrayInheritance)
+				extra: component.extra.map(disableArrayInheritance)
 			};
 		}
 
-		if ('with' in component) {
-			return {
+		type JSONTextComponentPossiblyWithWith = Extract<TextComponentObject, { with?: any }>;
+		if ((component as JSONTextComponentPossiblyWithWith).with) {
+			component = {
 				...component,
 				// TODO: Remove `as any`.
-				with: component.with?.map(disableArrayInheritance) as any
+				with: (component as JSONTextComponentPossiblyWithWith).with!.map(disableArrayInheritance) as any
 			};
 		}
 	}
