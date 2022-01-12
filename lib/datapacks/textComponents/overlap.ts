@@ -194,7 +194,7 @@ const overlap = (...components: JSONTextComponent[]) => {
 		if (overflowingWidth > 0) {
 			// The line still overflows the container.
 			throw new TypeError(
-				'There is not enough padding between overlapping subcomponents to fit the following text component on one line:\n'
+				'The following text component cannot fit on one line:\n'
 				+ JSON.stringify(minify(outputLine!))
 			);
 		}
