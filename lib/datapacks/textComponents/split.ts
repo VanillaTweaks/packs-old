@@ -1,77 +1,19 @@
-import type { JSONTextComponent, TextComponentObject } from 'sandstone';
-import { ComponentClass } from 'sandstone/variables';
+import type { JSONTextComponent } from 'sandstone';
+import type { FlatJSONTextComponent } from 'lib/datapacks/textComponents/flatten';
+import { generateFlat } from 'lib/datapacks/textComponents/flatten';
+import disableArrayInheritance from 'lib/datapacks/textComponents/disableArrayInheritance';
 
-/**
- * Splits a `JSONTextComponent` into an array of multiple `JSONTextComponent`s (not minified).
- *
- * The returned array is never empty.
- *
- * Disables array inheritance on the inputted component.
- */
-const split = (
-	component: JSONTextComponent,
-	/** The pattern on which each split should occur, or a function that takes a string and returns the string split into an array. */
-	separatorOrSplitFunction: string | RegExp | (
-		(
-			/** The string being split. */
-			string: string
-		) => string[]
-	)
-): JSONTextComponent[] => {
-	if (typeof component === 'object') {
-		if (Array.isArray(component)) {
-			if (component.length === 0) {
-				return [[]];
-			}
+type SeparatorOrSplitFunction = string | RegExp | (
+	(
+		/** The string being split. */
+		string: string
+	) => string[]
+);
 
-			const outputComponents: JSONTextComponent[] = split(component[0], separatorOrSplitFunction);
-
-			for (let i = 1; i < component.length; i++) {
-				const splitSubComponent = split(component[i], separatorOrSplitFunction);
-
-				// Concatenate the first element of the split subcomponent onto the last component of the output.
-				const lastOutputComponent = outputComponents[outputComponents.length - 1];
-				if (Array.isArray(lastOutputComponent)) {
-					if (lastOutputComponent[0] !== '') {
-						lastOutputComponent.unshift('');
-					}
-
-					lastOutputComponent.push(splitSubComponent[0]);
-				} else {
-					outputComponents[outputComponents.length - 1] = [
-						'',
-						lastOutputComponent,
-						splitSubComponent[0]
-					];
-				}
-
-				// Push the rest of the split subcomponent's elements separately.
-				outputComponents.push(...splitSubComponent.slice(1));
-			}
-
-			return outputComponents;
-		}
-
-		if (component instanceof ComponentClass) {
-			throw new Error('TODO: Handle `ComponentClass`.');
-		}
-
-		if ('extra' in component) {
-			throw new TypeError('TODO: The `extra` property is currently not supported when splitting text components.');
-		}
-
-		if ('text' in component) {
-			return split(component.text, separatorOrSplitFunction).map(substring => ({
-				...component as TextComponentObject,
-				text: substring as string
-			}));
-		}
-
-		return [component];
-	}
-
-	// If this point is reached, `component` is primitive.
-
+const splitPrimitive = (
+	component: string | number | boolean,
+	separatorOrSplitFunction: SeparatorOrSplitFunction
+) => {
 	component = component.toString();
 
 	const splitString = (
@@ -87,5 +29,88 @@ const split = (
 
 	return splitString;
 };
+
+/**
+ * Generates the series of subcomponents split from a specified `JSONTextComponent`.
+ *
+ * Always yields at least one value.
+ *
+ * Disables array inheritance on the inputted component.
+ */
+export const generateSplit = function* (
+	component: JSONTextComponent,
+	/** The pattern on which each split should occur, or a function that takes a string and returns the string split into an array. */
+	separatorOrSplitFunction: SeparatorOrSplitFunction
+) {
+	let previousSubcomponent: (
+		FlatJSONTextComponent
+		| ['', ...FlatJSONTextComponent[]]
+		| undefined
+	);
+
+	const appendToPreviousSubcomponent = (subcomponent: FlatJSONTextComponent) => {
+		if (previousSubcomponent === undefined) {
+			previousSubcomponent = subcomponent;
+		} else if (Array.isArray(previousSubcomponent)) {
+			previousSubcomponent.push(subcomponent);
+		} else {
+			previousSubcomponent = [
+				'',
+				previousSubcomponent,
+				subcomponent
+			];
+		}
+	};
+
+	for (const subcomponent of generateFlat(disableArrayInheritance(component))) {
+		let splitSubcomponent;
+
+		if (typeof subcomponent === 'object') {
+			if (!('text' in subcomponent)) {
+				// We can't split something without text.
+				appendToPreviousSubcomponent(subcomponent);
+				continue;
+			}
+
+			splitSubcomponent = splitPrimitive(
+				subcomponent.text,
+				separatorOrSplitFunction
+			).map(substring => ({
+				...subcomponent,
+				text: substring
+			}));
+		} else {
+			splitSubcomponent = splitPrimitive(
+				subcomponent,
+				separatorOrSplitFunction
+			);
+		}
+
+		appendToPreviousSubcomponent(splitSubcomponent[0]);
+
+		for (let i = 1; i < splitSubcomponent.length; i++) {
+			yield previousSubcomponent!;
+
+			previousSubcomponent = splitSubcomponent[i];
+		}
+	}
+
+	yield previousSubcomponent ?? '';
+};
+
+/**
+ * Splits a `JSONTextComponent` into an array of multiple `JSONTextComponent`s.
+ *
+ * The returned array is never empty.
+ *
+ * Disables array inheritance on the inputted component.
+ */
+const split = (
+	component: JSONTextComponent,
+	/** The pattern on which each split should occur, or a function that takes a string and returns the string split into an array. */
+	separatorOrSplitFunction: SeparatorOrSplitFunction
+) => [
+	...generateSplit(component, separatorOrSplitFunction)
+];
 
 export default split;
