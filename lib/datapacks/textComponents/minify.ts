@@ -1,208 +1,274 @@
-import type { JSONTextComponent } from 'sandstone';
-import hasHeritableProperties from 'lib/datapacks/textComponents/hasHeritableProperties';
-import { ComponentClass } from 'sandstone/variables';
-import heritableKeys from 'lib/datapacks/textComponents/heritableKeys';
+import type { JSONTextComponent, TextComponentObject } from 'sandstone';
+import type { HeritableProperties } from 'lib/datapacks/textComponents/getHeritableProperties';
+import getHeritableProperties from 'lib/datapacks/textComponents/getHeritableProperties';
+import type { HeritableKey } from 'lib/datapacks/textComponents/heritableKeys';
+import heritableKeys, { whitespaceAffectedByKeys, whitespaceUnaffectedByKeys } from 'lib/datapacks/textComponents/heritableKeys';
+import { generateFlat } from 'lib/datapacks/textComponents/flatten';
 
-const lineBreaks = /^\n*$/;
-const whitespace = /^\s*$/;
+type TextComponentObjectWithText = Extract<TextComponentObject, { text: any }>;
 
-/** Checks whether the `source` JSON text component can be merged into the `target` JSON text component without changing their appearance, given neither are arrays. */
-const canMergeComponents = (source: JSONTextComponent, target: JSONTextComponent, toLeft = false): boolean => {
-	if (source instanceof Array || target instanceof Array || typeof target === 'number' || typeof target === 'boolean') {
-		return false;
-	}
+const notLineBreaks = /[^\n]/;
+const notWhitespace = /[^\s]/;
 
-	if (typeof source === 'string' && typeof target === 'string') {
-		return true;
-	}
+/** Checks whether a `TextComponentObject` with only whitespace as its `text` would be indistinguishable with or without the specified properties. */
+const whitespaceUnaffectedBy = (properties: HeritableProperties) => (
+	// Check whether none of the properties affect whitespace.
+	whitespaceAffectedByKeys.every(key => (
+		properties[key] === undefined
+	))
+);
 
-	if (typeof source === 'object') {
-		if (
-			'text' in source
-			&& !('extra' in source)
-			&& typeof target === 'object'
-			&& 'text' in target
-			&& !('extra' in target && toLeft)
-		) {
-			if (!lineBreaks.test(source.text.toString())) {
-				const keysWhichMustMatch: Array<keyof typeof source> = [...heritableKeys];
+/** Transforms a `JSONTextComponent` to be as short and simplified as possible while keeping it indistinguishable in-game. */
+const minify = (component: JSONTextComponent) => {
+	const output: Array<TextComponentObject | string> = [];
 
-				if (!whitespace.test(source.text.toString())) {
-					keysWhichMustMatch.push('color');
-				}
+	let previousSubcomponent: TextComponentObject | string | undefined;
 
-				for (const key of keysWhichMustMatch) {
-					if (source[key] !== target[key]) {
-						return false;
-					}
-				}
-			}
+	const pushPreviousSubcomponent = () => {
+		if (previousSubcomponent !== undefined) {
+			output.push(previousSubcomponent);
+		}
+	};
 
-			// If this point is reached, either the source text is line breaks or all necessary keys match.
+	/** Finalizes the `previousSubcomponent` by pushing it to the `output`, since it can't be merged with the next `subcomponent` specified in this function's argument. */
+	const startNewSubcomponent = (subcomponent: typeof previousSubcomponent) => {
+		pushPreviousSubcomponent();
+		previousSubcomponent = subcomponent;
+	};
 
-			return true;
+	const processPlainString = (
+		subcomponent: string,
+		subcomponentIsWhitespace?: boolean,
+		subcomponentIsLineBreaks?: boolean
+	) => {
+		// Try to merge this subcomponent into the previous one.
+
+		if (previousSubcomponent === undefined) {
+			previousSubcomponent = subcomponent;
+			return;
 		}
 
-		return false;
-	}
+		if (typeof previousSubcomponent === 'object') {
+			if ('text' in previousSubcomponent) {
+				if (subcomponentIsWhitespace === undefined) {
+					subcomponentIsWhitespace = !notWhitespace.test(subcomponent);
+				}
+				if (subcomponentIsLineBreaks === undefined) {
+					subcomponentIsLineBreaks = subcomponentIsWhitespace && !notLineBreaks.test(subcomponent);
+				}
 
-	// If this point is reached, the source is primitive.
+				// Check whether this subcomponent can merge into the previous subcomponent (which necessarily has distinguishable formatting, since otherwise it would already have been reduced to a plain string).
+				if (subcomponentIsLineBreaks || (
+					subcomponentIsWhitespace
+					&& whitespaceUnaffectedBy(previousSubcomponent)
+				)) {
+					previousSubcomponent.text += subcomponent;
+				} else {
+					startNewSubcomponent(subcomponent);
+				}
+				return;
+			}
 
-	return typeof target === 'object' && 'text' in target && (
-		lineBreaks.test(source.toString()) || (
-			!hasHeritableProperties(target) && (
-				!target.color || whitespace.test(source.toString())
-			)
-		)
-	);
-};
+			// If this point is reached, the previous subcomponent doesn't have `text`, so it can't possibly merge with this one.
+			startNewSubcomponent(subcomponent);
+			return;
+		}
 
-/** Concatenates line breaks and spaces into their siblings, flattens unnecessary arrays, and merges sibling components which have equivalent properties. */
-export default function minify(
-	component: JSONTextComponent,
-	options?: {
-		mustReturnArray?: false,
-		modifiedCallback?: () => void
-	}
-): JSONTextComponent;
+		// If this point is reached, `previousSubcomponent` is a plain string, so it can merge with this plain string.
+		previousSubcomponent += subcomponent;
+	};
 
-export default function minify(
-	component: JSONTextComponent,
-	options: {
-		mustReturnArray: true,
-		modifiedCallback?: () => void
-	}
-): JSONTextComponent[];
+	for (const subcomponent of generateFlat(component)) {
+		// Try to reduce this subcomponent and merge the previous one into it.
 
-export default function minify(
-	component: JSONTextComponent,
-	options: {
-		mustReturnArray?: boolean,
-		modifiedCallback?: () => void
-	} = {}
-): JSONTextComponent {
-	let modified = false;
+		if (typeof subcomponent === 'object') {
+			if ('text' in subcomponent) {
+				if (subcomponent.text === '') {
+					continue;
+				}
 
-	if (component instanceof Array) {
-		component = [...component];
+				const text = subcomponent.text.toString();
+				const textIsWhitespace = !notWhitespace.test(text);
+				let textIsLineBreaks;
 
-		for (let i = 0; i < component.length; i++) {
-			if (i < 0) {
+				if (textIsWhitespace) {
+					for (const key of whitespaceUnaffectedByKeys) {
+						delete subcomponent[key];
+					}
+				}
+
+				const subcomponentKeys = Object.keys(subcomponent);
+				/** Whether the subcomponent's properties have no distinguishable effect on its `text`. */
+				const textUnaffectedByProperties = (
+					// Check if `text` is the only remaining property of the subcomponent.
+					subcomponentKeys.length === 1 || (
+						textIsLineBreaks = textIsWhitespace && !notLineBreaks.test(text)
+					)
+				);
+				if (textUnaffectedByProperties) {
+					// Reduce this subcomponent to a plain string.
+					processPlainString(text, textIsWhitespace, textIsLineBreaks);
+					continue;
+				}
+
+				// If this point is reached, the subcomponent's properties necessarily have a distinguishable effect on its `text`.
+
+				if (previousSubcomponent === undefined) {
+					previousSubcomponent = subcomponent;
+					continue;
+				}
+
+				if (typeof previousSubcomponent === 'object') {
+					if ('text' in previousSubcomponent) {
+						// If this point is reached, both this subcomponent and the previous one have `text` with distinguishable properties.
+
+						const keysWhichMustEqual = (
+							textIsWhitespace
+							|| !notWhitespace.test(previousSubcomponent.text.toString())
+								? whitespaceAffectedByKeys
+								: heritableKeys
+						);
+						if (keysWhichMustEqual.every(key => (
+							subcomponent[key]
+							=== (previousSubcomponent as TextComponentObjectWithText)[key]
+						))) {
+							// Merge their `text`.
+
+							// Save the `previousSubcomponent.text` before potentially overwriting the `previousSubcomponent`.
+							const previousText = previousSubcomponent.text;
+
+							if (!textIsWhitespace) {
+								// If this subcomponent isn't only whitespace, it is more likely to have distinguishable properties which the previous component doesn't have (since it's possible that the previous component is only whitespace), so the previous component's `text` should be merged into this subcomponent rather than the other way around.
+								previousSubcomponent = subcomponent;
+							}
+
+							previousSubcomponent.text = previousText + text;
+
+							continue;
+						}
+					}
+
+					// If this point is reached, either the previous subcomponent doesn't have `text`, or the properties of the subcomponents don't match, so they can't possibly merge.
+					startNewSubcomponent(subcomponent);
+					continue;
+				}
+
+				// If this point is reached, this subcomponent has distinguishable properties, and the previous subcomponent is a plain string.
+				// Try to merge the previous subcomponent into this one.
+
+				if (!notWhitespace.test(previousSubcomponent) && (
+					whitespaceUnaffectedBy(subcomponent)
+					|| !notLineBreaks.test(previousSubcomponent)
+				)) {
+					subcomponent.text = previousSubcomponent + text;
+					previousSubcomponent = subcomponent;
+				} else {
+					startNewSubcomponent(subcomponent);
+				}
 				continue;
 			}
 
-			const item = component[i];
+			// If this point is reached, this subcomponent doesn't have `text`.
 
-			if (item instanceof Array) {
-				component.splice(i, 1, ...item);
+			if ('with' in subcomponent && subcomponent.with !== undefined) {
+				// TODO: Remove `as any`.
+				subcomponent.with = subcomponent.with.map(minify) as any;
+			}
 
-				modified = true;
-				i -= 2;
-			} else if (typeof item === 'number' || typeof item === 'boolean') {
-				component[i] = item.toString();
+			// This subcomponent doesn't have `text`, so the previous one can't possibly merge with it.
+			startNewSubcomponent(subcomponent);
+			continue;
+		}
 
-				modified = true;
-				i -= 2;
-			} else {
-				const nextItem = component[i + 1];
-				if (
-					i + 1 < component.length
-					&& !(
-						i === 0
-						&& typeof nextItem === 'object'
-						&& typeof item === 'string'
-						&& whitespace.test(item)
-						&& !canMergeComponents('any non-whitespace text', nextItem)
-					)
-					&& canMergeComponents(item, nextItem)
-				) {
-					component.splice(
-						i,
-						2,
-						typeof nextItem === 'string'
-							? item + nextItem
-							: {
-								...nextItem as any,
-								text: (typeof item === 'object' ? (item as any).text : item) + (nextItem as any).text
-							}
-					);
+		processPlainString(subcomponent.toString());
+	}
 
-					modified = true;
-					i -= 2;
-				} else {
-					const previousItem = component[i - 1];
-					if (i - 1 >= 0 && canMergeComponents(item, previousItem, true)) {
-						component.splice(i - 1, 2, typeof previousItem === 'string' ? previousItem + item : {
-							...previousItem as any,
-							text: (previousItem as any).text + (typeof item === 'object' ? (item as any).text : item)
-						});
+	pushPreviousSubcomponent();
 
-						modified = true;
-						i -= 3;
-					} else {
-						component[i] = minify(item, {
-							modifiedCallback: () => {
-								modified = true;
-								i -= 2;
-							}
-						});
+	// Check if other subcomponents would inherit unwanted properties from the first subcomponent.
+	if (output.length > 1) {
+		const heritableProperties = getHeritableProperties(output[0]);
+		if (heritableProperties) {
+			/** Whether the first subcomponent has heritable properties which affect whitespace. */
+			let heritablePropertiesAffectWhitespace: boolean | undefined;
+
+			/** Returns whether a specified string is affected by the heritable properties of the first subcomponent, or `undefined` if it depends on what formatting the string has. */
+			const isStringAffected = (string: string) => {
+				if (string === '') {
+					return false;
+				}
+
+				if (!notWhitespace.test(string)) {
+					if (!notLineBreaks.test(string)) {
+						return false;
+					}
+
+					if (heritablePropertiesAffectWhitespace === undefined) {
+						heritablePropertiesAffectWhitespace = !whitespaceUnaffectedBy(heritableProperties);
+					}
+
+					if (heritablePropertiesAffectWhitespace) {
+						return true;
+					}
+				}
+			};
+
+			/** Pushes an empty string to the start of the output to prevent other subcomponents from inheriting properties of the first subcomponent. */
+			const preventInheritance = () => {
+				output.unshift('');
+			};
+
+			let heritablePropertyKeys;
+
+			checkingSubcomponents:
+			for (let i = 1; i < output.length; i++) {
+				const subcomponent = output[i];
+
+				if (typeof subcomponent === 'string') {
+					if (isStringAffected(subcomponent) === false) {
+						continue;
+					}
+
+					preventInheritance();
+					break;
+				}
+
+				if ('text' in subcomponent) {
+					const stringAffected = isStringAffected(subcomponent.text.toString());
+
+					if (stringAffected) {
+						preventInheritance();
+						break;
+					}
+
+					if (stringAffected === false) {
+						continue;
+					}
+				}
+
+				if (heritablePropertyKeys === undefined) {
+					heritablePropertyKeys = Object.keys(heritableProperties) as HeritableKey[];
+				}
+
+				for (const heritablePropertyKey of heritablePropertyKeys) {
+					if (subcomponent[heritablePropertyKey] === undefined) {
+						// A heritable property of the first subcomponent is missing from this subcomponent, so this subcomponent would inherit it.
+
+						preventInheritance();
+						break checkingSubcomponents;
 					}
 				}
 			}
 		}
-
-		if (!options.mustReturnArray && component.length === 1) {
-			component = component[0];
-
-			modified = true;
-		}
-	} else if (typeof component === 'object') {
-		if (component instanceof ComponentClass) {
-			throw new TypeError('TODO: Figure out why `ComponentClass` is necessary to check for. Consider making a new type that excludes it from `JSONTextComponent` and using that everywhere instead.');
-		}
-
-		component = { ...component };
-
-		if ('with' in component && component.with) {
-			component.with = component.with.map(subcomponent => (
-				minify(subcomponent, {
-					modifiedCallback: () => {
-						modified = true;
-					}
-				})
-			// TODO: Remove `as any`.
-			)) as any;
-		}
-
-		if ('extra' in component && component.extra) {
-			component.extra = minify(component.extra, {
-				mustReturnArray: true,
-				modifiedCallback: () => {
-					modified = true;
-				}
-			});
-		} else if ('text' in component && component.text === '') {
-			// This transformation is invalid if `component` has special formatting and is the first element of an array with at least one non-empty element.
-			// That's probably not worth fixing since we always avoid putting special formatting on the first element of an array.
-
-			component = '';
-
-			modified = true;
-		}
-
-		if (component !== '') {
-			const keys = Object.keys(component);
-			if (keys.length === 1 && keys[0] === 'text') {
-				component = (component as { text: string }).text;
-
-				modified = true;
-			}
-		}
 	}
 
-	if (modified && options.modifiedCallback) {
-		options.modifiedCallback();
-	}
+	return (
+		output.length === 0
+			? ''
+			: output.length === 1
+				? output[0]
+				: output
+	);
+};
 
-	return component;
-}
+export default minify;

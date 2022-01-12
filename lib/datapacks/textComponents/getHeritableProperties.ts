@@ -1,8 +1,7 @@
 import type { JSONTextComponent, TextComponentObject } from 'sandstone';
+import type { HeritableKey } from 'lib/datapacks/textComponents/heritableKeys';
 import heritableKeys from 'lib/datapacks/textComponents/heritableKeys';
 import { ComponentClass } from 'sandstone/variables';
-
-export type HeritableKey = typeof heritableKeys[number];
 
 export type HeritableProperties = {
 	[Key in HeritableKey]?: TextComponentObject[Key]

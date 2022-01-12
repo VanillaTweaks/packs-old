@@ -11,6 +11,8 @@ export type FlatJSONTextComponent = (
 /**
  * Generates the series of primitives and `TextComponentObject`s needed to recursively spread all arrays and `extra` properties of a text component into one big array.
  *
+ * Never yields `''`.
+ *
  * Does not transform `with` properties at all.
  */
 export const generateFlat = function* (
@@ -72,7 +74,7 @@ export const generateFlat = function* (
 /**
  * Recursively spreads all arrays and `extra` properties of a text component into one big array.
  *
- * Necessarily returns an array with `''` as the first element. Any `TextComponentObject` in the returned array necessarily has more properties than just `text`.
+ * Necessarily returns an array with `''` as the first element (but never as any other element). Any `TextComponentObject` in the returned array necessarily has more properties than just `text`.
  *
  * Does not transform `with` properties at all.
  */
