@@ -8,7 +8,7 @@ import overlap from 'lib/datapacks/textComponents/overlap';
 /**
  * Places a set of components into evenly spaced columns, each column being locally left-aligned, automatically minified.
  *
- * Disables array inheritance on the inputted component.
+ * Disables array inheritance on the inputted components.
  */
 const columns = (...components: JSONTextComponent[]) => {
 	const componentWidths: number[] = [];
