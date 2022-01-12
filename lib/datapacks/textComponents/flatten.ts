@@ -82,8 +82,9 @@ export const generateFlat = function* (
  *
  * Does not transform `with` properties at all.
  */
-const flatten = (component: JSONTextComponent): ['', ...FlatJSONTextComponent[]] => (
-	['', ...generateFlat(component)]
-);
+const flatten = (component: JSONTextComponent): ['', ...FlatJSONTextComponent[]] => [
+	'',
+	...generateFlat(component)
+];
 
 export default flatten;
