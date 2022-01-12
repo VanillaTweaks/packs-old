@@ -55,7 +55,7 @@ const padEachLine = (
 				paddingBeforeLine = padding(idealPaddingWidth, { floor: true });
 			}
 
-			return [paddingBeforeLine, componentLine];
+			return ['', paddingBeforeLine, componentLine];
 		}),
 		'\n'
 	);
