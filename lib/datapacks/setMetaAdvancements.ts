@@ -5,6 +5,7 @@ import pack from 'lib/datapacks/pack';
 import padding from 'lib/datapacks/textComponents/padding';
 import minify from 'lib/datapacks/textComponents/minify';
 import beforeSave from 'lib/beforeSave';
+import color from 'lib/datapacks/textComponents/color';
 
 /** Whether the `pack` has an uninstall function. */
 let hasUninstallFunction = false;
@@ -32,9 +33,9 @@ type MetaAdvancementOptions = {
 	/** The number of spaces after the title, so the advancement's description isn't so squished. */
 	titlePadding?: number,
 	/**
-	 * The text component for the advancement's description, with gold as the default color.
+	 * The advancement's description, with gold as the default color.
 	 *
-	 * If this is an array, inheritance directly within that array will be disabled.
+	 * Disables array inheritance on the inputted component.
 	 */
 	description: JSONTextComponent
 };
@@ -61,14 +62,6 @@ const metaAdvancementsJSON = {
 	} as MetaAdvancementJSON
 } as const;
 
-const color = (component: JSONTextComponent) => (
-	minify({
-		text: '',
-		color: 'gold',
-		extra: Array.isArray(component) ? component : [component]
-	})
-);
-
 /** Sets the info for the pack listed under a VT advancement tab. */
 const setMetaAdvancements = (options: {
 	root: MetaAdvancementOptions & {
@@ -87,7 +80,7 @@ const setMetaAdvancements = (options: {
 				pack.TITLE,
 				padding(options.root.titlePadding || 0)
 			]),
-			description: color(options.root.description),
+			description: color('gold', options.root.description),
 			show_toast: false,
 			announce_to_chat: false
 		},
@@ -183,7 +176,7 @@ const setMetaAdvancements = (options: {
 							metaAdvancementType.title,
 							padding(advancementOptions.titlePadding || 0)
 						]),
-						description: color(advancementOptions.description),
+						description: color('gold', advancementOptions.description),
 						show_toast: false,
 						announce_to_chat: false
 					},
