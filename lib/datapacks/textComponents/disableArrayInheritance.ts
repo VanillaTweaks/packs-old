@@ -20,12 +20,12 @@ const disableArrayInheritance = (component: JSONTextComponent): JSONTextComponen
 			};
 		}
 
-		type JSONTextComponentPossiblyWithWith = Extract<TextComponentObject, { with?: any }>;
-		if ((component as JSONTextComponentPossiblyWithWith).with) {
+		type ComponentPossiblyWithWith = Extract<typeof component, { with?: any }>;
+		if ((component as ComponentPossiblyWithWith).with) {
 			component = {
 				...component,
 				// TODO: Remove `as any`.
-				with: (component as JSONTextComponentPossiblyWithWith).with!.map(disableArrayInheritance) as any
+				with: (component as ComponentPossiblyWithWith).with!.map(disableArrayInheritance) as any
 			};
 		}
 	}
