@@ -1,4 +1,4 @@
-import type { JSONTextComponent, TextComponentObject } from 'sandstone';
+import type { JSONTextComponent } from 'sandstone';
 import { ComponentClass } from 'sandstone/variables';
 
 /** Recursively transforms every raw array in the specified component to have `''` as its first element, preventing other elements in the array from inheriting anything from it. */
