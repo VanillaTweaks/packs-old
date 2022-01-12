@@ -3,17 +3,20 @@ import type { HeritableProperties } from 'lib/datapacks/textComponents/getHerita
 import getHeritableProperties from 'lib/datapacks/textComponents/getHeritableProperties';
 import { ComponentClass } from 'sandstone/variables';
 
-export type FlatJSONTextComponent = TextComponentObject & { extra?: never };
+export type FlatJSONTextComponent = (
+	string | number | boolean
+	| (TextComponentObject & { extra?: never })
+);
 
 /**
- * Generates the series of `TextComponentObject`s needed to recursively spread all arrays and `extra` properties of a text component into one big array.
+ * Generates the series of primitives and `TextComponentObject`s needed to recursively spread all arrays and `extra` properties of a text component into one big array.
  *
  * Does not transform `with` properties at all.
  */
 export const generateFlat = function* (
 	component: JSONTextComponent,
 	/** Properties for the component and its children to inherit. */
-	properties: HeritableProperties = {}
+	properties?: HeritableProperties
 ): Generator<FlatJSONTextComponent, undefined> {
 	if (typeof component === 'object') {
 		if (Array.isArray(component)) {
@@ -39,9 +42,10 @@ export const generateFlat = function* (
 		};
 
 		if (extra !== undefined) {
-			properties = {
+			const heritableProperties = getHeritableProperties(component);
+			properties = (properties || heritableProperties) && {
 				...properties,
-				...getHeritableProperties(component)
+				...heritableProperties
 			};
 			for (const subcomponent of extra) {
 				yield* generateFlat(subcomponent, properties);
@@ -57,16 +61,18 @@ export const generateFlat = function* (
 		return;
 	}
 
-	yield {
+	yield properties ? {
 		text: component,
 		...properties
-	};
+	} : (
+		component
+	);
 };
 
 /**
  * Recursively spreads all arrays and `extra` properties of a text component into one big array.
  *
- * Necessarily returns an array with `''` as the first element.
+ * Necessarily returns an array with `''` as the first element. Any `TextComponentObject` in the returned array necessarily has more properties than just `text`.
  *
  * Does not transform `with` properties at all.
  */
