@@ -5,7 +5,7 @@ import join from 'lib/datapacks/textComponents/join';
 /**
  * Removes all consecutive whitespace from the start and end of the specified text component.
  *
- * Assumes all arrays in the inputted component have elements which shouldn't inherit special formatting from the first element, so it isn't necessary to avoid special formatting on the first element of any inputted array.
+ * Disables array inheritance on the inputted component.
  */
 const trim = (component: JSONTextComponent) => (
 	join(

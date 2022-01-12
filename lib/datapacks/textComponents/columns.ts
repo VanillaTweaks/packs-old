@@ -8,7 +8,7 @@ import overlap from 'lib/datapacks/textComponents/overlap';
 /**
  * Places a set of components into evenly spaced columns, each column being locally left-aligned.
  *
- * Assumes all arrays in the inputted component have elements which shouldn't inherit special formatting from the first element, so it isn't necessary to avoid special formatting on the first element of any inputted array.
+ * Disables array inheritance on the inputted component.
  */
 const columns = (...components: JSONTextComponent[]) => {
 	const componentWidths: number[] = [];

@@ -4,9 +4,9 @@ import { ComponentClass } from 'sandstone/variables';
 /**
  * Splits a `JSONTextComponent` into an array of multiple `JSONTextComponent`s (not minified).
  *
- * Assumes all arrays in the inputted component have elements which shouldn't inherit special formatting from the first element, so it isn't necessary to avoid special formatting on the first element of any inputted array.
- *
  * The returned array is never empty.
+ *
+ * Disables array inheritance on the inputted component.
  */
 const split = (
 	component: JSONTextComponent,

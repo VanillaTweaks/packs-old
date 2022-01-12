@@ -18,7 +18,7 @@ type JSONTextComponentRange = {
 /**
  * Overlaps multiple text components into the same text component, as if they were all rendered simultaneously in the same place, automatically minified.
  *
- * Assumes all arrays in the inputted component have elements which shouldn't inherit special formatting from the first element, so it isn't necessary to avoid special formatting on the first element of any inputted array.
+ * Disables array inheritance on the inputted component.
  *
  * Example:
  *
