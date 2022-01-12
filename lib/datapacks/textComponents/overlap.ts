@@ -5,6 +5,7 @@ import minify from 'lib/datapacks/textComponents/minify';
 import join from 'lib/datapacks/textComponents/join';
 import padding from 'lib/datapacks/textComponents/padding';
 import { containerWidth } from 'lib/datapacks/textComponents/withContainer';
+import disableArrayInheritance from 'lib/datapacks/textComponents/disableArrayInheritance';
 
 type JSONTextComponentRange = {
 	/** The component in the range. Should not contain whitespace. */
@@ -35,7 +36,7 @@ const overlap = (...components: JSONTextComponent[]) => {
 	const rangeLines: JSONTextComponentRange[][] = [];
 
 	for (const component of components) {
-		const componentLines = split(component, '\n');
+		const componentLines = split(disableArrayInheritance(component), '\n');
 
 		for (let lineIndex = 0; lineIndex < componentLines.length; lineIndex++) {
 			if (lineIndex >= rangeLines.length) {
@@ -202,7 +203,7 @@ const overlap = (...components: JSONTextComponent[]) => {
 		outputLines.push(outputLine!);
 	}
 
-	return join(outputLines, '\n');
+	return minify(join(outputLines, '\n'));
 };
 
 export default overlap;

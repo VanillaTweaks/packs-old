@@ -1,7 +1,6 @@
 import type { JSONTextComponent } from 'sandstone';
-import minify from 'lib/datapacks/textComponents/minify';
 
-/** Concatenates an array of `JSONTextComponent`s into one `JSONTextComponent`, automatically minified. */
+/** Concatenates an array of `JSONTextComponent`s into one `JSONTextComponent`. */
 const join = (
 	/** The array of text components to join. */
 	components: JSONTextComponent[],
@@ -18,7 +17,7 @@ const join = (
 		joinedComponent.push(components[i]);
 	}
 
-	return minify(joinedComponent);
+	return joinedComponent;
 };
 
 export default join;

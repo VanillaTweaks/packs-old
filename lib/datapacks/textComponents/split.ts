@@ -34,8 +34,6 @@ const splitPrimitive = (
  * Generates the series of subcomponents split from a specified `JSONTextComponent`.
  *
  * Always yields at least one value.
- *
- * Disables array inheritance on the inputted component.
  */
 export const generateSplit = function* (
 	component: JSONTextComponent,
@@ -62,7 +60,7 @@ export const generateSplit = function* (
 		}
 	};
 
-	for (const subcomponent of generateFlat(disableArrayInheritance(component))) {
+	for (const subcomponent of generateFlat(component)) {
 		let splitSubcomponent;
 
 		if (typeof subcomponent === 'object') {
@@ -102,8 +100,6 @@ export const generateSplit = function* (
  * Splits a `JSONTextComponent` into an array of multiple `JSONTextComponent`s.
  *
  * The returned array is never empty.
- *
- * Disables array inheritance on the inputted component.
  */
 const split = (
 	component: JSONTextComponent,

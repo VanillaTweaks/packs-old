@@ -2,9 +2,8 @@ import type { JSONTextComponent } from 'sandstone';
 import split from 'lib/datapacks/textComponents/split';
 import getWidth from 'lib/datapacks/textComponents/getWidth';
 import { containerWidth } from 'lib/datapacks/textComponents/withContainer';
-import minify from 'lib/datapacks/textComponents/minify';
 
-/** Inserts `\n` characters in a text component where there would otherwise be line breaks due to the text overflowing the container, automatically minified. */
+/** Inserts `\n` characters in a text component where there would otherwise be line breaks due to the text overflowing the container. */
 const wrap = <Component extends JSONTextComponent>(
 	component: Component
 ): Component extends string ? string : JSONTextComponent => {
@@ -93,7 +92,7 @@ const wrap = <Component extends JSONTextComponent>(
 		endLine();
 	}
 
-	return minify(output) as Component extends string ? string : JSONTextComponent;
+	return output as Component extends string ? string : JSONTextComponent;
 };
 
 export default wrap;

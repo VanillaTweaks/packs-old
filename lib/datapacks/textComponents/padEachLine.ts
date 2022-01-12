@@ -7,6 +7,7 @@ import { containerWidth } from 'lib/datapacks/textComponents/withContainer';
 import minify from 'lib/datapacks/textComponents/minify';
 import trim from 'lib/datapacks/textComponents/trim';
 import wrap from 'lib/datapacks/textComponents/wrap';
+import disableArrayInheritance from 'lib/datapacks/textComponents/disableArrayInheritance';
 
 /**
  * Adds padding before each of a text component's trimmed lines (counting lines caused by wrapping), automatically minified.
@@ -30,8 +31,11 @@ const padEachLine = (
 			: idealPaddingWidthArgument
 	);
 
-	return join(
-		split(wrap(component), '\n').map(untrimmedComponentLine => {
+	return minify(join(
+		split(
+			wrap(disableArrayInheritance(component)),
+			'\n'
+		).map(untrimmedComponentLine => {
 			const componentLine = trim(untrimmedComponentLine);
 			const width = getWidth(componentLine);
 
@@ -58,7 +62,7 @@ const padEachLine = (
 			return ['', paddingBeforeLine, componentLine];
 		}),
 		'\n'
-	);
+	));
 };
 
 export default padEachLine;

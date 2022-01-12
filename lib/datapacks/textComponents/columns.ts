@@ -6,7 +6,7 @@ import padEachLine from 'lib/datapacks/textComponents/padEachLine';
 import overlap from 'lib/datapacks/textComponents/overlap';
 
 /**
- * Places a set of components into evenly spaced columns, each column being locally left-aligned.
+ * Places a set of components into evenly spaced columns, each column being locally left-aligned, automatically minified.
  *
  * Disables array inheritance on the inputted component.
  */
