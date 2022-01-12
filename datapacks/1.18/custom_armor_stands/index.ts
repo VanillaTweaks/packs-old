@@ -8,15 +8,11 @@ import NBTRecipe from 'lib/datapacks/NBTRecipe';
 setMetaAdvancements({
 	root: {
 		icon: { item: 'minecraft:armor_stand' },
-		description: (
-			{ text: 'Lets you customize armor stands, their poses, and all of their properties in survival or creative mode.', color: 'gold' }
-		)
+		description: 'Lets you customize armor stands, their poses, and all of their properties in survival or creative mode.'
 	},
 	usage: {
 		titlePadding: 24,
-		description: (
-			{ text: 'Put a book and an armor stand in a crafting table to get a magic book that lets you customize armor stands.', color: 'gold' }
-		)
+		description: 'Put a book and an armor stand in a crafting table to get a magic book that lets you customize armor stands.'
 	},
 	opUsage: {
 		titlePadding: 76

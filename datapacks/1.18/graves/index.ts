@@ -10,19 +10,15 @@ setMetaAdvancements({
 			item: 'minecraft:stone_brick_wall'
 		},
 		titlePadding: 36,
-		description: [
-			'',
-			{ text: 'When you die, your items and/or XP will be stored safely in a grave instead of dropped.', color: 'gold' }
-		]
+		description: 'When you die, your items and/or XP will be stored safely in a grave instead of dropped.'
 	},
 	usage: {
 		titlePadding: 40,
 		description: [
-			'',
 			{ text: 'Right-click', color: 'yellow' },
-			{ text: ' your grave with an empty hand to retrieve its contents.', color: 'gold' },
+			' your grave with an empty hand to retrieve its contents.',
 			{ text: '\n\nHold crouch', color: 'yellow' },
-			{ text: ' while you right-click to make it so only you can pick up the items.', color: 'gold' }
+			' while you right-click to make it so only you can pick up the items.'
 		]
 	},
 	opUsage: {

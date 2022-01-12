@@ -6,10 +6,7 @@ setMetaAdvancements({
 			item: 'minecraft:item_frame'
 		},
 		titlePadding: 36,
-		description: [
-			'',
-			{ text: 'Shear an item frame to make it invisible.', color: 'gold' }
-		]
+		description: 'Shear an item frame to make it invisible.'
 	},
 	usage: {
 		titlePadding: 40,

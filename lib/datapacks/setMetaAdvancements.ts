@@ -31,6 +31,11 @@ export const setHasConfigFunction = (newValue: boolean) => {
 type MetaAdvancementOptions = {
 	/** The number of spaces after the title, so the advancement's description isn't so squished. */
 	titlePadding?: number,
+	/**
+	 * The text component for the advancement's description, with gold as the default color.
+	 *
+	 * If this is an array, inheritance directly within that array will be disabled.
+	 */
 	description: JSONTextComponent
 };
 
@@ -56,6 +61,14 @@ const metaAdvancementsJSON = {
 	} as MetaAdvancementJSON
 } as const;
 
+const color = (component: JSONTextComponent) => (
+	minify({
+		text: '',
+		color: 'gold',
+		extra: Array.isArray(component) ? component : [component]
+	})
+);
+
 /** Sets the info for the pack listed under a VT advancement tab. */
 const setMetaAdvancements = (options: {
 	root: MetaAdvancementOptions & {
@@ -74,7 +87,7 @@ const setMetaAdvancements = (options: {
 				pack.TITLE,
 				padding(options.root.titlePadding || 0)
 			]),
-			description: minify(options.root.description),
+			description: color(options.root.description),
 			show_toast: false,
 			announce_to_chat: false
 		},
@@ -126,10 +139,7 @@ const setMetaAdvancements = (options: {
 
 			if (!Array.isArray(options.opUsage.description)) {
 				options.opUsage.description = [
-					'',
-					...options.opUsage.description === undefined ? [] : [
-						options.opUsage.description
-					]
+					options.opUsage.description || ''
 				];
 			}
 
@@ -142,7 +152,7 @@ const setMetaAdvancements = (options: {
 						),
 						color: 'yellow'
 					},
-					{ text: '\nConfigure the data pack.', color: 'gold' }
+					'\nConfigure the data pack.'
 				);
 			}
 
@@ -155,7 +165,7 @@ const setMetaAdvancements = (options: {
 						),
 						color: 'yellow'
 					},
-					{ text: '\nUninstall the data pack.', color: 'gold' }
+					'\nUninstall the data pack.'
 				);
 			}
 		}
@@ -173,7 +183,7 @@ const setMetaAdvancements = (options: {
 							metaAdvancementType.title,
 							padding(advancementOptions.titlePadding || 0)
 						]),
-						description: minify(advancementOptions.description),
+						description: color(advancementOptions.description),
 						show_toast: false,
 						announce_to_chat: false
 					},
