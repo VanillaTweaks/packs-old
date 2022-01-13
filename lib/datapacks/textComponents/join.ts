@@ -4,8 +4,8 @@ import type { JSONTextComponent } from 'sandstone';
 const join = (
 	/** The array of text components to join. */
 	components: JSONTextComponent[],
-	/** A `JSONTextComponent` to be inserted between each element of the array. Defaults to `''`. */
-	separator: JSONTextComponent = ''
+	/** A `JSONTextComponent` to be inserted between each element of the array. */
+	separator: JSONTextComponent
 ) => {
 	const joinedComponent: JSONTextComponent[] = [''];
 

@@ -6,7 +6,8 @@ import join from 'lib/datapacks/textComponents/join';
 const trim = (component: JSONTextComponent) => (
 	join(
 		// Split the component so that the start and end whitespace can easily be sliced off.
-		split(component, /([^ ]+)/).slice(1, -1)
+		split(component, /(\S+)/).slice(1, -1),
+		''
 	)
 );
 
