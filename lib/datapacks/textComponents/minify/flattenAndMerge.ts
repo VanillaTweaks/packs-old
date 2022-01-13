@@ -1,10 +1,12 @@
 import type { JSONTextComponent, TextComponentObject } from 'sandstone';
 import type { MinifyOutputArray } from 'lib/datapacks/textComponents/minify';
-import heritableKeys, { whitespaceAffectedByKeys, whitespaceUnaffectedByKeys } from 'lib/datapacks/textComponents/heritableKeys';
+import heritableKeys, { whitespaceAffectedByKeys } from 'lib/datapacks/textComponents/heritableKeys';
+import type { FlatJSONTextComponent } from 'lib/datapacks/textComponents/flatten';
 import { generateFlat } from 'lib/datapacks/textComponents/flatten';
 import whitespaceUnaffectedBy from 'lib/datapacks/textComponents/whitespaceUnaffectedBy';
 import minify from 'lib/datapacks/textComponents/minify';
 import { notWhitespace, notLineBreaks } from 'lib/datapacks/textComponents/minify/regex';
+import reduceFlatComponent from 'lib/datapacks/textComponents/minify/reduceFlatComponent';
 
 type TextComponentObjectWithText = Extract<TextComponentObject, { text: any }>;
 
@@ -13,11 +15,8 @@ type TextComponentObjectWithText = Extract<TextComponentObject, { text: any }>;
  *
  * ⚠️ Only for use in `minify`. Mutates the inputted `output` array.
  */
-const flattenAndMerge = (
-	component: JSONTextComponent,
-	output: MinifyOutputArray
-) => {
-	let previousSubcomponent: TextComponentObject | string | undefined;
+const flattenAndMerge = (component: JSONTextComponent, output: MinifyOutputArray) => {
+	let previousSubcomponent: FlatJSONTextComponent | undefined;
 
 	const pushPreviousSubcomponent = () => {
 		if (previousSubcomponent !== undefined) {
@@ -31,94 +30,33 @@ const flattenAndMerge = (
 		previousSubcomponent = subcomponent;
 	};
 
-	/** Tries to merge a plain string subcomponent into the previous subcomponent. */
-	const processPlainString = (
-		subcomponent: string,
-		subcomponentIsWhitespace?: boolean,
-		subcomponentIsLineBreaks?: boolean
-	) => {
+	for (const nonReducedSubcomponent of generateFlat(component)) {
+		const subcomponent = reduceFlatComponent(nonReducedSubcomponent);
+
+		if (subcomponent === '') {
+			continue;
+		}
+
+		// Try to merge this subcomponent with the previous one.
+
 		if (previousSubcomponent === undefined) {
 			previousSubcomponent = subcomponent;
-			return;
+			continue;
 		}
-
-		if (typeof previousSubcomponent === 'object') {
-			if ('text' in previousSubcomponent) {
-				if (subcomponentIsWhitespace === undefined) {
-					subcomponentIsWhitespace = !notWhitespace.test(subcomponent);
-				}
-				if (subcomponentIsLineBreaks === undefined) {
-					subcomponentIsLineBreaks = subcomponentIsWhitespace && !notLineBreaks.test(subcomponent);
-				}
-
-				// Check whether this subcomponent can merge into the previous subcomponent (which necessarily has distinguishable formatting, since otherwise it would already have been reduced to a plain string).
-				if (subcomponentIsLineBreaks || (
-					subcomponentIsWhitespace
-					&& whitespaceUnaffectedBy(previousSubcomponent)
-				)) {
-					previousSubcomponent.text += subcomponent;
-				} else {
-					startNewSubcomponent(subcomponent);
-				}
-				return;
-			}
-
-			// If this point is reached, the previous subcomponent doesn't have `text`, so it can't possibly merge with this one.
-			startNewSubcomponent(subcomponent);
-			return;
-		}
-
-		// If this point is reached, `previousSubcomponent` is a plain string, so it can merge with this plain string.
-		previousSubcomponent += subcomponent;
-	};
-
-	for (const subcomponent of generateFlat(component)) {
-		// Try to reduce this subcomponent and merge it with the previous one.
 
 		if (typeof subcomponent === 'object') {
 			if ('text' in subcomponent) {
-				if (subcomponent.text === '') {
-					continue;
-				}
-
-				const text = subcomponent.text.toString();
-				const textIsWhitespace = !notWhitespace.test(text);
-				let textIsLineBreaks;
-
-				if (textIsWhitespace) {
-					for (const key of whitespaceUnaffectedByKeys) {
-						delete subcomponent[key];
-					}
-				}
-
-				const subcomponentKeys = Object.keys(subcomponent);
-				/** Whether the subcomponent's properties have no distinguishable effect on its `text`. */
-				const textUnaffectedByProperties = (
-					// Check if `text` is the only remaining property of the subcomponent.
-					subcomponentKeys.length === 1 || (
-						textIsLineBreaks = textIsWhitespace && !notLineBreaks.test(text)
-					)
-				);
-				if (textUnaffectedByProperties) {
-					// Reduce this subcomponent to a plain string.
-					processPlainString(text, textIsWhitespace, textIsLineBreaks);
-					continue;
-				}
-
 				// If this point is reached, the subcomponent's properties necessarily have a distinguishable effect on its `text`.
-
-				if (previousSubcomponent === undefined) {
-					previousSubcomponent = subcomponent;
-					continue;
-				}
 
 				if (typeof previousSubcomponent === 'object') {
 					if ('text' in previousSubcomponent) {
 						// If this point is reached, both this subcomponent and the previous one have `text` with distinguishable properties.
 
+						const text = previousSubcomponent.text.toString();
+						const textIsWhitespace = !notWhitespace.test(text);
 						const keysWhichMustEqual = (
 							textIsWhitespace
-								|| !notWhitespace.test(previousSubcomponent.text.toString())
+							|| !notWhitespace.test(previousSubcomponent.text.toString())
 								? whitespaceAffectedByKeys
 								: heritableKeys
 						);
@@ -147,14 +85,15 @@ const flattenAndMerge = (
 					continue;
 				}
 
-				// If this point is reached, this subcomponent has distinguishable properties, and the previous subcomponent is a plain string.
+				// If this point is reached, this subcomponent has distinguishable properties, and the previous subcomponent is a plain primitive.
 				// Try to merge the previous subcomponent into this one.
 
-				if (!notWhitespace.test(previousSubcomponent) && (
+				const previousSubcomponentString = previousSubcomponent.toString();
+				if (!notWhitespace.test(previousSubcomponentString) && (
 					whitespaceUnaffectedBy(subcomponent)
-					|| !notLineBreaks.test(previousSubcomponent)
+					|| !notLineBreaks.test(previousSubcomponentString)
 				)) {
-					subcomponent.text = previousSubcomponent + text;
+					subcomponent.text = previousSubcomponentString + subcomponent.text;
 					previousSubcomponent = subcomponent;
 				} else {
 					startNewSubcomponent(subcomponent);
@@ -174,7 +113,33 @@ const flattenAndMerge = (
 			continue;
 		}
 
-		processPlainString(subcomponent.toString());
+		// If this point is reached, the subcomponent is a plain primitive.
+
+		if (typeof previousSubcomponent === 'object') {
+			if ('text' in previousSubcomponent) {
+				const subcomponentString = subcomponent.toString();
+				const subcomponentIsWhitespace = !notWhitespace.test(subcomponentString);
+				const subcomponentIsLineBreaks = subcomponentIsWhitespace && !notLineBreaks.test(subcomponentString);
+
+				// Check whether this subcomponent can merge into the previous subcomponent (which necessarily has distinguishable formatting, since otherwise it would already have been reduced to a plain primitive).
+				if (subcomponentIsLineBreaks || (
+					subcomponentIsWhitespace
+					&& whitespaceUnaffectedBy(previousSubcomponent)
+				)) {
+					previousSubcomponent.text += subcomponentString;
+				} else {
+					startNewSubcomponent(subcomponent);
+				}
+				continue;
+			}
+
+			// If this point is reached, the previous subcomponent doesn't have `text`, so it can't possibly merge with this one.
+			startNewSubcomponent(subcomponent);
+			continue;
+		}
+
+		// If this point is reached, `previousSubcomponent` is a plain primitive, so it can merge with this plain primitive.
+		previousSubcomponent = previousSubcomponent.toString() + subcomponent;
 	}
 
 	pushPreviousSubcomponent();

@@ -48,40 +48,44 @@ const disableInheritanceIfNecessary = (output: MinifyOutputArray) => {
 			for (let i = 1; i < output.length; i++) {
 				const subcomponent = output[i];
 
-				if (typeof subcomponent === 'string') {
-					if (isStringAffected(subcomponent) === false) {
-						continue;
+				if (typeof subcomponent === 'object') {
+					if ('text' in subcomponent) {
+						const stringAffected = isStringAffected(subcomponent.text.toString());
+
+						if (stringAffected) {
+							preventInheritance();
+							return;
+						}
+
+						if (stringAffected === false) {
+							continue;
+						}
 					}
 
-					preventInheritance();
-					return;
-				}
-
-				if ('text' in subcomponent) {
-					const stringAffected = isStringAffected(subcomponent.text.toString());
-
-					if (stringAffected) {
-						preventInheritance();
-						return;
+					if (heritablePropertyKeys === undefined) {
+						heritablePropertyKeys = Object.keys(heritableProperties) as HeritableKey[];
 					}
 
-					if (stringAffected === false) {
-						continue;
+					for (const heritablePropertyKey of heritablePropertyKeys) {
+						if (subcomponent[heritablePropertyKey] === undefined) {
+							// A heritable property of the first subcomponent is missing from this subcomponent, so this subcomponent would inherit it.
+
+							preventInheritance();
+							return;
+						}
 					}
+
+					continue;
 				}
 
-				if (heritablePropertyKeys === undefined) {
-					heritablePropertyKeys = Object.keys(heritableProperties) as HeritableKey[];
+				// If this point is reached, `subcomponent` is primitive.
+
+				if (isStringAffected(subcomponent.toString()) === false) {
+					continue;
 				}
 
-				for (const heritablePropertyKey of heritablePropertyKeys) {
-					if (subcomponent[heritablePropertyKey] === undefined) {
-						// A heritable property of the first subcomponent is missing from this subcomponent, so this subcomponent would inherit it.
-
-						preventInheritance();
-						return;
-					}
-				}
+				preventInheritance();
+				return;
 			}
 		}
 	}

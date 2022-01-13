@@ -1,8 +1,9 @@
-import type { JSONTextComponent, TextComponentObject } from 'sandstone';
+import type { JSONTextComponent } from 'sandstone';
 import flattenAndMerge from 'lib/datapacks/textComponents/minify/flattenAndMerge';
 import disableInheritanceIfNecessary from 'lib/datapacks/textComponents/minify/disableInheritanceIfNecessary';
+import type { FlatJSONTextComponent } from 'lib/datapacks/textComponents/flatten';
 
-export type MinifyOutputArray = Array<TextComponentObject | string>;
+export type MinifyOutputArray = FlatJSONTextComponent[];
 
 /** Transforms a `JSONTextComponent` to be as short and simplified as possible while keeping it indistinguishable in-game. */
 const minify = (component: JSONTextComponent) => {
