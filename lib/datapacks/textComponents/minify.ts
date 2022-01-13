@@ -71,7 +71,7 @@ const minify = (component: JSONTextComponent) => {
 	};
 
 	for (const subcomponent of generateFlat(component)) {
-		// Try to reduce this subcomponent and merge the previous one into it.
+		// Try to reduce this subcomponent and merge it with the previous one.
 
 		if (typeof subcomponent === 'object') {
 			if ('text' in subcomponent) {
