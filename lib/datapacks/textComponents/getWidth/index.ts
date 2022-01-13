@@ -1,6 +1,6 @@
 import type { JSONTextComponent } from 'sandstone';
-import nonLegacyUnicodeCodePoints from 'lib/datapacks/textComponents/nonLegacyUnicodeCodePoints.json';
-import codePointWidths from 'lib/datapacks/textComponents/codePointWidths.json';
+import nonLegacyUnicodeCodePoints from 'lib/datapacks/textComponents/getWidth/nonLegacyUnicodeCodePoints.json';
+import codePointWidths from 'lib/datapacks/textComponents/getWidth/codePointWidths.json';
 import split from 'lib/datapacks/textComponents/split';
 import { ComponentClass } from 'sandstone/variables';
 
