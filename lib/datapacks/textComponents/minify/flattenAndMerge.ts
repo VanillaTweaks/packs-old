@@ -103,7 +103,7 @@ const flattenAndMerge = (component: JSONTextComponent, output: MinifyOutputArray
 
 			// If this point is reached, this subcomponent is an object without `text`.
 
-			// Recursively minify `with` values, just because it needs to be done somewhere, and there isn't really a better place to do it elsewhere.
+			// Recursively minify `with` values, just because it needs to be done somewhere, and it's not worth creating a separate loop for in a different module.
 			type SubcomponentPossiblyWithWith = Extract<typeof subcomponent, { with?: any }>;
 			if ((subcomponent as SubcomponentPossiblyWithWith).with) {
 				(subcomponent as SubcomponentPossiblyWithWith).with = (
