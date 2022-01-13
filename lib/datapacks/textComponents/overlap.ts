@@ -1,6 +1,6 @@
 import type { JSONTextComponent } from 'sandstone';
 import split from 'lib/datapacks/textComponents/split';
-import getWidth from 'lib/datapacks/textComponents/getWidth';
+import getSingleLineWidth from 'lib/datapacks/textComponents/getWidth/getSingleLineWidth';
 import minify from 'lib/datapacks/textComponents/minify';
 import join from 'lib/datapacks/textComponents/join';
 import padding from 'lib/datapacks/textComponents/padding';
@@ -108,7 +108,7 @@ const overlap = (...components: JSONTextComponent[]) => {
 
 			for (let i = 0; i < subcomponents.length; i++) {
 				const subcomponent = subcomponents[i];
-				const subcomponentWidth = getWidth(subcomponent);
+				const subcomponentWidth = getSingleLineWidth(subcomponent);
 
 				if (i % 2 === 0) {
 					// This subcomponent does not contain only whitespace, so add it to the `value` if it isn't empty.
@@ -168,7 +168,7 @@ const overlap = (...components: JSONTextComponent[]) => {
 				);
 
 				const rangeWidth = range.end - range.start;
-				const paddingWidth = getWidth(paddingBeforeRange);
+				const paddingWidth = getSingleLineWidth(paddingBeforeRange);
 				previousEnd += paddingWidth + rangeWidth;
 
 				if (paddingWidthOffset === 0) {

@@ -1,9 +1,11 @@
 import type { JSONTextComponent } from 'sandstone';
-import getWidth, { SPACE_WIDTH } from 'lib/datapacks/textComponents/getWidth';
+import getWidth from 'lib/datapacks/textComponents/getWidth';
+import SPACE_WIDTH from 'lib/datapacks/textComponents/getWidth/SPACE_WIDTH';
 import { containerWidth } from 'lib/datapacks/textComponents/withContainer';
 import padding from 'lib/datapacks/textComponents/padding';
 import padEachLine from 'lib/datapacks/textComponents/padEachLine';
 import overlap from 'lib/datapacks/textComponents/overlap';
+import getSingleLineWidth from 'lib/datapacks/textComponents/getWidth/getSingleLineWidth';
 
 /**
  * Places a set of components into evenly spaced columns, each column being locally left-aligned, automatically minified.
@@ -46,7 +48,7 @@ const columns = (...components: JSONTextComponent[]) => {
 	}
 
 	// Round to the nearest valid padding width.
-	columnSpacing = getWidth(padding(columnSpacing));
+	columnSpacing = getSingleLineWidth(padding(columnSpacing));
 
 	const paddedColumns: JSONTextComponent[] = [];
 

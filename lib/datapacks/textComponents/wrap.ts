@@ -1,6 +1,6 @@
 import type { JSONTextComponent } from 'sandstone';
 import split from 'lib/datapacks/textComponents/split';
-import getWidth from 'lib/datapacks/textComponents/getWidth';
+import getSingleLineWidth from 'lib/datapacks/textComponents/getWidth/getSingleLineWidth';
 import { containerWidth } from 'lib/datapacks/textComponents/withContainer';
 
 /** Inserts `\n` characters in a text component where there would otherwise be line breaks due to the text overflowing the container. */
@@ -58,7 +58,7 @@ const wrap = <Component extends JSONTextComponent>(
 					['', ...string]
 				));
 				for (const codePoint of codePoints) {
-					const codePointWidth = getWidth(codePoint);
+					const codePointWidth = getSingleLineWidth(codePoint);
 					outputWordWidth += codePointWidth;
 
 					if (outputWordWidth > containerWidth) {
@@ -85,7 +85,7 @@ const wrap = <Component extends JSONTextComponent>(
 			} else {
 				space = wordsAndSpaces[wordOrSpaceIndex];
 
-				outputLineWidth += getWidth(space);
+				outputLineWidth += getSingleLineWidth(space);
 			}
 		}
 

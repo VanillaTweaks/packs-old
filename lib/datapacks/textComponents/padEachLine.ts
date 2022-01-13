@@ -1,6 +1,6 @@
 import type { JSONTextComponent } from 'sandstone';
 import split from 'lib/datapacks/textComponents/split';
-import getWidth from 'lib/datapacks/textComponents/getWidth';
+import getSingleLineWidth from 'lib/datapacks/textComponents/getWidth/getSingleLineWidth';
 import padding from 'lib/datapacks/textComponents/padding';
 import join from 'lib/datapacks/textComponents/join';
 import { containerWidth } from 'lib/datapacks/textComponents/withContainer';
@@ -35,7 +35,7 @@ const padEachLine = (
 			wrap(disableArrayInheritance(component)),
 			'\n'
 		).map(componentLine => {
-			const width = getWidth(componentLine);
+			const width = getSingleLineWidth(componentLine);
 
 			if (width === 0) {
 				// If the line is empty, just leave it empty rather than adding useless padding.
@@ -51,7 +51,7 @@ const padEachLine = (
 
 			idealPaddingWidth = getIdealPaddingWidth(width);
 			let paddingBeforeLine = padding(idealPaddingWidth);
-			const paddingWidth = getWidth(paddingBeforeLine);
+			const paddingWidth = getSingleLineWidth(paddingBeforeLine);
 
 			if (width + paddingWidth > containerWidth) {
 				paddingBeforeLine = padding(idealPaddingWidth, { floor: true });
