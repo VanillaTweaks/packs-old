@@ -104,7 +104,7 @@ const flattenAndMerge = (component: JSONTextComponent, output: MinifyOutputArray
 			// If this point is reached, this subcomponent doesn't have `text`.
 
 			type SubcomponentPossiblyWithWith = Extract<typeof subcomponent, { with?: any }>;
-			if ((subcomponent as SubcomponentPossiblyWithWith).with !== undefined) {
+			if ((subcomponent as SubcomponentPossiblyWithWith).with) {
 				(subcomponent as SubcomponentPossiblyWithWith).with = (
 					// TODO: Remove `as any`.
 					(subcomponent as SubcomponentPossiblyWithWith).with!.map(minify) as any
