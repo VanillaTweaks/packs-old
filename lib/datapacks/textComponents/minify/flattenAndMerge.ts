@@ -101,7 +101,18 @@ const flattenAndMerge = (component: JSONTextComponent, output: MinifyOutputArray
 				continue;
 			}
 
-			// If this point is reached, this subcomponent doesn't have `text`, so the previous one can't possibly merge with it.
+			// If this point is reached, this subcomponent is an object without `text`.
+
+			// Recursively minify `with` values, just because it needs to be done somewhere, and there isn't really a better place to do it elsewhere.
+			type SubcomponentPossiblyWithWith = Extract<typeof subcomponent, { with?: any }>;
+			if ((subcomponent as SubcomponentPossiblyWithWith).with) {
+				(subcomponent as SubcomponentPossiblyWithWith).with = (
+					// TODO: Remove `as any`.
+					(subcomponent as SubcomponentPossiblyWithWith).with!.map(minify) as any
+				);
+			}
+
+			// This subcomponent doesn't have `text`, so the previous one can't possibly merge with it.
 			startNewSubcomponent(subcomponent);
 			continue;
 		}
