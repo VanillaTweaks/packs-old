@@ -1,19 +1,22 @@
 import type { JSONTextComponent, TextComponentObject } from 'sandstone';
-import getHeritableProperties from 'lib/datapacks/textComponents/getHeritableProperties';
-import type { HeritableKey } from 'lib/datapacks/textComponents/heritableKeys';
+import type { MinifyOutputArray } from 'lib/datapacks/textComponents/minify';
 import heritableKeys, { whitespaceAffectedByKeys, whitespaceUnaffectedByKeys } from 'lib/datapacks/textComponents/heritableKeys';
 import { generateFlat } from 'lib/datapacks/textComponents/flatten';
 import whitespaceUnaffectedBy from 'lib/datapacks/textComponents/whitespaceUnaffectedBy';
+import minify from 'lib/datapacks/textComponents/minify';
+import { notWhitespace, notLineBreaks } from 'lib/datapacks/textComponents/minify/regex';
 
 type TextComponentObjectWithText = Extract<TextComponentObject, { text: any }>;
 
-const notLineBreaks = /[^\n]/;
-const notWhitespace = /[^\s]/;
-
-/** Transforms a `JSONTextComponent` to be as short and simplified as possible while keeping it indistinguishable in-game. */
-const minify = (component: JSONTextComponent) => {
-	const output: Array<TextComponentObject | string> = [];
-
+/**
+ * Flattens the inputted component into one array and merges adjacent elements of the array wherever possible.
+ *
+ * ⚠️ Only for use in `minify`. Mutates the inputted `output` array.
+ */
+const flattenAndMerge = (
+	component: JSONTextComponent,
+	output: MinifyOutputArray
+) => {
 	let previousSubcomponent: TextComponentObject | string | undefined;
 
 	const pushPreviousSubcomponent = () => {
@@ -28,13 +31,12 @@ const minify = (component: JSONTextComponent) => {
 		previousSubcomponent = subcomponent;
 	};
 
+	/** Tries to merge a plain string subcomponent into the previous subcomponent. */
 	const processPlainString = (
 		subcomponent: string,
 		subcomponentIsWhitespace?: boolean,
 		subcomponentIsLineBreaks?: boolean
 	) => {
-		// Try to merge this subcomponent into the previous one.
-
 		if (previousSubcomponent === undefined) {
 			previousSubcomponent = subcomponent;
 			return;
@@ -116,7 +118,7 @@ const minify = (component: JSONTextComponent) => {
 
 						const keysWhichMustEqual = (
 							textIsWhitespace
-							|| !notWhitespace.test(previousSubcomponent.text.toString())
+								|| !notWhitespace.test(previousSubcomponent.text.toString())
 								? whitespaceAffectedByKeys
 								: heritableKeys
 						);
@@ -176,91 +178,6 @@ const minify = (component: JSONTextComponent) => {
 	}
 
 	pushPreviousSubcomponent();
-
-	// Check if other subcomponents would inherit unwanted properties from the first subcomponent.
-	if (output.length > 1) {
-		const heritableProperties = getHeritableProperties(output[0]);
-		if (heritableProperties) {
-			/** Whether the first subcomponent has heritable properties which affect whitespace. */
-			let heritablePropertiesAffectWhitespace: boolean | undefined;
-
-			/** Returns whether a specified string is affected by the heritable properties of the first subcomponent, or `undefined` if it depends on what formatting the string has. */
-			const isStringAffected = (string: string) => {
-				if (string === '') {
-					return false;
-				}
-
-				if (!notWhitespace.test(string)) {
-					if (!notLineBreaks.test(string)) {
-						return false;
-					}
-
-					if (heritablePropertiesAffectWhitespace === undefined) {
-						heritablePropertiesAffectWhitespace = !whitespaceUnaffectedBy(heritableProperties);
-					}
-
-					if (heritablePropertiesAffectWhitespace) {
-						return true;
-					}
-				}
-			};
-
-			/** Pushes an empty string to the start of the output to prevent other subcomponents from inheriting properties of the first subcomponent. */
-			const preventInheritance = () => {
-				output.unshift('');
-			};
-
-			let heritablePropertyKeys;
-
-			checkingSubcomponents:
-			for (let i = 1; i < output.length; i++) {
-				const subcomponent = output[i];
-
-				if (typeof subcomponent === 'string') {
-					if (isStringAffected(subcomponent) === false) {
-						continue;
-					}
-
-					preventInheritance();
-					break;
-				}
-
-				if ('text' in subcomponent) {
-					const stringAffected = isStringAffected(subcomponent.text.toString());
-
-					if (stringAffected) {
-						preventInheritance();
-						break;
-					}
-
-					if (stringAffected === false) {
-						continue;
-					}
-				}
-
-				if (heritablePropertyKeys === undefined) {
-					heritablePropertyKeys = Object.keys(heritableProperties) as HeritableKey[];
-				}
-
-				for (const heritablePropertyKey of heritablePropertyKeys) {
-					if (subcomponent[heritablePropertyKey] === undefined) {
-						// A heritable property of the first subcomponent is missing from this subcomponent, so this subcomponent would inherit it.
-
-						preventInheritance();
-						break checkingSubcomponents;
-					}
-				}
-			}
-		}
-	}
-
-	return (
-		output.length === 0
-			? ''
-			: output.length === 1
-				? output[0]
-				: output
-	);
 };
 
-export default minify;
+export default flattenAndMerge;
