@@ -52,7 +52,7 @@ const flattenAndMerge = (component: JSONTextComponent, output: MinifyOutputArray
 					if ('text' in previousSubcomponent) {
 						// If this point is reached, both this subcomponent and the previous one have `text` with distinguishable properties.
 
-						const text = previousSubcomponent.text.toString();
+						const text = subcomponent.text.toString();
 						const textIsWhitespace = !notWhitespace.test(text);
 						const keysWhichMustEqual = (
 							textIsWhitespace
@@ -101,17 +101,7 @@ const flattenAndMerge = (component: JSONTextComponent, output: MinifyOutputArray
 				continue;
 			}
 
-			// If this point is reached, this subcomponent doesn't have `text`.
-
-			type SubcomponentPossiblyWithWith = Extract<typeof subcomponent, { with?: any }>;
-			if ((subcomponent as SubcomponentPossiblyWithWith).with) {
-				(subcomponent as SubcomponentPossiblyWithWith).with = (
-					// TODO: Remove `as any`.
-					(subcomponent as SubcomponentPossiblyWithWith).with!.map(minify) as any
-				);
-			}
-
-			// This subcomponent doesn't have `text`, so the previous one can't possibly merge with it.
+			// If this point is reached, this subcomponent doesn't have `text`, so the previous one can't possibly merge with it.
 			startNewSubcomponent(subcomponent);
 			continue;
 		}
@@ -141,7 +131,7 @@ const flattenAndMerge = (component: JSONTextComponent, output: MinifyOutputArray
 			continue;
 		}
 
-		// If this point is reached, `previousSubcomponent` is a plain primitive, so it can merge with this plain primitive.
+		// If this point is reached, the previous subcomponent is a plain primitive, so it can merge with this plain primitive.
 		previousSubcomponent = previousSubcomponent.toString() + subcomponent;
 	}
 
