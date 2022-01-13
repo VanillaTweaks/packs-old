@@ -11,6 +11,11 @@ const minify = (component: JSONTextComponent) => {
 
 	flattenAndMerge(component, output);
 
+	// TODO: Factor common properties out via array inheritance. For example,
+	// [{ text: 'a', color: 'red' }, { text: 'b', color: 'green' }, { text: 'c', color: 'blue' }, { text: 'd', color: 'green' }]
+	// should minify to
+	// [{ text: 'a', color: 'red' }, [{ text: 'b', color: 'green' }, { text: 'c', color: 'blue' }, 'd']]
+
 	disableInheritanceIfNecessary(output);
 
 	return (
