@@ -161,6 +161,7 @@ const ResourceLocation = <
 			? undefined
 			: base.slice(colonIndex + 1)
 	) as Path;
+
 	let pathSegments: string[];
 	if (path) {
 		pathSegments = path.split('/');
