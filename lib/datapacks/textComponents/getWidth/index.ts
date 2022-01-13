@@ -5,6 +5,7 @@ import getSingleLineWidth from 'lib/datapacks/textComponents/getWidth/getSingleL
 /** Gets the width in in-game pixels that a `JSONTextComponent` takes up. */
 const getWidth = (component: JSONTextComponent) => {
 	const lines = split(component, '\n');
+
 	return Math.max(
 		...lines.map(line => getSingleLineWidth(line))
 	);
