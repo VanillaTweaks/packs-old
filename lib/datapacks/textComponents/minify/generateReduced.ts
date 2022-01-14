@@ -52,6 +52,8 @@ const generateReduced = function* (
 			}
 		}
 
+		// The reason we don't have to avoid yielding `''` here is because `generateFlat`, the first step of the `minify` algorithm, never yields `''`, so `subcomponent` here in this later step could never be `''`.
+
 		yield subcomponent;
 	}
 };
