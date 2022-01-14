@@ -3,6 +3,8 @@ import { notLineBreaks, notWhitespace } from 'lib/datapacks/textComponents/minif
 import { whitespaceUnaffectedByKeys } from 'lib/datapacks/textComponents/heritableKeys';
 import minify from 'lib/datapacks/textComponents/minify';
 
+type SubcomponentPossiblyWithWith = Extract<FlatJSONTextComponent, { with?: any }>;
+
 /**
  * Reduces the size of each `FlatJSONTextComponent` using only the information contained by it.
  *
@@ -40,15 +42,12 @@ const generateReduced = function* (
 					yield text;
 					continue;
 				}
-			} else {
+			} else if ((subcomponent as SubcomponentPossiblyWithWith).with) {
 				// Recursively minify `with` values.
-				type SubcomponentPossiblyWithWith = Extract<typeof subcomponent, { with?: any }>;
-				if ((subcomponent as SubcomponentPossiblyWithWith).with) {
-					(subcomponent as SubcomponentPossiblyWithWith).with = (
-						// TODO: Remove `as any`.
-						(subcomponent as SubcomponentPossiblyWithWith).with!.map(minify) as any
-					);
-				}
+				(subcomponent as SubcomponentPossiblyWithWith).with = (
+					// TODO: Remove `as any`.
+					(subcomponent as SubcomponentPossiblyWithWith).with!.map(minify) as any
+				);
 			}
 		}
 
