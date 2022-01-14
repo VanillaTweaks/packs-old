@@ -4,14 +4,6 @@ import setMetaAdvancements from 'lib/datapacks/setMetaAdvancements';
 import setConfigFunction from 'lib/datapacks/setConfigFunction';
 import armorStandBookNBT from './armorStandBook/armorStandBookNBT';
 import NBTRecipe from 'lib/datapacks/NBTRecipe';
-import minify from 'lib/datapacks/textComponents/minify';
-
-console.log(minify([
-	{ text: 'a', color: 'red' },
-	{ text: 'b', color: 'green' },
-	{ text: 'c', color: 'blue' },
-	{ text: 'd', color: 'green' }
-]));
 
 setMetaAdvancements({
 	root: {

@@ -10,7 +10,7 @@ const minify = (component: JSONTextComponent) => {
 	outputGenerator = generateReduced(outputGenerator);
 	outputGenerator = generateMerged(outputGenerator);
 
-	// TODO: Factor common properties out via array inheritance. For example,
+	// TODO: Factor out common properties via array inheritance. For example,
 	// [{ text: 'a', color: 'red' }, { text: 'b', color: 'green' }, { text: 'c', color: 'blue' }, { text: 'd', color: 'green' }]
 	// should minify to
 	// [{ text: 'a', color: 'red' }, [{ text: 'b', color: 'green' }, { text: 'c', color: 'blue' }, 'd']]
