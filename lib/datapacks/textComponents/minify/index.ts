@@ -1,29 +1,28 @@
 import type { JSONTextComponent } from 'sandstone';
-import flattenAndMerge from 'lib/datapacks/textComponents/minify/flattenAndMerge';
+import generateMerged from 'lib/datapacks/textComponents/minify/generateMerged';
 import disableInheritanceIfNecessary from 'lib/datapacks/textComponents/minify/disableInheritanceIfNecessary';
-import type { FlatJSONTextComponent } from 'lib/datapacks/textComponents/flatten';
-
-export type MinifyOutputArray = FlatJSONTextComponent[];
+import { generateFlat } from 'lib/datapacks/textComponents/flatten';
+import generateReduced from 'lib/datapacks/textComponents/minify/generateReduced';
 
 /** Transforms a `JSONTextComponent` to be as short and simplified as possible while keeping it indistinguishable in-game. */
 const minify = (component: JSONTextComponent) => {
-	const output: MinifyOutputArray = [];
-
-	flattenAndMerge(component, output);
+	let outputGenerator = generateFlat(component);
+	outputGenerator = generateReduced(outputGenerator);
+	outputGenerator = generateMerged(outputGenerator);
 
 	// TODO: Factor common properties out via array inheritance. For example,
 	// [{ text: 'a', color: 'red' }, { text: 'b', color: 'green' }, { text: 'c', color: 'blue' }, { text: 'd', color: 'green' }]
 	// should minify to
 	// [{ text: 'a', color: 'red' }, [{ text: 'b', color: 'green' }, { text: 'c', color: 'blue' }, 'd']]
 
-	disableInheritanceIfNecessary(output);
+	const output = [...outputGenerator];
 
 	return (
 		output.length === 0
 			? ''
 			: output.length === 1
 				? output[0]
-				: output
+				: disableInheritanceIfNecessary(output)
 	);
 };
 

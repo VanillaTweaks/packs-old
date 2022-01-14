@@ -1,48 +1,27 @@
-import type { JSONTextComponent, TextComponentObject } from 'sandstone';
-import type { MinifyOutputArray } from 'lib/datapacks/textComponents/minify';
+import type { TextComponentObject } from 'sandstone';
 import heritableKeys, { whitespaceAffectedByKeys } from 'lib/datapacks/textComponents/heritableKeys';
 import type { FlatJSONTextComponent } from 'lib/datapacks/textComponents/flatten';
-import { generateFlat } from 'lib/datapacks/textComponents/flatten';
 import whitespaceUnaffectedBy from 'lib/datapacks/textComponents/whitespaceUnaffectedBy';
-import minify from 'lib/datapacks/textComponents/minify';
 import { notWhitespace, notLineBreaks } from 'lib/datapacks/textComponents/minify/regex';
-import reduceFlatComponent from 'lib/datapacks/textComponents/minify/reduceFlatComponent';
 
 type TextComponentObjectWithText = Extract<TextComponentObject, { text: any }>;
 
 /**
- * Flattens the inputted component into one array and merges adjacent elements of the array wherever possible.
+ * Merges adjacent elements of the inputted `JSONTextComponent` array wherever possible.
  *
  * ⚠️ Only for use in `minify`. Mutates the inputted `output` array.
  */
-const flattenAndMerge = (component: JSONTextComponent, output: MinifyOutputArray) => {
-	let previousSubcomponent: FlatJSONTextComponent | undefined;
+const generateMerged = function* (
+	subcomponentGenerator: Generator<FlatJSONTextComponent, void>
+): Generator<FlatJSONTextComponent, void> {
+	const firstSubcomponentResult = subcomponentGenerator.next();
+	if (firstSubcomponentResult.done) {
+		return;
+	}
+	let previousSubcomponent = firstSubcomponentResult.value;
 
-	const pushPreviousSubcomponent = () => {
-		if (previousSubcomponent !== undefined) {
-			output.push(previousSubcomponent);
-		}
-	};
-
-	/** Finalizes the `previousSubcomponent` by pushing it to the `output`, since it can't be merged with the next `subcomponent` specified in this function's argument. */
-	const startNewSubcomponent = (subcomponent: typeof previousSubcomponent) => {
-		pushPreviousSubcomponent();
-		previousSubcomponent = subcomponent;
-	};
-
-	for (const nonReducedSubcomponent of generateFlat(component)) {
-		const subcomponent = reduceFlatComponent(nonReducedSubcomponent);
-
-		if (subcomponent === '') {
-			continue;
-		}
-
+	for (const subcomponent of subcomponentGenerator) {
 		// Try to merge this subcomponent with the previous one.
-
-		if (previousSubcomponent === undefined) {
-			previousSubcomponent = subcomponent;
-			continue;
-		}
 
 		if (typeof subcomponent === 'object') {
 			if ('text' in subcomponent) {
@@ -81,7 +60,8 @@ const flattenAndMerge = (component: JSONTextComponent, output: MinifyOutputArray
 					}
 
 					// If this point is reached, either the previous subcomponent doesn't have `text`, or the properties of the subcomponents don't match, so they can't possibly merge.
-					startNewSubcomponent(subcomponent);
+					yield previousSubcomponent;
+					previousSubcomponent = subcomponent;
 					continue;
 				}
 
@@ -96,24 +76,15 @@ const flattenAndMerge = (component: JSONTextComponent, output: MinifyOutputArray
 					subcomponent.text = previousSubcomponentString + subcomponent.text;
 					previousSubcomponent = subcomponent;
 				} else {
-					startNewSubcomponent(subcomponent);
+					yield previousSubcomponent;
+					previousSubcomponent = subcomponent;
 				}
 				continue;
 			}
 
-			// If this point is reached, this subcomponent is an object without `text`.
-
-			// Recursively minify `with` values, just because it needs to be done somewhere, and it's not worth creating a separate loop for in a different module.
-			type SubcomponentPossiblyWithWith = Extract<typeof subcomponent, { with?: any }>;
-			if ((subcomponent as SubcomponentPossiblyWithWith).with) {
-				(subcomponent as SubcomponentPossiblyWithWith).with = (
-					// TODO: Remove `as any`.
-					(subcomponent as SubcomponentPossiblyWithWith).with!.map(minify) as any
-				);
-			}
-
-			// This subcomponent doesn't have `text`, so the previous one can't possibly merge with it.
-			startNewSubcomponent(subcomponent);
+			// If this point is reached, this subcomponent is an object without `text`, so the previous one can't possibly merge with it.
+			yield previousSubcomponent;
+			previousSubcomponent = subcomponent;
 			continue;
 		}
 
@@ -132,13 +103,15 @@ const flattenAndMerge = (component: JSONTextComponent, output: MinifyOutputArray
 				)) {
 					previousSubcomponent.text += subcomponentString;
 				} else {
-					startNewSubcomponent(subcomponent);
+					yield previousSubcomponent;
+					previousSubcomponent = subcomponent;
 				}
 				continue;
 			}
 
 			// If this point is reached, the previous subcomponent doesn't have `text`, so it can't possibly merge with this one.
-			startNewSubcomponent(subcomponent);
+			yield previousSubcomponent;
+			previousSubcomponent = subcomponent;
 			continue;
 		}
 
@@ -146,7 +119,7 @@ const flattenAndMerge = (component: JSONTextComponent, output: MinifyOutputArray
 		previousSubcomponent = previousSubcomponent.toString() + subcomponent;
 	}
 
-	pushPreviousSubcomponent();
+	yield previousSubcomponent;
 };
 
-export default flattenAndMerge;
+export default generateMerged;

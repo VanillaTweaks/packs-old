@@ -19,7 +19,7 @@ export const generateFlat = function* (
 	component: JSONTextComponent,
 	/** Properties for the component and its children to inherit. */
 	properties?: HeritableProperties
-): Generator<FlatJSONTextComponent, undefined> {
+): Generator<FlatJSONTextComponent, void> {
 	if (typeof component === 'object') {
 		if (Array.isArray(component)) {
 			if (component.length) {
