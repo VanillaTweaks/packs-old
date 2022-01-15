@@ -10,20 +10,22 @@ const minify = (component: JSONTextComponent) => {
 	outputGenerator = generateReduced(outputGenerator);
 	outputGenerator = generateMerged(outputGenerator);
 
+	const output = [...outputGenerator];
+
+	if (output.length === 1) {
+		return output[0];
+	}
+
+	if (output.length === 0) {
+		return '';
+	}
+
 	// TODO: Factor out common properties via array inheritance. For example,
 	// [{ text: 'a', color: 'red' }, { text: 'b', color: 'green' }, { text: 'c', color: 'blue' }, { text: 'd', color: 'green' }]
 	// should minify to
 	// [{ text: 'a', color: 'red' }, [{ text: 'b', color: 'green' }, { text: 'c', color: 'blue' }, 'd']]
 
-	const output = [...outputGenerator];
-
-	return (
-		output.length === 0
-			? ''
-			: output.length === 1
-				? output[0]
-				: disableInheritanceIfNecessary(output)
-	);
+	return disableInheritanceIfNecessary(output);
 };
 
 export default minify;
