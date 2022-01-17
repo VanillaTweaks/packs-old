@@ -11,7 +11,7 @@ export type FlatJSONTextComponent = (
 /**
  * Generates the series of primitives and `TextComponentObject`s needed to recursively spread all arrays and `extra` properties of a text component into one big array.
  *
- * Never yields `''`.
+ * Never yields `''`. No yielded subcomponent is a reference to any of the inputted subcomponents, so it is safe to mutate the shallow properties of any yielded object.
  *
  * Does not transform `with` properties at all.
  */

@@ -9,7 +9,7 @@ type TextComponentObjectWithText = Extract<TextComponentObject, { text: any }>;
 /**
  * Merges adjacent elements of the inputted `JSONTextComponent` array wherever possible.
  *
- * ⚠️ Only for use in `minify`. Mutates the inputted `output` array.
+ * ⚠️ Only for use in `minify`. May mutate the inputted subcomponents.
  */
 const generateMerged = function* (
 	subcomponentGenerator: Generator<FlatJSONTextComponent, void>

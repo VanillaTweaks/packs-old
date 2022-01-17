@@ -8,7 +8,7 @@ type SubcomponentPossiblyWithWith = Extract<FlatJSONTextComponent, { with?: any 
 /**
  * Reduces the size of each `FlatJSONTextComponent` using only the information contained by it.
  *
- * ⚠️ Only for use in `minify`. May incidentally mutate the inputted components.
+ * ⚠️ Only for use in `minify`. May mutate the inputted subcomponents.
  */
 const generateReduced = function* (
 	subcomponentGenerator: Generator<FlatJSONTextComponent, void>
