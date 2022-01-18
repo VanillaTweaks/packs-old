@@ -1,5 +1,5 @@
 import type { FlatJSONTextComponent } from 'lib/datapacks/textComponents/flatten';
-import { notLineBreaks, notWhitespace } from 'lib/datapacks/textComponents/minify/regex';
+import { notLineBreaks, notWhitespace } from 'lib/datapacks/textComponents/regex';
 import { whitespaceUnaffectedByKeys } from 'lib/datapacks/textComponents/heritableKeys';
 import minify from 'lib/datapacks/textComponents/minify';
 

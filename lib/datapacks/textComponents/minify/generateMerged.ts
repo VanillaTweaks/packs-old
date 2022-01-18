@@ -1,8 +1,9 @@
 import type { TextComponentObject } from 'sandstone';
 import heritableKeys, { whitespaceAffectedByKeys } from 'lib/datapacks/textComponents/heritableKeys';
 import type { FlatJSONTextComponent } from 'lib/datapacks/textComponents/flatten';
-import whitespaceUnaffectedBy from 'lib/datapacks/textComponents/whitespaceUnaffectedBy';
-import { notWhitespace, notLineBreaks } from 'lib/datapacks/textComponents/minify/regex';
+import isAffectedByInheriting from 'lib/datapacks/textComponents/isAffectedByInheriting';
+import { notWhitespace } from 'lib/datapacks/textComponents/regex';
+import getHeritableProperties from 'lib/datapacks/textComponents/getHeritableProperties';
 
 type TextComponentObjectWithText = Extract<TextComponentObject, { text: any }>;
 
@@ -66,19 +67,14 @@ const generateMerged = function* (
 				}
 
 				// If this point is reached, this subcomponent has distinguishable properties, and the previous subcomponent is a plain primitive.
-				// Try to merge the previous subcomponent into this one.
 
-				const previousSubcomponentString = previousSubcomponent.toString();
-				if (!notWhitespace.test(previousSubcomponentString) && (
-					whitespaceUnaffectedBy(subcomponent)
-					|| !notLineBreaks.test(previousSubcomponentString)
-				)) {
-					subcomponent.text = previousSubcomponentString + subcomponent.text;
-					previousSubcomponent = subcomponent;
-				} else {
+				// Try to merge the previous subcomponent into this one.
+				if (isAffectedByInheriting(previousSubcomponent, getHeritableProperties(subcomponent))) {
 					yield previousSubcomponent;
-					previousSubcomponent = subcomponent;
+				} else {
+					subcomponent.text = previousSubcomponent.toString() + subcomponent.text;
 				}
+				previousSubcomponent = subcomponent;
 				continue;
 			}
 
@@ -92,19 +88,12 @@ const generateMerged = function* (
 
 		if (typeof previousSubcomponent === 'object') {
 			if ('text' in previousSubcomponent) {
-				const subcomponentString = subcomponent.toString();
-				const subcomponentIsWhitespace = !notWhitespace.test(subcomponentString);
-				const subcomponentIsLineBreaks = subcomponentIsWhitespace && !notLineBreaks.test(subcomponentString);
-
 				// Check whether this subcomponent can merge into the previous subcomponent (which necessarily has distinguishable formatting, since otherwise it would already have been reduced to a plain primitive).
-				if (subcomponentIsLineBreaks || (
-					subcomponentIsWhitespace
-					&& whitespaceUnaffectedBy(previousSubcomponent)
-				)) {
-					previousSubcomponent.text += subcomponentString;
-				} else {
+				if (isAffectedByInheriting(subcomponent, getHeritableProperties(previousSubcomponent))) {
 					yield previousSubcomponent;
 					previousSubcomponent = subcomponent;
+				} else {
+					previousSubcomponent.text += subcomponent.toString();
 				}
 				continue;
 			}
