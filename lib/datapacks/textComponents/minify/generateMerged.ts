@@ -3,7 +3,7 @@ import heritableKeys, { whitespaceAffectedByKeys } from 'lib/datapacks/textCompo
 import type { FlatJSONTextComponent } from 'lib/datapacks/textComponents/flatten';
 import isAffectedByInheriting from 'lib/datapacks/textComponents/minify/isAffectedByInheriting';
 import { notWhitespace } from 'lib/datapacks/textComponents/minify/regex';
-import getHeritableProperties from 'lib/datapacks/textComponents/getHeritableProperties';
+import getHeritableKeys from 'lib/datapacks/textComponents/getHeritableKeys';
 
 type TextComponentObjectWithText = Extract<TextComponentObject, { text: any }>;
 
@@ -71,7 +71,7 @@ const generateMerged = function* (
 				// If this point is reached, this subcomponent has distinguishable properties, and the previous subcomponent is a plain primitive.
 
 				// Try to merge the previous subcomponent into this one.
-				if (isAffectedByInheriting(previousSubcomponent, getHeritableProperties(subcomponent))) {
+				if (isAffectedByInheriting(previousSubcomponent, getHeritableKeys(subcomponent))) {
 					yield previousSubcomponent;
 				} else {
 					subcomponent.text = previousSubcomponent.toString() + subcomponent.text;
@@ -91,7 +91,7 @@ const generateMerged = function* (
 		if (typeof previousSubcomponent === 'object') {
 			if ('text' in previousSubcomponent) {
 				// Check whether this subcomponent can merge into the previous subcomponent (which necessarily has distinguishable formatting, since otherwise it would already have been reduced to a plain primitive).
-				if (isAffectedByInheriting(subcomponent, getHeritableProperties(previousSubcomponent))) {
+				if (isAffectedByInheriting(subcomponent, getHeritableKeys(previousSubcomponent))) {
 					yield previousSubcomponent;
 					previousSubcomponent = subcomponent;
 				} else {

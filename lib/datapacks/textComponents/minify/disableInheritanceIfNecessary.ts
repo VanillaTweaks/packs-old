@@ -1,4 +1,4 @@
-import getHeritableProperties from 'lib/datapacks/textComponents/getHeritableProperties';
+import getHeritableKeys from 'lib/datapacks/textComponents/getHeritableKeys';
 import type { FlatJSONTextComponent } from 'lib/datapacks/textComponents/flatten';
 import isAffectedByInheriting from 'lib/datapacks/textComponents/minify/isAffectedByInheriting';
 
@@ -10,14 +10,14 @@ import isAffectedByInheriting from 'lib/datapacks/textComponents/minify/isAffect
 const disableInheritanceIfNecessary = (output: FlatJSONTextComponent[]) => {
 	// Check if other subcomponents would inherit unwanted properties from the first subcomponent.
 
-	/** The first subcomponent's heritable properties. */
-	const heritableProperties = getHeritableProperties(output[0]);
+	/** The first subcomponent's heritable keys. */
+	const keys = getHeritableKeys(output[0]);
 
-	if (heritableProperties) {
+	if (keys.length) {
 		for (let i = 1; i < output.length; i++) {
 			const subcomponent = output[i];
 
-			if (isAffectedByInheriting(subcomponent, heritableProperties)) {
+			if (isAffectedByInheriting(subcomponent, keys)) {
 				output.unshift('');
 				break;
 			}

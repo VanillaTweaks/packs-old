@@ -1,4 +1,3 @@
-import type { HeritableProperties } from 'lib/datapacks/textComponents/getHeritableProperties';
 import type { HeritableKey } from 'lib/datapacks/textComponents/heritableKeys';
 import { whitespaceAffectedByKeys } from 'lib/datapacks/textComponents/heritableKeys';
 import type { FlatJSONTextComponent } from 'lib/datapacks/textComponents/flatten';
@@ -7,12 +6,8 @@ import { notLineBreaks, notWhitespace } from 'lib/datapacks/textComponents/minif
 /** Checks whether a specified `FlatJSONTextComponent` inheriting the specified properties has a distinguishable in-game effect on the component. */
 const isAffectedByInheriting = (
 	component: FlatJSONTextComponent,
-	/**
-	 * The properties to check for whether the component is affected by inheriting them, or `undefined` if there are no properties.
-	 *
-	 * ⚠️ The object passed here must not have additional properties which are not specified by `HeritableProperties`.
-	 */
-	properties: HeritableProperties | undefined,
+	/** The keys of properties to check for whether the component is affected by inheriting them. */
+	keys: HeritableKey[],
 	{ textIsWhitespace, textIsLineBreaks }: {
 		/**
 		 * Whether the component's text is only whitespace.
@@ -28,12 +23,6 @@ const isAffectedByInheriting = (
 		textIsLineBreaks?: boolean
 	} = {}
 ) => {
-	if (properties === undefined) {
-		return false;
-	}
-
-	const keys = Object.keys(properties) as HeritableKey[];
-
 	if (keys.length === 0) {
 		return false;
 	}
