@@ -34,12 +34,14 @@ const generateMerged = function* (
 
 						const text = subcomponent.text.toString();
 						const textIsWhitespace = !notWhitespace.test(text);
+
 						const keysWhichMustEqual = (
 							textIsWhitespace
 							|| !notWhitespace.test(previousSubcomponent.text.toString())
 								? whitespaceAffectedByKeys
 								: heritableKeys
 						);
+
 						if (keysWhichMustEqual.every(key => (
 							subcomponent[key]
 							=== (previousSubcomponent as TextComponentObjectWithText)[key]
