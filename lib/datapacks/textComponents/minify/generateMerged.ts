@@ -1,8 +1,8 @@
 import type { TextComponentObject } from 'sandstone';
 import heritableKeys, { whitespaceAffectedByKeys } from 'lib/datapacks/textComponents/heritableKeys';
 import type { FlatJSONTextComponent } from 'lib/datapacks/textComponents/flatten';
-import isAffectedByInheriting from 'lib/datapacks/textComponents/isAffectedByInheriting';
-import { notWhitespace } from 'lib/datapacks/textComponents/regex';
+import isAffectedByInheriting from 'lib/datapacks/textComponents/minify/isAffectedByInheriting';
+import { notWhitespace } from 'lib/datapacks/textComponents/minify/regex';
 import getHeritableProperties from 'lib/datapacks/textComponents/getHeritableProperties';
 
 type TextComponentObjectWithText = Extract<TextComponentObject, { text: any }>;

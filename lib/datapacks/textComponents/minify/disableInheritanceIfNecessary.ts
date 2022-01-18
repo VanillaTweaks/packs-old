@@ -1,6 +1,6 @@
 import getHeritableProperties from 'lib/datapacks/textComponents/getHeritableProperties';
 import type { FlatJSONTextComponent } from 'lib/datapacks/textComponents/flatten';
-import isAffectedByInheriting from 'lib/datapacks/textComponents/isAffectedByInheriting';
+import isAffectedByInheriting from 'lib/datapacks/textComponents/minify/isAffectedByInheriting';
 
 /**
  * Returns the `output` array with `''` inserted at the beginning, only if necessary to prevent other subcomponents from inheriting properties from the first.
