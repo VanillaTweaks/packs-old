@@ -1,11 +1,11 @@
 // A faithful implementation of https://github.com/LanternMC/load.
 
 import { MCFunction, Objective, scoreboard, Tag } from 'sandstone';
-import ResourceLocation from 'lib/datapacks/ResourceLocation';
+import BaseLocation from 'lib/datapacks/BaseLocation';
 import { loadTempObjective } from 'lib/datapacks/temp';
 import { fixMaxCommandChainLengthTag } from 'lib/datapacks/faultChecking/fixMaxCommandChainLength';
 
-const lanternLoad = ResourceLocation('load', { external: true });
+const lanternLoad = BaseLocation('load', { external: true });
 
 const preLoadTag = Tag('functions', lanternLoad`pre_load`, [
 	loadTempObjective,

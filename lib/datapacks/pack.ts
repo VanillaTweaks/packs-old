@@ -1,8 +1,8 @@
-import ResourceLocation from 'lib/datapacks/ResourceLocation';
+import BaseLocation from 'lib/datapacks/BaseLocation';
 import { title, namespace, version } from 'lib/meta';
 
-/** The `ResourceLocation` for the data pack's namespace. */
-const pack = ResourceLocation(namespace, { title, version });
+/** The `BaseLocation` for the data pack's namespace. */
+const pack = BaseLocation(namespace, { title, version });
 
 if (pack.PATH !== undefined) {
 	throw new TypeError('The pack\'s namespace is invalid.');

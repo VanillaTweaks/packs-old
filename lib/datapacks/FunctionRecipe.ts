@@ -1,4 +1,4 @@
-import type { ResourceLocationInstance } from 'lib/datapacks/ResourceLocation';
+import type { BaseLocationInstance } from 'lib/datapacks/BaseLocation';
 import { advancement, Advancement, execute, kill, MCFunction, NBT, recipe, Recipe, scoreboard } from 'sandstone';
 import type { RecipeJSON } from 'sandstone';
 import vt from 'lib/datapacks/vt';
@@ -27,22 +27,22 @@ export type FunctionRecipeJSON = UnionOmit<Extract<RecipeJSON, { result: { item:
 
 /** A crafting recipe that outputs a knowledge book which runs a specified callback `as` and `at` the player when taken from the crafting output. */
 const FunctionRecipe = (
-	/** The `ResourceLocation` under which to create the necessary directories and resources. */
-	resourceLocation: ResourceLocationInstance,
+	/** The `BaseLocation` under which to create the necessary directories and resources. */
+	baseLocation: BaseLocationInstance,
 	/** The non-namespaced name of the recipe. */
 	name: string,
 	recipeJSON: FunctionRecipeJSON
 ) => {
 	/** The crafting recipe that outputs a knowledge book. */
-	const functionRecipe = Recipe(resourceLocation`${name}`, {
+	const functionRecipe = Recipe(baseLocation`${name}`, {
 		...recipeJSON,
 		result: {
 			item: 'minecraft:knowledge_book'
 		}
 	});
 
-	const recipes = resourceLocation.getChild('recipes');
-	const functionRecipes = resourceLocation.getChild('function_recipes');
+	const recipes = baseLocation.getChild('recipes');
+	const functionRecipes = baseLocation.getChild('function_recipes');
 
 	const recipeUnlockedAdvancement = Advancement(recipes`${name}`, {
 		parent: Advancement(recipes`root`, {

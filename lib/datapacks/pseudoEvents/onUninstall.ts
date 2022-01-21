@@ -1,4 +1,4 @@
-import type { ResourceLocationInstance } from 'lib/datapacks/ResourceLocation';
+import type { BaseLocationInstance } from 'lib/datapacks/BaseLocation';
 import pack from 'lib/datapacks/pack';
 import { Tag, MCFunction, functionCmd } from 'sandstone';
 import vt from 'lib/datapacks/vt';
@@ -11,20 +11,20 @@ MCFunction(vt`uninstall`, () => {
 	functionCmd(uninstallTag);
 });
 
-/** Adds to a `ResourceLocation`'s uninstall function. */
+/** Adds to a `BaseLocation`'s uninstall function. */
 const onUninstall = (
-	resourceLocation: ResourceLocationInstance,
+	baseLocation: BaseLocationInstance,
 	callback: () => void
 ) => {
 	let uninstallFunctionName;
 
-	if (resourceLocation === pack) {
+	if (baseLocation === pack) {
 		setHasUninstallFunction(true);
 
-		uninstallFunctionName = resourceLocation`uninstall`;
+		uninstallFunctionName = baseLocation`uninstall`;
 	} else {
-		// If this uninstall function is for a `ResourceLocation` other than `pack`, then it should not be publicly accessible, because that would allow people to run it despite other packs still depending on the `ResourceLocation` being fully installed and running.
-		uninstallFunctionName = resourceLocation`_uninstall`;
+		// If this uninstall function is for a `BaseLocation` other than `pack`, then it should not be publicly accessible, because that would allow people to run it despite other packs still depending on the `BaseLocation` being fully installed and running.
+		uninstallFunctionName = baseLocation`_uninstall`;
 	}
 
 	const uninstallFunction = MCFunction(uninstallFunctionName, callback, {

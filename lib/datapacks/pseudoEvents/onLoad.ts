@@ -1,4 +1,4 @@
-import type { ResourceLocationInstance } from 'lib/datapacks/ResourceLocation';
+import type { BaseLocationInstance } from 'lib/datapacks/BaseLocation';
 import { loadTag } from 'lib/datapacks/lanternLoad';
 import { MCFunction } from 'sandstone';
 import pack from 'lib/datapacks/pack';
@@ -6,16 +6,16 @@ import beforeSave from 'lib/beforeSave';
 import setLoadStatus from 'lib/datapacks/lanternLoad/setLoadStatus';
 import vt from 'lib/datapacks/vt';
 
-/** Adds to a `ResourceLocation`'s `load` function, which is (indirectly) called by `#minecraft:load`. */
+/** Adds to a `BaseLocation`'s `load` function, which is (indirectly) called by `#minecraft:load`. */
 const onLoad = (
-	/** The `ResourceLocation` to put the `load` function under. */
-	resourceLocation: ResourceLocationInstance,
+	/** The `BaseLocation` to put the `load` function under. */
+	baseLocation: BaseLocationInstance,
 	callback: () => void
 ) => {
 	setLoadStatus(vt);
-	setLoadStatus(resourceLocation);
+	setLoadStatus(baseLocation);
 
-	const loadFunction = MCFunction(resourceLocation`_load`, callback, {
+	const loadFunction = MCFunction(baseLocation`_load`, callback, {
 		onConflict: 'append'
 	});
 
@@ -24,7 +24,7 @@ const onLoad = (
 		// TODO: Remove `as any`.
 		loadTag.add(loadFunction as any);
 
-		if (resourceLocation === pack) {
+		if (baseLocation === pack) {
 			beforeSave(import('lib/datapacks/faultChecking/checkLoadTagNotLoaded'));
 		}
 	}

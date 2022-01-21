@@ -1,4 +1,4 @@
-import type { ResourceLocationInstance } from 'lib/datapacks/ResourceLocation';
+import type { BaseLocationInstance } from 'lib/datapacks/BaseLocation';
 import type { TimeArgument } from 'sandstone';
 import { MCFunction, schedule } from 'sandstone';
 import onLoad from 'lib/datapacks/pseudoEvents/onLoad';
@@ -10,11 +10,11 @@ const existingFunctions: Partial<Record<string, true>> = {};
 /** Runs a function one tick after the pack loads and then on a periodical clock. */
 const every = (
 	duration: Exclude<TimeArgument, number>,
-	/** The `ResourceLocation` to put the clock function under. */
-	resourceLocation: ResourceLocationInstance,
+	/** The `BaseLocation` to put the clock function under. */
+	baseLocation: BaseLocationInstance,
 	callback: () => void
 ) => {
-	const functionName = resourceLocation`_${duration === '1t' ? 'tick' : duration}`;
+	const functionName = baseLocation`_${duration === '1t' ? 'tick' : duration}`;
 
 	/** Whether this `MCFunction` was already created by a previous `every` call. */
 	const functionAlreadyExists = existingFunctions[functionName];
@@ -29,12 +29,12 @@ const every = (
 	}, { onConflict: 'append' });
 
 	if (!functionAlreadyExists) {
-		onLoad(resourceLocation, () => {
+		onLoad(baseLocation, () => {
 			// This is scheduled one tick ahead so that clock functions always run after the load tag is fully complete.
 			schedule.function(clockFunction, '1t');
 		});
 
-		onUninstall(resourceLocation, () => {
+		onUninstall(baseLocation, () => {
 			schedule.clear(clockFunction);
 		});
 	}

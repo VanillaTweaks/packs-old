@@ -1,53 +1,53 @@
-import type { ResourceLocationInstance } from 'lib/datapacks/ResourceLocation';
+import type { BaseLocationInstance } from 'lib/datapacks/BaseLocation';
 import { scoreboard } from 'sandstone';
 import { loadStatus } from 'lib/datapacks/lanternLoad';
 import onLoad from 'lib/datapacks/pseudoEvents/onLoad';
 import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';
 import loadStatusOf from 'lib/datapacks/lanternLoad/loadStatusOf';
 
-/** An array of the targets of `loadStatus` scores for the `ResourceLocation`s which `setLoadStatus` has already been called on. */
+/** An array of the targets of `loadStatus` scores for the `BaseLocation`s which `setLoadStatus` has already been called on. */
 const loadStatusTargets: string[] = [];
 
 /**
- * Sets a `ResourceLocation`'s `loadStatus` score(s) `onLoad` and `onUninstall`.
+ * Sets a `BaseLocation`'s `loadStatus` score(s) `onLoad` and `onUninstall`.
  *
- * ⚠️ This already runs automatically for any `ResourceLocation` which `onLoad` is called on.
+ * ⚠️ This already runs automatically for any `BaseLocation` which `onLoad` is called on.
  */
 const setLoadStatus = (
-	/** The `ResourceLocation` to set the `loadStatus` score(s) of `onLoad` and `onUninstall`. */
-	resourceLocation: ResourceLocationInstance
+	/** The `BaseLocation` to set the `loadStatus` score(s) of `onLoad` and `onUninstall`. */
+	baseLocation: BaseLocationInstance
 ) => {
-	const $resourceLocationLoadStatus = loadStatusOf(resourceLocation);
+	const $baseLocationLoadStatus = loadStatusOf(baseLocation);
 
-	const resourceLocationLoadStatusTarget = $resourceLocationLoadStatus.target.toString();
-	if (loadStatusTargets.includes(resourceLocationLoadStatusTarget)) {
-		// Don't allow `setLoadStatus` to be called multiple times on the same `ResourceLocation`.
+	const baseLocationLoadStatusTarget = $baseLocationLoadStatus.target.toString();
+	if (loadStatusTargets.includes(baseLocationLoadStatusTarget)) {
+		// Don't allow `setLoadStatus` to be called multiple times on the same `BaseLocation`.
 		return;
 	}
-	loadStatusTargets.push(resourceLocationLoadStatusTarget);
+	loadStatusTargets.push(baseLocationLoadStatusTarget);
 
-	onLoad(resourceLocation, () => {
-		scoreboard.players.set($resourceLocationLoadStatus, 1);
+	onLoad(baseLocation, () => {
+		scoreboard.players.set($baseLocationLoadStatus, 1);
 	});
 
-	onUninstall(resourceLocation, () => {
+	onUninstall(baseLocation, () => {
 		// Set to -1 instead of 0 so predicates can distinguish between uninstalled and not loaded.
-		scoreboard.players.set($resourceLocationLoadStatus, -1);
+		scoreboard.players.set($baseLocationLoadStatus, -1);
 	});
 
-	if (resourceLocation.VERSION) {
+	if (baseLocation.VERSION) {
 		for (const versionKey of ['major', 'minor', 'patch'] as const) {
-			onLoad(resourceLocation, () => {
+			onLoad(baseLocation, () => {
 				scoreboard.players.set(
-					`${$resourceLocationLoadStatus.target}.${versionKey}`,
+					`${$baseLocationLoadStatus.target}.${versionKey}`,
 					loadStatus,
-					resourceLocation.VERSION![versionKey]
+					baseLocation.VERSION![versionKey]
 				);
 			});
 
-			onUninstall(resourceLocation, () => {
+			onUninstall(baseLocation, () => {
 				scoreboard.players.set(
-					`${$resourceLocationLoadStatus.target}.${versionKey}`,
+					`${$baseLocationLoadStatus.target}.${versionKey}`,
 					loadStatus,
 					0
 				);

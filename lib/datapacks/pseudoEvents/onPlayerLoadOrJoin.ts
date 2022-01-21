@@ -4,7 +4,7 @@ import every from 'lib/datapacks/every';
 import vt from 'lib/datapacks/vt';
 import objective from 'lib/datapacks/objective';
 import onLoad from 'lib/datapacks/pseudoEvents/onLoad';
-import type { ResourceLocationInstance } from 'lib/datapacks/ResourceLocation';
+import type { BaseLocationInstance } from 'lib/datapacks/BaseLocation';
 
 const playerJoinOrLoad = vt.getChild('player_join_or_load');
 
@@ -39,8 +39,8 @@ every('1t', playerJoinOrLoad, () => {
 /** Runs something as any player who joins the game and as `@a` on load. */
 const onPlayerJoinOrLoad = (
 	...args: [
-		/** The `ResourceLocation` to put the `player_join_or_load` function under. */
-		resourceLocation: ResourceLocationInstance,
+		/** The `BaseLocation` to put the `player_join_or_load` function under. */
+		baseLocation: BaseLocationInstance,
 		callback: () => void
 	] | [
 		/** The function or function tag to add to the `playerJoinOrLoadTag`. */
@@ -52,9 +52,9 @@ const onPlayerJoinOrLoad = (
 	if (args.length === 1) {
 		[functionOrFunctionTag] = args;
 	} else {
-		const [resourceLocation, callback] = args;
+		const [baseLocation, callback] = args;
 
-		functionOrFunctionTag = MCFunction(resourceLocation`_player_join_or_load`, callback, {
+		functionOrFunctionTag = MCFunction(baseLocation`_player_join_or_load`, callback, {
 			onConflict: 'append'
 		});
 	}

@@ -1,12 +1,12 @@
-import type { ResourceLocationInstance } from 'lib/datapacks/ResourceLocation';
+import type { BaseLocationInstance } from 'lib/datapacks/BaseLocation';
 import { loadStatus } from 'lib/datapacks/lanternLoad';
 
-/** Gets the `loadStatus` score of a `ResourceLocation`. */
-const loadStatusOf = (resourceLocation: ResourceLocationInstance) => (
+/** Gets the `loadStatus` score of a `BaseLocation`. */
+const loadStatusOf = (baseLocation: BaseLocationInstance) => (
 	loadStatus(
-		'$' + resourceLocation.NAMESPACE + (
-			resourceLocation.PATH
-				? `.${resourceLocation.PATH.replace(/\//g, '.')}`
+		'$' + baseLocation.NAMESPACE + (
+			baseLocation.PATH
+				? `.${baseLocation.PATH.replace(/\//g, '.')}`
 				: ''
 		)
 	)

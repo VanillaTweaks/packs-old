@@ -2,7 +2,7 @@ import { LootTable, NBT } from 'sandstone';
 import type { RecipeJSON, RootNBT } from 'sandstone';
 import type { FunctionRecipeJSON } from 'lib/datapacks/FunctionRecipe';
 import FunctionRecipe from 'lib/datapacks/FunctionRecipe';
-import type { ResourceLocationInstance } from 'lib/datapacks/ResourceLocation';
+import type { BaseLocationInstance } from 'lib/datapacks/BaseLocation';
 import giveLootTable from 'lib/datapacks/giveLootTable';
 
 export type NBTRecipeJSON = Extract<RecipeJSON, { type: FunctionRecipeJSON['type'] }> & {
@@ -13,13 +13,13 @@ export type NBTRecipeJSON = Extract<RecipeJSON, { type: FunctionRecipeJSON['type
 
 /** A crafting recipe that outputs a knowledge book which gives the player an item with custom NBT when taken from the crafting output. */
 const NBTRecipe = (
-	/** The `ResourceLocation` under which to create the necessary directories and resources. */
-	resourceLocation: ResourceLocationInstance,
+	/** The `BaseLocation` under which to create the necessary directories and resources. */
+	baseLocation: BaseLocationInstance,
 	/** The non-namespaced name of the recipe. */
 	name: string,
 	recipeJSON: NBTRecipeJSON
 ) => {
-	const items = resourceLocation.getChild('items');
+	const items = baseLocation.getChild('items');
 
 	const itemLootTable = LootTable(items`${name}`, {
 		type: 'minecraft:command',
@@ -37,7 +37,7 @@ const NBTRecipe = (
 		}]
 	});
 
-	FunctionRecipe(resourceLocation, name, {
+	FunctionRecipe(baseLocation, name, {
 		...recipeJSON,
 		result: () => {
 			const count = recipeJSON.result.count ?? 1;

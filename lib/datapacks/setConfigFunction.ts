@@ -1,18 +1,18 @@
 import pack from 'lib/datapacks/pack';
-import type { ResourceLocationInstance } from 'lib/datapacks/ResourceLocation';
+import type { BaseLocationInstance } from 'lib/datapacks/BaseLocation';
 import { MCFunction } from 'sandstone';
 import { setHasConfigFunction } from 'lib/datapacks/setMetaAdvancements';
 
-/** Sets a `ResourceLocation`'s config function. */
+/** Sets a `BaseLocation`'s config function. */
 const setConfigFunction = (
-	resourceLocation: ResourceLocationInstance,
+	baseLocation: BaseLocationInstance,
 	callback: () => void
 ) => {
-	if (resourceLocation === pack) {
+	if (baseLocation === pack) {
 		setHasConfigFunction(true);
 	}
 
-	return MCFunction(resourceLocation`config`, callback);
+	return MCFunction(baseLocation`config`, callback);
 };
 
 export default setConfigFunction;

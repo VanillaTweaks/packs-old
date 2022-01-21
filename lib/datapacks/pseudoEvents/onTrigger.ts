@@ -1,4 +1,4 @@
-import type { ResourceLocationInstance } from 'lib/datapacks/ResourceLocation';
+import type { BaseLocationInstance } from 'lib/datapacks/BaseLocation';
 import type { JSONTextComponent, ObjectiveInstance } from 'sandstone';
 import { execute, scoreboard } from 'sandstone';
 import every from 'lib/datapacks/every';
@@ -6,8 +6,8 @@ import objective from 'lib/datapacks/objective';
 
 /** Creates a scoreboard objective with the `trigger` criterion, adds the necessary `scoreboard` commands to the load and uninstall functions, and runs a function as any player who sets the trigger to 1 or greater. */
 const onTrigger = (
-	/** The `ResourceLocation` to create functions under. */
-	resourceLocation: ResourceLocationInstance,
+	/** The `BaseLocation` to create functions under. */
+	baseLocation: BaseLocationInstance,
 	/** The name of the scoreboard objective to create. Must contain only lowercase letters and underscores. */
 	objectiveName: string,
 	/** The display name of the scoreboard objective to create. */
@@ -25,17 +25,17 @@ const onTrigger = (
 	}
 
 	const trigger = objective(
-		resourceLocation,
+		baseLocation,
 		objectiveName,
 		'trigger',
 		displayName,
 		{ namespaced: false }
 	);
 
-	every('4t', resourceLocation, () => {
+	every('4t', baseLocation, () => {
 		execute
 			.as(`@a[scores={${objectiveName}=1..}]`)
-			.run(resourceLocation`_trigger_${objectiveName}`, () => {
+			.run(baseLocation`_trigger_${objectiveName}`, () => {
 				callback(trigger);
 			});
 

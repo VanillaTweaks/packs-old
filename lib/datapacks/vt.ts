@@ -1,7 +1,7 @@
-import ResourceLocation from 'lib/datapacks/ResourceLocation';
+import BaseLocation from 'lib/datapacks/BaseLocation';
 
-/** The `ResourceLocation` for the `vanillatweaks` namespace. */
-const vt = ResourceLocation('vanillatweaks', {
+/** The `BaseLocation` for the `vanillatweaks` namespace. */
+const vt = BaseLocation('vanillatweaks', {
 	title: 'Vanilla Tweaks'
 });
 
