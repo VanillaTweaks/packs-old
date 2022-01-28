@@ -25,9 +25,12 @@ const generateMerged = function* (
 	for (const subcomponent of subcomponentGenerator) {
 		// Try to merge this subcomponent with the previous one.
 
+		/** Whether this subcomponent was successfully merged with the previous one. */
+		let merged = false;
+
 		if (typeof subcomponent === 'object') {
 			if ('text' in subcomponent) {
-				// If this point is reached, the subcomponent's properties necessarily have a distinguishable effect on its `text`.
+				// If this point is reached, the subcomponent has `text` with distinguishable properties.
 
 				if (typeof previousSubcomponent === 'object') {
 					if ('text' in previousSubcomponent) {
@@ -58,57 +61,37 @@ const generateMerged = function* (
 							}
 
 							previousSubcomponent.text = previousText + text;
-
-							continue;
+							merged = true;
 						}
 					}
-
-					// If this point is reached, either the previous subcomponent doesn't have `text`, or the properties of the subcomponents don't match, so they can't possibly merge.
-					yield previousSubcomponent;
-					previousSubcomponent = subcomponent;
-					continue;
-				}
-
-				// If this point is reached, this subcomponent has distinguishable properties, and the previous subcomponent is a plain primitive.
-
-				// Try to merge the previous subcomponent into this one.
-				if (isAffectedByInheriting(previousSubcomponent, getHeritableKeys(subcomponent))) {
-					yield previousSubcomponent;
-				} else {
+				} else if (!isAffectedByInheriting(previousSubcomponent, getHeritableKeys(subcomponent))) {
+					// If this point is reached, this subcomponent has `text` with distinguishable properties, the previous subcomponent is a plain primitive, and they can be merged.
 					subcomponent.text = previousSubcomponent.toString() + subcomponent.text;
-				}
-				previousSubcomponent = subcomponent;
-				continue;
-			}
-
-			// If this point is reached, this subcomponent is an object without `text`, so the previous one can't possibly merge with it.
-			yield previousSubcomponent;
-			previousSubcomponent = subcomponent;
-			continue;
-		}
-
-		// If this point is reached, the subcomponent is a plain primitive.
-
-		if (typeof previousSubcomponent === 'object') {
-			if ('text' in previousSubcomponent) {
-				// Check whether this subcomponent can merge into the previous subcomponent (which necessarily has distinguishable formatting, since otherwise it would already have been reduced to a plain primitive).
-				if (isAffectedByInheriting(subcomponent, getHeritableKeys(previousSubcomponent))) {
-					yield previousSubcomponent;
 					previousSubcomponent = subcomponent;
-				} else {
-					previousSubcomponent.text += subcomponent.toString();
+					merged = true;
 				}
-				continue;
 			}
+		} else if (typeof previousSubcomponent === 'object') {
+			// If this point is reached, this subcomponent is a plain primitive, but the previous one is not.
 
-			// If this point is reached, the previous subcomponent doesn't have `text`, so it can't possibly merge with this one.
-			yield previousSubcomponent;
-			previousSubcomponent = subcomponent;
-			continue;
+			if (
+				'text' in previousSubcomponent
+				&& !isAffectedByInheriting(subcomponent, getHeritableKeys(previousSubcomponent))
+			) {
+				previousSubcomponent.text += subcomponent.toString();
+				merged = true;
+			}
+		} else {
+			// If this point is reached, both this subcomponent and the previous one are plain primitives.
+			previousSubcomponent = previousSubcomponent.toString() + subcomponent;
+			merged = true;
 		}
 
-		// If this point is reached, the previous subcomponent is a plain primitive, so it can merge with this plain primitive.
-		previousSubcomponent = previousSubcomponent.toString() + subcomponent;
+		if (!merged) {
+			// The previous subcomponent is ready to be yielded, since it is now known not to be mergeable with this subcomponent.
+			yield previousSubcomponent;
+			previousSubcomponent = subcomponent;
+		}
 	}
 
 	yield previousSubcomponent;
