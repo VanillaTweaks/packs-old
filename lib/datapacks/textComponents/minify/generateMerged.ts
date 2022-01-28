@@ -1,9 +1,8 @@
 import type { TextComponentObject } from 'sandstone';
 import heritableKeys, { whitespaceAffectedByKeys } from 'lib/datapacks/textComponents/heritableKeys';
 import type { FlatJSONTextComponent } from 'lib/datapacks/textComponents/flatten';
-import isAffectedByInheriting from 'lib/datapacks/textComponents/minify/isAffectedByInheriting';
+import isAffectedByInheritingFrom from 'lib/datapacks/textComponents/minify/isAffectedByInheritingFrom';
 import { notWhitespace } from 'lib/datapacks/textComponents/minify/regex';
-import getHeritableKeys from 'lib/datapacks/textComponents/getHeritableKeys';
 
 type TextComponentObjectWithText = Extract<TextComponentObject, { text: any }>;
 
@@ -64,7 +63,7 @@ const generateMerged = function* (
 							merged = true;
 						}
 					}
-				} else if (!isAffectedByInheriting(previousSubcomponent, getHeritableKeys(subcomponent))) {
+				} else if (!isAffectedByInheritingFrom(previousSubcomponent, subcomponent)) {
 					// If this point is reached, this subcomponent has `text` with distinguishable properties, the previous subcomponent is a plain primitive, and they can be merged.
 					subcomponent.text = previousSubcomponent.toString() + subcomponent.text;
 					previousSubcomponent = subcomponent;
@@ -76,7 +75,7 @@ const generateMerged = function* (
 
 			if (
 				'text' in previousSubcomponent
-				&& !isAffectedByInheriting(subcomponent, getHeritableKeys(previousSubcomponent))
+				&& !isAffectedByInheritingFrom(subcomponent, previousSubcomponent)
 			) {
 				previousSubcomponent.text += subcomponent.toString();
 				merged = true;
