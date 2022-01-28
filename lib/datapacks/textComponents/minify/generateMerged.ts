@@ -65,7 +65,7 @@ const generateMerged = function* (
 					}
 				} else if (!isAffectedByInheritingFrom(previousSubcomponent, subcomponent)) {
 					// If this point is reached, this subcomponent has `text` with distinguishable properties, the previous subcomponent is a plain primitive, and they can be merged.
-					subcomponent.text = previousSubcomponent.toString() + subcomponent.text;
+					subcomponent.text = previousSubcomponent + subcomponent.text.toString();
 					previousSubcomponent = subcomponent;
 					merged = true;
 				}
@@ -82,7 +82,7 @@ const generateMerged = function* (
 			}
 		} else {
 			// If this point is reached, both this subcomponent and the previous one are plain primitives.
-			previousSubcomponent = previousSubcomponent.toString() + subcomponent;
+			previousSubcomponent += subcomponent.toString();
 			merged = true;
 		}
 
