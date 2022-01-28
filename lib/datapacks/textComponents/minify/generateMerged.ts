@@ -19,6 +19,7 @@ const generateMerged = function* (
 	if (firstSubcomponentResult.done) {
 		return;
 	}
+
 	let previousSubcomponent = firstSubcomponentResult.value;
 
 	for (const subcomponent of subcomponentGenerator) {
