@@ -1,10 +1,7 @@
-import type { TextComponentObject } from 'sandstone';
 import heritableKeys, { whitespaceAffectedByKeys } from 'lib/datapacks/textComponents/heritableKeys';
 import type { FlatJSONTextComponent } from 'lib/datapacks/textComponents/flatten';
 import isAffectedByInheritingFrom from 'lib/datapacks/textComponents/minify/isAffectedByInheritingFrom';
 import { notWhitespace } from 'lib/datapacks/textComponents/minify/regex';
-
-type TextComponentObjectWithText = Extract<TextComponentObject, { text: any }>;
 
 /**
  * Merges adjacent elements of the inputted `JSONTextComponent` array wherever possible.
@@ -45,9 +42,11 @@ const generateMerged = function* (
 								: heritableKeys
 						);
 
+						type PreviousSubcomponent = typeof previousSubcomponent;
+
 						if (keysWhichMustEqual.every(key => (
 							subcomponent[key]
-							=== (previousSubcomponent as TextComponentObjectWithText)[key]
+							=== (previousSubcomponent as PreviousSubcomponent)[key]
 						))) {
 							// Merge their `text`.
 
