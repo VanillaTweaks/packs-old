@@ -21,6 +21,8 @@ every('1t', vtFunctionRecipes, () => {
 });
 
 export type FunctionRecipeJSON = UnionOmit<Extract<RecipeJSON, { result: { item: string } }>, 'result'> & {
+	/** What to call this recipe in the config. */
+	// TODO: displayName: string,
 	/** What to run when the recipe is crafted. */
 	result: () => void
 };
