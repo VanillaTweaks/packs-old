@@ -4,7 +4,6 @@ import FunctionRecipe from 'lib/datapacks/FunctionRecipe';
 import type { BaseLocationInstance } from 'lib/BaseLocation';
 import type { UnionOmit } from 'lib/types';
 import type { ItemInstance } from 'lib/datapacks/Item';
-import giveItem from 'lib/datapacks/Item/giveItem';
 
 export type NBTRecipeJSON = UnionOmit<Extract<RecipeJSON, { type: FunctionRecipeJSON['type'] }>, 'result'> & {
 	result: {
@@ -24,7 +23,7 @@ const NBTRecipe = (
 		result: () => {
 			const count = recipeJSON.result.count ?? 1;
 			for (let i = 0; i < count; i++) {
-				giveItem(recipeJSON.result.item);
+				recipeJSON.result.item.give();
 			}
 		}
 	});

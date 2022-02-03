@@ -1,7 +1,8 @@
 import type { BaseLocationInstance } from 'lib/BaseLocation';
-import type { ITEMS, LiteralUnion, LootTableInstance, NBTObject, RootNBT } from 'sandstone';
-import { LootTable, NBT } from 'sandstone';
+import type { ITEMS, LiteralUnion, LootTableInstance, MCFunctionInstance, NBTObject, RootNBT } from 'sandstone';
+import { LootTable, MCFunction, NBT } from 'sandstone';
 import vt from 'lib/vt';
+import giveLootTable from 'lib/datapacks/giveLootTable';
 
 export type ItemOptions = {
 	/** The namespaced ID of the real item which the custom item extends. */
@@ -47,6 +48,12 @@ export type ItemInstance = {
 	 */
 	nameWithoutBase: string,
 	lootTable: LootTableInstance,
+	/**
+	 * Gives `@s` the item.
+	 *
+	 * ⚠️ Assumes it is being executed `at @s`.
+	 */
+	give: MCFunctionInstance,
 	toString: () => string
 };
 
@@ -60,9 +67,7 @@ const Item = (
 ) => {
 	const name = baseLocation`${nameWithoutBase}`;
 
-	const items = baseLocation.getChild('items');
-
-	const lootTable = LootTable(items`${nameWithoutBase}`, {
+	const lootTable = LootTable(baseLocation`items/${nameWithoutBase}`, {
 		type: 'minecraft:command',
 		pools: [{
 			rolls: 1,
@@ -87,12 +92,17 @@ const Item = (
 		}]
 	});
 
+	const giveItem = MCFunction(baseLocation`give/${nameWithoutBase}`, () => {
+		giveLootTable(item.lootTable);
+	});
+
 	const item: ItemInstance = {
 		baseLocation,
 		name,
 		nameWithoutBase,
 		lootTable,
-		toString: () => item.name
+		toString: () => item.name,
+		give: giveItem
 	};
 
 	return item;
