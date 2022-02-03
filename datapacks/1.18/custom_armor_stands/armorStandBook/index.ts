@@ -12,13 +12,13 @@ import Item from 'lib/datapacks/Item';
 const armorStandBook = Item(pack, 'armor_stand_book', {
 	item: 'minecraft:written_book',
 	nbt: {
+		CustomModelData: customModelData(0),
 		data: {
 			[pack.NAMESPACE]: {
 				pastActions: [],
 				futureActions: []
 			}
 		},
-		CustomModelData: customModelData(0),
 		title: pack.TITLE,
 		author: vt.TITLE,
 		display: {

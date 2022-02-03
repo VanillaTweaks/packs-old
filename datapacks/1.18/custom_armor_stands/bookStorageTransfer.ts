@@ -15,6 +15,6 @@ export const copyStorageToBook = ItemModifier(pack`copy_storage_to_book`, {
 	}]
 });
 
-export const copyBookToStorage = MCFunction(pack`copy_book_to_storage`, () => {
+export const copyBookToStorage = MCFunction(pack`_copy_book_to_storage`, () => {
 	// data.modify.storage(pack`main`, 'book').set.from
 });
