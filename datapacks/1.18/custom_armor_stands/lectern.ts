@@ -3,7 +3,7 @@ import pack from 'lib/pack';
 import objective from 'lib/datapacks/objective';
 import checkLoadStatus from 'lib/datapacks/lanternLoad/checkLoadStatus';
 import temp from 'lib/datapacks/temp';
-import vt from 'lib/datapacks/vt';
+import vt from 'lib/vt';
 
 const lectern = pack.getChild('lectern');
 

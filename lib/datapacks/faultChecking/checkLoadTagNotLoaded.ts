@@ -2,7 +2,7 @@
 
 import type { AdvancementInstance, PredicateCondition } from 'sandstone';
 import { advancement, Advancement, execute, MCFunction, Predicate, schedule, scoreboard, Tag, tellraw } from 'sandstone';
-import vt from 'lib/datapacks/vt';
+import vt from 'lib/vt';
 import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';
 import loadStatusOf from 'lib/datapacks/lanternLoad/loadStatusOf';
 import pack from 'lib/pack';

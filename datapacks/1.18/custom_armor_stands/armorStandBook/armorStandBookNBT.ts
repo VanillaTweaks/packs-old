@@ -4,7 +4,7 @@ import center from 'lib/datapacks/textComponents/center';
 import columns from 'lib/datapacks/textComponents/columns';
 import minify from 'lib/datapacks/textComponents/minify';
 import withContainer, { BOOK } from 'lib/datapacks/textComponents/withContainer';
-import vt from 'lib/datapacks/vt';
+import vt from 'lib/vt';
 import type { RootNBT } from 'sandstone';
 import { PAGE_TITLE_COLOR, DETAILS_COLOR, HEADING_COLOR, CLICKABLE_COLOR, CLICKABLE_COLOR_2, NEGATIVE_NUMBER_COLOR, POSITIVE_NUMBER_COLOR, NUMBER_COLOR } from '../armorStandBook/colors';
 import page from '../armorStandBook/page';

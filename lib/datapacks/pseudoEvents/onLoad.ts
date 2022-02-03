@@ -4,7 +4,7 @@ import { MCFunction } from 'sandstone';
 import pack from 'lib/pack';
 import beforeSave from 'lib/beforeSave';
 import setLoadStatus from 'lib/datapacks/lanternLoad/setLoadStatus';
-import vt from 'lib/datapacks/vt';
+import vt from 'lib/vt';
 
 /** Adds to a `BaseLocation`'s `load` function, which is (indirectly) called by `#minecraft:load`. */
 const onLoad = (

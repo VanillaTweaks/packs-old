@@ -1,6 +1,6 @@
 import type { PredicateCondition } from 'sandstone';
 import loadStatusOf from 'lib/datapacks/lanternLoad/loadStatusOf';
-import vt from 'lib/datapacks/vt';
+import vt from 'lib/vt';
 
 const $vtLoadStatus = loadStatusOf(vt);
 

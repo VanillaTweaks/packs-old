@@ -1,5 +1,5 @@
 import { MCFunction, Objective, scoreboard } from 'sandstone';
-import vt from 'lib/datapacks/vt';
+import vt from 'lib/vt';
 import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';
 
 const tempObjective = vt.getChild('temp_objective');

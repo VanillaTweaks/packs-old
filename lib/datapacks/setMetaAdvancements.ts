@@ -1,4 +1,4 @@
-import vt from 'lib/datapacks/vt';
+import vt from 'lib/vt';
 import { Advancement, NBT } from 'sandstone';
 import type { AdvancementJSON, JSONTextComponent } from 'sandstone';
 import pack from 'lib/pack';

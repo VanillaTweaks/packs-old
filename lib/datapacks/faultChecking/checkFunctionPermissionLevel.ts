@@ -1,7 +1,7 @@
 // Creates a few advancements and functions to warn the server when the `function-permission-level` is too low.
 
 import { advancement, Advancement, MCFunction, me } from 'sandstone';
-import vt from 'lib/datapacks/vt';
+import vt from 'lib/vt';
 import onPlayerJoinOrLoad from 'lib/datapacks/pseudoEvents/onPlayerLoadOrJoin';
 import vtNotUninstalled from 'lib/datapacks/faultChecking/vtNotUninstalled';
 

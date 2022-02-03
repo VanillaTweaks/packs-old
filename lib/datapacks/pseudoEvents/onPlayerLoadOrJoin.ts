@@ -1,7 +1,7 @@
 import type { MCFunctionInstance, TagInstance } from 'sandstone';
 import { execute, MCFunction, scoreboard, Tag } from 'sandstone';
 import every from 'lib/datapacks/every';
-import vt from 'lib/datapacks/vt';
+import vt from 'lib/vt';
 import objective from 'lib/datapacks/objective';
 import onLoad from 'lib/datapacks/pseudoEvents/onLoad';
 import type { BaseLocationInstance } from 'lib/BaseLocation';

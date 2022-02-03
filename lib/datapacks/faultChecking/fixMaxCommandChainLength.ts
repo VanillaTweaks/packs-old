@@ -1,4 +1,4 @@
-import vt from 'lib/datapacks/vt';
+import vt from 'lib/vt';
 import { execute, MCFunction, schedule, Tag } from 'sandstone';
 import temp from 'lib/datapacks/temp';
 import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';

@@ -1,7 +1,7 @@
 import type { BaseLocationInstance } from 'lib/BaseLocation';
 import pack from 'lib/pack';
 import { Tag, MCFunction, functionCmd } from 'sandstone';
-import vt from 'lib/datapacks/vt';
+import vt from 'lib/vt';
 import { setHasUninstallFunction } from 'lib/datapacks/setMetaAdvancements';
 
 const uninstallTag = Tag('functions', vt`_uninstall`);

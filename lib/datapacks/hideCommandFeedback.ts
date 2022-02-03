@@ -1,4 +1,4 @@
-import vt from 'lib/datapacks/vt';
+import vt from 'lib/vt';
 import { execute, gamerule, schedule } from 'sandstone';
 import temp from 'lib/datapacks/temp';
 
