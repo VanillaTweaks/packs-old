@@ -33,6 +33,7 @@ export type ItemOptions = {
 };
 
 export type ItemInstance = {
+	baseLocation: BaseLocationInstance,
 	/**
 	 * The namespaced name of the custom item.
 	 *
@@ -45,7 +46,8 @@ export type ItemInstance = {
 	 * Example: `'wrench'`
 	 */
 	nameWithoutBase: string,
-	lootTable: LootTableInstance
+	lootTable: LootTableInstance,
+	toString: () => string
 };
 
 /** Creates an abstraction for a custom NBT item. */
@@ -53,12 +55,14 @@ const Item = (
 	/** The `BaseLocation` under which to create the necessary directories and resources for the item. */
 	baseLocation: BaseLocationInstance,
 	/** The non-namespaced name of the item. */
-	name: string,
+	nameWithoutBase: string,
 	options: ItemOptions
 ) => {
+	const name = baseLocation`${nameWithoutBase}`;
+
 	const items = baseLocation.getChild('items');
 
-	const lootTable = LootTable(items`${name}`, {
+	const lootTable = LootTable(items`${nameWithoutBase}`, {
 		type: 'minecraft:command',
 		pools: [{
 			rolls: 1,
@@ -74,7 +78,7 @@ const Item = (
 							...options.nbt.data,
 							[vt.NAMESPACE]: {
 								...options.nbt.data?.[vt.NAMESPACE],
-								item: baseLocation`${name}`
+								item: name
 							}
 						}
 					})
@@ -84,9 +88,11 @@ const Item = (
 	});
 
 	const item: ItemInstance = {
-		name: baseLocation`${name}`,
-		nameWithoutBase: name,
-		lootTable
+		baseLocation,
+		name,
+		nameWithoutBase,
+		lootTable,
+		toString: () => item.name
 	};
 
 	return item;

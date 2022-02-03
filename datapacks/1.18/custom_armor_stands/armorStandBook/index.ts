@@ -13,14 +13,11 @@ const armorStandBook = Item(pack, 'armor_stand_book', {
 	item: 'minecraft:written_book',
 	nbt: {
 		data: {
-			[vt.NAMESPACE]: {
-				item: 'armor_stand_book'
-			},
 			[pack.NAMESPACE]: {
 				pastActions: [],
 				futureActions: []
 			}
-		} as any,
+		},
 		CustomModelData: customModelData(0),
 		title: pack.TITLE,
 		author: vt.TITLE,
