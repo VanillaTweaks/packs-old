@@ -2,7 +2,7 @@ import onTrigger from 'lib/datapacks/pseudoEvents/onTrigger';
 import pack from 'lib/pack';
 import setMetaAdvancements from 'lib/datapacks/setMetaAdvancements';
 import setConfigFunction from 'lib/datapacks/setConfigFunction';
-import armorStandBookNBT from './armorStandBook/armorStandBookNBT';
+import armorStandBook from './armorStandBook';
 import NBTRecipe from 'lib/datapacks/NBTRecipe';
 
 setMetaAdvancements({
@@ -19,7 +19,7 @@ setMetaAdvancements({
 	}
 });
 
-NBTRecipe(pack, 'armor_stand_book', {
+NBTRecipe(pack, {
 	// TODO: Remove type assertion.
 	type: 'minecraft:crafting_shapeless' as 'crafting_shapeless',
 	ingredients: [{
@@ -28,8 +28,7 @@ NBTRecipe(pack, 'armor_stand_book', {
 		item: 'minecraft:armor_stand'
 	}],
 	result: {
-		item: 'minecraft:written_book',
-		nbt: armorStandBookNBT
+		item: armorStandBook
 	}
 });
 

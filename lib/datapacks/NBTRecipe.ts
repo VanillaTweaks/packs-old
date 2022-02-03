@@ -1,13 +1,15 @@
-import { LootTable, NBT } from 'sandstone';
-import type { RecipeJSON, RootNBT } from 'sandstone';
+import type { RecipeJSON } from 'sandstone';
 import type { FunctionRecipeJSON } from 'lib/datapacks/FunctionRecipe';
 import FunctionRecipe from 'lib/datapacks/FunctionRecipe';
 import type { BaseLocationInstance } from 'lib/BaseLocation';
-import giveLootTable from 'lib/datapacks/giveLootTable';
+import type { UnionOmit } from 'lib/types';
+import type { ItemInstance } from 'lib/datapacks/Item';
+import giveItem from 'lib/datapacks/Item/giveItem';
 
-export type NBTRecipeJSON = Extract<RecipeJSON, { type: FunctionRecipeJSON['type'] }> & {
+export type NBTRecipeJSON = UnionOmit<Extract<RecipeJSON, { type: FunctionRecipeJSON['type'] }>, 'result'> & {
 	result: {
-		nbt: RootNBT
+		item: ItemInstance,
+		count?: number
 	}
 };
 
@@ -15,34 +17,14 @@ export type NBTRecipeJSON = Extract<RecipeJSON, { type: FunctionRecipeJSON['type
 const NBTRecipe = (
 	/** The `BaseLocation` under which to create the necessary directories and resources. */
 	baseLocation: BaseLocationInstance,
-	/** The non-namespaced name of the recipe. */
-	name: string,
 	recipeJSON: NBTRecipeJSON
 ) => {
-	const items = baseLocation.getChild('items');
-
-	const itemLootTable = LootTable(items`${name}`, {
-		type: 'minecraft:command',
-		pools: [{
-			rolls: 1,
-			entries: [{
-				type: 'minecraft:item',
-				name: recipeJSON.result.item,
-				functions: [{
-					// TODO: Remove type assertion.
-					function: 'minecraft:set_nbt' as 'set_nbt',
-					tag: NBT.stringify(recipeJSON.result.nbt)
-				}]
-			}]
-		}]
-	});
-
-	FunctionRecipe(baseLocation, name, {
+	FunctionRecipe(baseLocation, recipeJSON.result.item.nameWithoutBase, {
 		...recipeJSON,
 		result: () => {
 			const count = recipeJSON.result.count ?? 1;
 			for (let i = 0; i < count; i++) {
-				giveLootTable(itemLootTable);
+				giveItem(recipeJSON.result.item);
 			}
 		}
 	});

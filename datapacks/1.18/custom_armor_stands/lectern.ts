@@ -4,6 +4,7 @@ import objective from 'lib/datapacks/objective';
 import checkLoadStatus from 'lib/datapacks/lanternLoad/checkLoadStatus';
 import temp from 'lib/datapacks/temp';
 import vt from 'lib/vt';
+import armorStandBook from './armorStandBook';
 
 const lectern = pack.getChild('lectern');
 
@@ -21,7 +22,7 @@ Advancement(lectern`use`, {
 						nbt: NBT.stringify({
 							data: {
 								[vt.NAMESPACE]: {
-									item: 'armor_stand_book'
+									item: armorStandBook.name
 								}
 							}
 						})
