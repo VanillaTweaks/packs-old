@@ -1,5 +1,5 @@
 import setMetaAdvancements from 'lib/datapacks/setMetaAdvancements';
-import pack from 'lib/datapacks/pack';
+import pack from 'lib/pack';
 import { advancement, Advancement, data, execute, kill, MCFunction, NBT, particle, playsound, summon, tag } from 'sandstone';
 import every from 'lib/datapacks/every';
 import objective from 'lib/datapacks/objective';

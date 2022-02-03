@@ -2,7 +2,7 @@ import { LootTable, NBT } from 'sandstone';
 import type { RecipeJSON, RootNBT } from 'sandstone';
 import type { FunctionRecipeJSON } from 'lib/datapacks/FunctionRecipe';
 import FunctionRecipe from 'lib/datapacks/FunctionRecipe';
-import type { BaseLocationInstance } from 'lib/datapacks/BaseLocation';
+import type { BaseLocationInstance } from 'lib/BaseLocation';
 import giveLootTable from 'lib/datapacks/giveLootTable';
 
 export type NBTRecipeJSON = Extract<RecipeJSON, { type: FunctionRecipeJSON['type'] }> & {

@@ -1,4 +1,4 @@
-import pack from 'lib/datapacks/pack';
+import pack from 'lib/pack';
 import { Advancement, advancement, data, execute, MCFunction, NBT, schedule, tag } from 'sandstone';
 import setMetaAdvancements from 'lib/datapacks/setMetaAdvancements';
 import setConfigFunction from 'lib/datapacks/setConfigFunction';

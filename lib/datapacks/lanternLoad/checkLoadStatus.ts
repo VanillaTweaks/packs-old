@@ -1,7 +1,7 @@
 import type { PredicateCondition } from 'sandstone';
 import loadStatusOf from 'lib/datapacks/lanternLoad/loadStatusOf';
-import type { BaseLocationInstance } from 'lib/datapacks/BaseLocation';
-import pack from 'lib/datapacks/pack';
+import type { BaseLocationInstance } from 'lib/BaseLocation';
+import pack from 'lib/pack';
 
 /**
  * Returns a `PredicateCondition`, to include in an advancement criterion's `player` condition, which ensures a `BaseLocation` (the `pack` by default) is loaded, since otherwise an advancement's reward function could run even after everything is supposed to be uninstalled, or while the `function-permission-level` is too low.

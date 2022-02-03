@@ -1,4 +1,4 @@
-import pack from 'lib/datapacks/pack';
+import pack from 'lib/pack';
 import horizontalBar from 'lib/datapacks/tellraw/horizontalBar';
 import type { JSONTextComponent, MultiplePlayersArgument } from 'sandstone';
 import { tellraw } from 'sandstone';

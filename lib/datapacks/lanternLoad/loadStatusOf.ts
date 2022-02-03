@@ -1,4 +1,4 @@
-import type { BaseLocationInstance } from 'lib/datapacks/BaseLocation';
+import type { BaseLocationInstance } from 'lib/BaseLocation';
 import { loadStatus } from 'lib/datapacks/lanternLoad';
 
 /** Gets the `loadStatus` score of a `BaseLocation`. */

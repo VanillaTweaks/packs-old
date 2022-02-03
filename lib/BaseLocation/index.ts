@@ -1,5 +1,5 @@
-import type { VersionString } from 'lib/datapacks/BaseLocation/Version';
-import type Version from 'lib/datapacks/BaseLocation/Version';
+import type { VersionString } from 'lib/BaseLocation/Version';
+import type Version from 'lib/BaseLocation/Version';
 
 /** A base location path named to discourage players from running functions and function tags under it. */
 const PRIVATE_PATH = 'zz/do_not_run_or_packs_may_break';

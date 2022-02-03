@@ -1,4 +1,4 @@
-import pack from 'lib/datapacks/pack';
+import pack from 'lib/pack';
 import { ItemModifier, MCFunction } from 'sandstone';
 
 export const copyStorageToBook = ItemModifier(pack`copy_storage_to_book`, {

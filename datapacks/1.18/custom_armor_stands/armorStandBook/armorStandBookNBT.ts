@@ -1,5 +1,5 @@
 import customModelData from 'lib/customModelData';
-import pack from 'lib/datapacks/pack';
+import pack from 'lib/pack';
 import center from 'lib/datapacks/textComponents/center';
 import columns from 'lib/datapacks/textComponents/columns';
 import minify from 'lib/datapacks/textComponents/minify';

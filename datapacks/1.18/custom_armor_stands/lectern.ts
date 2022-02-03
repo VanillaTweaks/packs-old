@@ -1,5 +1,5 @@
 import { Advancement, MCFunction, NBT, execute, summon, scoreboard } from 'sandstone';
-import pack from 'lib/datapacks/pack';
+import pack from 'lib/pack';
 import objective from 'lib/datapacks/objective';
 import checkLoadStatus from 'lib/datapacks/lanternLoad/checkLoadStatus';
 import temp from 'lib/datapacks/temp';

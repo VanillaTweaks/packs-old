@@ -5,7 +5,7 @@ import { advancement, Advancement, execute, MCFunction, Predicate, schedule, sco
 import vt from 'lib/datapacks/vt';
 import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';
 import loadStatusOf from 'lib/datapacks/lanternLoad/loadStatusOf';
-import pack from 'lib/datapacks/pack';
+import pack from 'lib/pack';
 import { loadStatus } from 'lib/datapacks/lanternLoad';
 import onLoad from 'lib/datapacks/pseudoEvents/onLoad';
 import temp from 'lib/datapacks/temp';

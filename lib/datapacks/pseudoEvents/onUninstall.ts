@@ -1,5 +1,5 @@
-import type { BaseLocationInstance } from 'lib/datapacks/BaseLocation';
-import pack from 'lib/datapacks/pack';
+import type { BaseLocationInstance } from 'lib/BaseLocation';
+import pack from 'lib/pack';
 import { Tag, MCFunction, functionCmd } from 'sandstone';
 import vt from 'lib/datapacks/vt';
 import { setHasUninstallFunction } from 'lib/datapacks/setMetaAdvancements';

@@ -1,5 +1,5 @@
 import onLoad from 'lib/datapacks/pseudoEvents/onLoad';
-import type { BaseLocationInstance } from 'lib/datapacks/BaseLocation';
+import type { BaseLocationInstance } from 'lib/BaseLocation';
 import { Objective, scoreboard } from 'sandstone';
 import onUninstall from 'lib/datapacks/pseudoEvents/onUninstall';
 

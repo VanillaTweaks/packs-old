@@ -4,7 +4,7 @@ import every from 'lib/datapacks/every';
 import vt from 'lib/datapacks/vt';
 import objective from 'lib/datapacks/objective';
 import onLoad from 'lib/datapacks/pseudoEvents/onLoad';
-import type { BaseLocationInstance } from 'lib/datapacks/BaseLocation';
+import type { BaseLocationInstance } from 'lib/BaseLocation';
 
 const playerJoinOrLoad = vt.getChild('player_join_or_load');
 

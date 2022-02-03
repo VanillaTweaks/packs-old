@@ -2,7 +2,7 @@
 
 import path from 'path';
 import fs from 'fs-extra';
-import type { VersionString } from 'lib/datapacks/BaseLocation/Version';
+import type { VersionString } from 'lib/BaseLocation/Version';
 
 const packDirectory = path.join(
 	process.cwd(),

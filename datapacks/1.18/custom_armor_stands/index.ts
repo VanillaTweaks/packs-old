@@ -1,5 +1,5 @@
 import onTrigger from 'lib/datapacks/pseudoEvents/onTrigger';
-import pack from 'lib/datapacks/pack';
+import pack from 'lib/pack';
 import setMetaAdvancements from 'lib/datapacks/setMetaAdvancements';
 import setConfigFunction from 'lib/datapacks/setConfigFunction';
 import armorStandBookNBT from './armorStandBook/armorStandBookNBT';

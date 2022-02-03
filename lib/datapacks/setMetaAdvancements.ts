@@ -1,7 +1,7 @@
 import vt from 'lib/datapacks/vt';
 import { Advancement, NBT } from 'sandstone';
 import type { AdvancementJSON, JSONTextComponent } from 'sandstone';
-import pack from 'lib/datapacks/pack';
+import pack from 'lib/pack';
 import padding from 'lib/datapacks/textComponents/padding';
 import minify from 'lib/datapacks/textComponents/minify';
 import beforeSave from 'lib/beforeSave';

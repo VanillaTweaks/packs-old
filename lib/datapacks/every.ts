@@ -1,4 +1,4 @@
-import type { BaseLocationInstance } from 'lib/datapacks/BaseLocation';
+import type { BaseLocationInstance } from 'lib/BaseLocation';
 import type { TimeArgument } from 'sandstone';
 import { MCFunction, schedule } from 'sandstone';
 import onLoad from 'lib/datapacks/pseudoEvents/onLoad';

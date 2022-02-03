@@ -1,4 +1,4 @@
-import BaseLocation from 'lib/datapacks/BaseLocation';
+import BaseLocation from 'lib/BaseLocation';
 import { title, namespace, version } from 'lib/meta';
 
 /** The `BaseLocation` for the data pack's namespace. */

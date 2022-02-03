@@ -1,7 +1,7 @@
 // A faithful implementation of https://github.com/LanternMC/load.
 
 import { MCFunction, Objective, scoreboard, Tag } from 'sandstone';
-import BaseLocation from 'lib/datapacks/BaseLocation';
+import BaseLocation from 'lib/BaseLocation';
 import { loadTempObjective } from 'lib/datapacks/temp';
 import { fixMaxCommandChainLengthTag } from 'lib/datapacks/faultChecking/fixMaxCommandChainLength';
 

@@ -1,4 +1,4 @@
-import type { BaseLocationInstance } from 'lib/datapacks/BaseLocation';
+import type { BaseLocationInstance } from 'lib/BaseLocation';
 import { scoreboard } from 'sandstone';
 import { loadStatus } from 'lib/datapacks/lanternLoad';
 import onLoad from 'lib/datapacks/pseudoEvents/onLoad';

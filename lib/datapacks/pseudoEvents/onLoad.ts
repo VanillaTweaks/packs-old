@@ -1,7 +1,7 @@
-import type { BaseLocationInstance } from 'lib/datapacks/BaseLocation';
+import type { BaseLocationInstance } from 'lib/BaseLocation';
 import { loadTag } from 'lib/datapacks/lanternLoad';
 import { MCFunction } from 'sandstone';
-import pack from 'lib/datapacks/pack';
+import pack from 'lib/pack';
 import beforeSave from 'lib/beforeSave';
 import setLoadStatus from 'lib/datapacks/lanternLoad/setLoadStatus';
 import vt from 'lib/datapacks/vt';

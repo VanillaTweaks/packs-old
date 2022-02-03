@@ -1,4 +1,4 @@
-import type { BaseLocationInstance } from 'lib/datapacks/BaseLocation';
+import type { BaseLocationInstance } from 'lib/BaseLocation';
 import { advancement, Advancement, execute, kill, MCFunction, NBT, recipe, Recipe, scoreboard } from 'sandstone';
 import type { RecipeJSON } from 'sandstone';
 import vt from 'lib/datapacks/vt';

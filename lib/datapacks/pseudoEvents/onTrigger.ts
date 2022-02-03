@@ -1,4 +1,4 @@
-import type { BaseLocationInstance } from 'lib/datapacks/BaseLocation';
+import type { BaseLocationInstance } from 'lib/BaseLocation';
 import type { JSONTextComponent, ObjectiveInstance } from 'sandstone';
 import { execute, scoreboard } from 'sandstone';
 import every from 'lib/datapacks/every';
