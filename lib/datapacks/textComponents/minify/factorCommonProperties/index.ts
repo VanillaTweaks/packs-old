@@ -1,24 +1,11 @@
 import type { FlatJSONTextComponent } from 'lib/datapacks/textComponents/flatten';
-import type { HeritableKey } from 'lib/datapacks/textComponents/heritableKeys';
 import isAffectedByInheriting from 'lib/datapacks/textComponents/minify/isAffectedByInheriting';
 import getHeritableKeys from 'lib/datapacks/textComponents/getHeritableKeys';
-
-/** A string that both uniquely identifies a property and represents the number of characters which that property generally consumes via its length. */
-type PropertyString = `,"${string}":${string}`;
-
-/** Information about a `TextComponentObject` property. */
-type PropertyInfo = {
-	key: HeritableKey,
-	string: PropertyString,
-	/** An ordered array of indexes in the `subcomponents` at which the property is present. */
-	occurrences: number[],
-	/**
-	 * An ordered array of adjacent indexes in the `subcomponents` at which inheriting the property has no distinguishable effect.
-	 *
-	 * Is a superset of `occurrences`. Does not include indexes before the first index in `occurrences`.
-	 */
-	unaffected: number[]
-};
+import type PropertyBoundary from 'lib/datapacks/textComponents/minify/factorCommonProperties/PropertyBoundary';
+import PropertyStart from 'lib/datapacks/textComponents/minify/factorCommonProperties/PropertyStart';
+import type { PropertyString } from 'lib/datapacks/textComponents/minify/factorCommonProperties/getPropertyString';
+import getPropertyString from 'lib/datapacks/textComponents/minify/factorCommonProperties/getPropertyString';
+import PropertyEnd from 'lib/datapacks/textComponents/minify/factorCommonProperties/PropertyEnd';
 
 /**
  * Wraps certain ranges of subcomponents into arrays, utilizing array inheritance to reduce the number of properties in the wrapped subcomponents.
@@ -44,63 +31,55 @@ type PropertyInfo = {
  * ```
  */
 const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
-	/** An array of information about all the properties from all the subcomponents. */
-	const properties: PropertyInfo[] = [];
-	/** A mapping from each distinct `PropertyString` to information about that property. */
-	const propertyRecord: Partial<Record<PropertyString, PropertyInfo>> = {};
+	/** All subcomponents with `PropertyBoundary`s mixed in to mark where properties start and end within the subcomponents. */
+	const nodes: Array<FlatJSONTextComponent | PropertyBoundary> = [];
+	/** An mapping from each `PropertyString` to its `PropertyStart` if it has no respective `PropertyEnd` yet. */
+	const openProperties: Record<PropertyString, PropertyStart> = {};
+
+	/** Marks the end of a range of subcomponents which are unaffected by the specified property, and removes the specified property from `openProperties`. */
+	const endProperty = (property: PropertyStart) => {
+		nodes.push(new PropertyEnd(property));
+
+		delete openProperties[property.string];
+	};
 
 	for (let subcomponentIndex = 0; subcomponentIndex < subcomponents.length; subcomponentIndex++) {
 		const subcomponent = subcomponents[subcomponentIndex];
 
-		if (typeof subcomponent !== 'object') {
-			continue;
-		}
+		if (typeof subcomponent === 'object') {
+			for (const key of getHeritableKeys(subcomponent)) {
+				const value = subcomponent[key];
+				const propertyString = getPropertyString(key, value);
 
-		for (const key of getHeritableKeys(subcomponent)) {
-			const value = subcomponent[key];
-			const propertyString: PropertyString = `,"${key}":${JSON.stringify(value)}`;
+				let property = openProperties[propertyString] as PropertyStart | undefined;
 
-			let property = propertyRecord[propertyString];
+				if (!property) {
+					property = new PropertyStart(key, value);
 
-			if (!(
-				property
-				// Ensure this subcomponent is adjacent to this property's last unaffected subcomponent.
-				// If it isn't, then create a new `PropertyInfo` object for the next range of unaffected subcomponents.
-				&& property.unaffected[property.unaffected.length - 1] === subcomponentIndex - 1
-			)) {
-				property = {
-					key,
-					string: propertyString,
-					occurrences: [],
-					unaffected: []
-				};
+					openProperties[propertyString] = property;
+					nodes.push(property);
+				}
 
-				propertyRecord[propertyString] = property;
-				properties.push(property);
+				property.occurrences.push(subcomponentIndex);
 			}
-
-			property.occurrences.push(subcomponentIndex);
-			property.unaffected.push(subcomponentIndex);
 		}
 
-		for (const property of properties) {
+		for (const property of Object.values(openProperties)) {
 			if (
-				// Ensure the previous `for` loop didn't already push `subcomponentIndex` to the `property`'s `unaffected` array.
-				property.unaffected[property.unaffected.length - 1] !== subcomponentIndex
-				&& !isAffectedByInheriting(subcomponent, [property.key])
+				// We don't need to check whether the subcomponent is affected by the property if we already know it has the property.
+				property.occurrences[property.occurrences.length - 1] !== subcomponentIndex
+				&& isAffectedByInheriting(subcomponent, [property.key])
 			) {
-				property.unaffected.push(subcomponentIndex);
+				endProperty(property);
 			}
 		}
+
+		nodes.push(subcomponent);
 	}
 
-	// Sort `properties` by roughly how many total characters each property consumes throughout all subcomponents, from most to least.
-	properties.sort((propertyA, propertyB) => {
-		const propertyACost = propertyA.string.length * propertyA.occurrences.length;
-		const propertyBCost = propertyB.string.length * propertyB.occurrences.length;
-
-		return propertyBCost - propertyACost;
-	});
+	for (const property of Object.values(openProperties)) {
+		endProperty(property);
+	}
 
 	// TODO
 
