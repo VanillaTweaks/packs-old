@@ -33,6 +33,7 @@ import PropertyEnd from 'lib/datapacks/textComponents/minify/factorCommonPropert
 const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 	/** All subcomponents with `PropertyBoundary`s mixed in to mark where properties start and end within the subcomponents. */
 	const nodes: Array<FlatJSONTextComponent | PropertyBoundary> = [];
+	const properties: PropertyStart[] = [];
 	/** An mapping from each `PropertyString` to its `PropertyStart` if it has no respective `PropertyEnd` yet. */
 	const openProperties: Record<PropertyString, PropertyStart> = {};
 
@@ -56,8 +57,9 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 				if (!property) {
 					property = new PropertyStart(key, value);
 
-					openProperties[propertyString] = property;
 					nodes.push(property);
+					properties.push(property);
+					openProperties[propertyString] = property;
 				}
 
 				property.occurrences.push(subcomponentIndex);
@@ -81,7 +83,7 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 		endProperty(property);
 	}
 
-	// TODO
+
 
 	return subcomponents;
 };
