@@ -11,7 +11,7 @@ import onLoad from 'lib/datapacks/pseudoEvents/onLoad';
 import temp from 'lib/datapacks/temp';
 import { scheduleFixMaxCommandChainLength } from 'lib/datapacks/faultChecking/fixMaxCommandChainLength';
 import { fplTooLowAdvancement } from 'lib/datapacks/faultChecking/checkFunctionPermissionLevel';
-import onPlayerJoinOrLoad from 'lib/datapacks/pseudoEvents/onPlayerLoadOrJoin';
+import onPlayerJoinOrLoad from 'lib/datapacks/pseudoEvents/onPlayerJoinOrLoad';
 import vtNotUninstalled from 'lib/datapacks/faultChecking/vtNotUninstalled';
 
 const loadTagNotLoaded = vt.getChild('load_tag_not_loaded');

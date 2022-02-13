@@ -2,7 +2,7 @@
 
 import { advancement, Advancement, MCFunction, me } from 'sandstone';
 import vt from 'lib/vt';
-import onPlayerJoinOrLoad from 'lib/datapacks/pseudoEvents/onPlayerLoadOrJoin';
+import onPlayerJoinOrLoad from 'lib/datapacks/pseudoEvents/onPlayerJoinOrLoad';
 import vtNotUninstalled from 'lib/datapacks/faultChecking/vtNotUninstalled';
 
 const functionPermissionLevel = vt.getChild('function_permission_level');
