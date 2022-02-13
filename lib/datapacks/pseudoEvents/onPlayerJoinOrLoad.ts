@@ -14,7 +14,7 @@ const $globalCounter = counter('$global');
 const playerJoinOrLoadTag = Tag('functions', vt`_player_join_or_load`);
 
 onLoad(playerJoinOrLoad, () => {
-	// Reset all counters (including the global counter) to ensure all players are detected as out of sync next time.
+	// Reset all counters (including the global counter) to ensure all players are detected as out of sync the next time they're online.
 	scoreboard.players.reset('*', counter);
 });
 
