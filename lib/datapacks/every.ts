@@ -9,7 +9,7 @@ const existingFunctions: Partial<Record<string, true>> = {};
 
 /** Runs a function one tick after the pack loads and then on a periodical clock. */
 const every = (
-	duration: Exclude<TimeArgument, number>,
+	duration: Extract<TimeArgument, string>,
 	/** The `BaseLocation` to put the clock function under. */
 	baseLocation: BaseLocationInstance,
 	callback: () => void

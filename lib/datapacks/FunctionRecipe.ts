@@ -15,7 +15,7 @@ const craftedKnowledgeBook = objective(vtFunctionRecipes, 'crafted_knowledge_boo
 const $craftedKnowledgeBook = craftedKnowledgeBook('@s');
 
 every('1t', vtFunctionRecipes, () => {
-	// Reset everyone's `craftedKnowledgeBook` score in case they crafted a knowledge book by external means.
+	// Reset everyone's `craftedKnowledgeBook` score every tick in case they crafted a knowledge book from a non-VT data pack.
 	// No need to do this for spectators since spectators can't craft.
 	scoreboard.players.reset('@a[gamemode=!spectator]', craftedKnowledgeBook);
 });
