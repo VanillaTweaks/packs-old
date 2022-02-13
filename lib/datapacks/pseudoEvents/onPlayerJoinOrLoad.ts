@@ -24,7 +24,7 @@ every('1t', playerJoinOrLoad, () => {
 		// Check if the player's counter is not in sync with the global counter.
 		// TODO: Replace `$globalCounter.target.toString(), $globalCounter.objective` with `$globalCounter`.
 		.unless.score('@s', counter, '=', $globalCounter.target.toString(), $globalCounter.objective)
-		// The player's counter is not in sync, so we can tell they joined the game.
+		// The player's counter is not in sync, so we can tell they joined the game or the game loaded.
 		// TODO: Remove `.functionCmd`.
 		.run.functionCmd(playerJoinOrLoadTag);
 
