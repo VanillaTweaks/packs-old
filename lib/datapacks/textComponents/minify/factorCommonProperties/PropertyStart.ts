@@ -1,6 +1,6 @@
 import PropertyBoundary from 'lib/datapacks/textComponents/minify/factorCommonProperties/PropertyBoundary';
 import type { HeritableKey } from 'lib/datapacks/textComponents/heritableKeys';
-import type PropertyEnd from 'lib/datapacks/textComponents/minify/factorCommonProperties/PropertyEnd';
+import PropertyEnd from 'lib/datapacks/textComponents/minify/factorCommonProperties/PropertyEnd';
 import type { PropertyString } from 'lib/datapacks/textComponents/minify/factorCommonProperties/getPropertyString';
 import getPropertyString from 'lib/datapacks/textComponents/minify/factorCommonProperties/getPropertyString';
 
@@ -15,7 +15,7 @@ export default class PropertyStart extends PropertyBoundary {
 	readonly size: number;
 
 	/** The `PropertyEnd` which this marks the start of. */
-	end?: PropertyEnd;
+	readonly end = new PropertyEnd(this);
 
 	/** Marks the start of a series of consecutive subcomponents which are unaffected by a property. */
 	constructor(

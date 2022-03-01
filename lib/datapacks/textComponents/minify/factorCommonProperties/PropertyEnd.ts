@@ -6,10 +6,9 @@ export default class PropertyEnd extends PropertyBoundary {
 	readonly start: PropertyStart;
 
 	/** Marks the end of a series of consecutive subcomponents which are unaffected by a property. */
-	constructor(start: PropertyEnd['start']) {
+	constructor(start: PropertyStart) {
 		super();
 
 		this.start = start;
-		this.start.end = this;
 	}
 }
