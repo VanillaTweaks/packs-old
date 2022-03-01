@@ -32,6 +32,8 @@ import getPropertyString from 'lib/datapacks/textComponents/minify/factorCommonP
 const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 	/** All subcomponents with `PropertyBoundary`s mixed in to mark where properties start and end within the subcomponents (ordered). */
 	const nodes: Array<FlatJSONTextComponent | PropertyBoundary> = [];
+	/** The `PropertyStart`s of all property ranges (unordered). */
+	const properties: PropertyStart[] = [];
 	/** The `PropertyStart`s of all property ranges that are not yet finalized. */
 	const tentativeProperties = new Set<PropertyStart>();
 
@@ -65,16 +67,17 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 			const newProperties: PropertyStart[] = [];
 
 			for (const key of getHeritableKeys(subcomponent)) {
-				const value = subcomponent[key];
-				const propertyString = getPropertyString(key, value);
+				const stringifiedValue = JSON.stringify(subcomponent[key]);
+				const propertyString = getPropertyString(key, stringifiedValue);
 
 				let property = openProperties[propertyString] as PropertyStart | undefined;
 
 				if (!property) {
-					property = new PropertyStart(key, value);
+					property = new PropertyStart(key, stringifiedValue);
 					newProperties.push(property);
 
 					pushPropertyNode(property);
+					properties.push(property);
 					tentativeProperties.add(property);
 					openProperties[propertyString] = property;
 				}
@@ -99,11 +102,61 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 	 */
 	const splitProperty = (
 		/** The `PropertyStart` of the property to split. */
-		property: PropertyStart,
+		leftProperty: PropertyStart,
 		/** The index in `nodes` to split the property around. */
 		splitIndex: number
 	) => {
+		const rightProperty = new PropertyStart(leftProperty.key, leftProperty.stringifiedValue);
 
+		for (let i = leftProperty.occurrences.length - 1; i >= 0; i--) {
+			const occurrence = leftProperty.occurrences[i];
+
+			// Check if the occurrence is to the right of the split.
+			if (occurrence > splitIndex) {
+				leftProperty.occurrences.pop();
+				rightProperty.occurrences.unshift(occurrence);
+			} else {
+				// Once an occurrence is found to the left of the split, the rest of the occurrences will also be to the left.
+				break;
+			}
+		}
+
+		nodes.splice(leftProperty.end.index, 1, rightProperty.end);
+		nodes.splice(splitIndex + 1, 0, rightProperty);
+		nodes.splice(splitIndex, 0, leftProperty.end);
+
+		// Adjust all indexes to account for the split.
+
+		const adjustIndex = (index: number) => {
+			if (index >= splitIndex) {
+				if (index > splitIndex) {
+					// `rightProperty.start` will shift this to the right.
+					index++;
+				}
+
+				// `leftProperty.end` will shift this to the right.
+				index++;
+			}
+
+			return index;
+		};
+
+		for (const property of properties) {
+			property.index = adjustIndex(property.index);
+			property.end.index = adjustIndex(property.end.index);
+			for (let i = 0; i < property.occurrences.length; i++) {
+				property.occurrences[i] = adjustIndex(property.occurrences[i]);
+			}
+		}
+
+		splitIndex = adjustIndex(splitIndex);
+
+		rightProperty.index = splitIndex + 1;
+		rightProperty.end.index = leftProperty.end.index;
+		leftProperty.end.index = splitIndex - 1;
+
+		properties.push(rightProperty);
+		tentativeProperties.add(rightProperty);
 	};
 
 	// Split properties that straddle the boundaries of more costly properties.

@@ -7,7 +7,7 @@ import getPropertyString from 'lib/datapacks/textComponents/minify/factorCommonP
 export default class PropertyStart extends PropertyBoundary {
 	readonly key: HeritableKey;
 	/** This property's value passed through `JSON.stringify`. */
-	readonly value: string;
+	readonly stringifiedValue: string;
 
 	/** A string that both uniquely identifies a property and represents the number of characters which a single instance of that property generally requires via its length. */
 	readonly string: PropertyString;
@@ -20,14 +20,14 @@ export default class PropertyStart extends PropertyBoundary {
 	/** Marks the start of a series of consecutive subcomponents which are unaffected by a property. */
 	constructor(
 		key: PropertyStart['key'],
-		value: unknown
+		stringifiedValue: PropertyStart['stringifiedValue']
 	) {
 		super();
 
 		this.key = key;
-		this.value = JSON.stringify(value);
+		this.stringifiedValue = JSON.stringify(stringifiedValue);
 
-		this.string = getPropertyString(key, value);
+		this.string = getPropertyString(key, stringifiedValue);
 		this.size = this.string.length;
 	}
 
@@ -40,7 +40,7 @@ export default class PropertyStart extends PropertyBoundary {
 	}
 
 	/** Checks whether this property is equivalent to another. */
-	equals(...[key, value]: ConstructorParameters<typeof PropertyStart>) {
-		return this.string === getPropertyString(key, value);
+	equals(...[key, stringifiedValue]: ConstructorParameters<typeof PropertyStart>) {
+		return this.string === getPropertyString(key, stringifiedValue);
 	}
 }
