@@ -55,7 +55,7 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 
 	for (const subcomponent of subcomponents) {
 		// End any open properties that would affect this subcomponent.
-		for (const property of Object.values(openProperties)) {
+		for (const property of Object.values(openProperties).reverse()) {
 			if (isAffectedByInheriting(subcomponent, [property.key])) {
 				endProperty(property);
 			}
@@ -64,7 +64,8 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 		if (typeof subcomponent === 'object') {
 			// Start or continue properties which this subcomponent has.
 
-			const newProperties: PropertyStart[] = [];
+			/** Properties which this subcomponent has. */
+			const subcomponentProperties: PropertyStart[] = [];
 
 			for (const key of getHeritableKeys(subcomponent)) {
 				const stringifiedValue = JSON.stringify(subcomponent[key]);
@@ -74,16 +75,17 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 
 				if (!property) {
 					property = new PropertyStart(key, stringifiedValue);
-					newProperties.push(property);
 
 					pushPropertyNode(property);
 					properties.push(property);
 					tentativeProperties.add(property);
 					openProperties[propertyString] = property;
 				}
+
+				subcomponentProperties.push(property);
 			}
 
-			for (const property of newProperties) {
+			for (const property of subcomponentProperties) {
 				property.occurrences.push(nodes.length);
 			}
 		}
@@ -91,7 +93,7 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 		nodes.push(subcomponent);
 	}
 
-	Object.values(openProperties).forEach(endProperty);
+	Object.values(openProperties).reverse().forEach(endProperty);
 
 	// `nodes` and `tentativeProperties` are now compiled.
 
@@ -191,7 +193,10 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 				) {
 					startStraddlers.push(property);
 				}
-			} else if (property.end.index > greatestProperty.end.index) {
+			} else if (
+				property.index < greatestProperty.end.index
+				&& property.end.index > greatestProperty.end.index
+			) {
 				endStraddlers.push(property);
 			}
 		}
