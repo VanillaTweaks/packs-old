@@ -210,6 +210,9 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 
 	/** Removes a property's `PropertyBoundary`s from the `nodes` array. */
 	const removeProperty = (property: PropertyStart) => {
+		nodes.splice(property.end.index, 1);
+		nodes.splice(property.index, 1);
+
 		adjustIndexes(index => {
 			if (index > property.index) {
 				if (index > property.end.index) {
