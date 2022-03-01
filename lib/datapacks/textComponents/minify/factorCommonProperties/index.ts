@@ -1,7 +1,7 @@
 import type { FlatJSONTextComponent } from 'lib/datapacks/textComponents/flatten';
 import isAffectedByInheriting from 'lib/datapacks/textComponents/minify/isAffectedByInheriting';
 import getHeritableKeys from 'lib/datapacks/textComponents/getHeritableKeys';
-import PropertyBoundary from 'lib/datapacks/textComponents/minify/factorCommonProperties/PropertyBoundary';
+import type PropertyBoundary from 'lib/datapacks/textComponents/minify/factorCommonProperties/PropertyBoundary';
 import PropertyStart from 'lib/datapacks/textComponents/minify/factorCommonProperties/PropertyStart';
 import type { PropertyString } from 'lib/datapacks/textComponents/minify/factorCommonProperties/getPropertyString';
 import getPropertyString from 'lib/datapacks/textComponents/minify/factorCommonProperties/getPropertyString';
@@ -30,10 +30,10 @@ import getPropertyString from 'lib/datapacks/textComponents/minify/factorCommonP
  * ```
  */
 const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
-	/** All subcomponents with `PropertyBoundary`s mixed in to mark where properties start and end within the subcomponents. */
+	/** All subcomponents with `PropertyBoundary`s mixed in to mark where properties start and end within the subcomponents (ordered). */
 	const nodes: Array<FlatJSONTextComponent | PropertyBoundary> = [];
 	/** The `PropertyStart`s of all property ranges that are not yet finalized. */
-	const tentativeProperties: PropertyStart[] = [];
+	const tentativeProperties = new Set<PropertyStart>();
 
 	/** Pushes a `PropertyBoundary` to `nodes`, setting its `index`. */
 	const pushPropertyNode = (propertyBoundary: PropertyBoundary) => {
@@ -75,7 +75,7 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 					newProperties.push(property);
 
 					pushPropertyNode(property);
-					tentativeProperties.push(property);
+					tentativeProperties.add(property);
 					openProperties[propertyString] = property;
 				}
 			}
@@ -106,22 +106,18 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 
 	};
 
-	// Finalize all `tentativeProperties` in order of cost.
-	while (tentativeProperties.length) {
-		/** The index of the most costly element of `tentativeProperties`. */
-		let greatestPropertyIndex: number;
+	// Split properties that straddle the boundaries of more costly properties.
+	while (tentativeProperties.size) {
+		const tentativePropertyIterator = tentativeProperties.values();
 
-		let greatestPropertyCost = -1;
-		for (let i = 0; i < tentativeProperties.length; i++) {
-			const property = tentativeProperties[i];
+		/** The most costly element of `tentativeProperties`. */
+		let greatestProperty = tentativePropertyIterator.next().value;
 
-			if (property.cost > greatestPropertyCost) {
-				greatestPropertyIndex = i;
-				greatestPropertyCost = property.cost;
+		for (const property of tentativePropertyIterator) {
+			if (property.cost > greatestProperty.cost) {
+				greatestProperty = property;
 			}
 		}
-
-		const greatestProperty = tentativeProperties[greatestPropertyIndex!];
 
 		/** The `PropertyStart` of each property which straddles the `greatestProperty`'s start boundary. */
 		const startStraddlers: PropertyStart[] = [];
@@ -149,8 +145,8 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 			splitProperty(property, greatestProperty.end.index);
 		}
 
-		// Now that the `greatestProperty` is finalized, it is no longer tentative.
-		tentativeProperties.splice(greatestPropertyIndex!, 1)[0];
+		// The `greatestProperty` is no longer tentative.
+		tentativeProperties.delete(greatestProperty);
 	}
 
 	return subcomponents;
