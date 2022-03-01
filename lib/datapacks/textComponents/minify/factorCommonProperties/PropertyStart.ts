@@ -25,7 +25,7 @@ export default class PropertyStart extends PropertyBoundary {
 		super();
 
 		this.key = key;
-		this.stringifiedValue = JSON.stringify(stringifiedValue);
+		this.stringifiedValue = stringifiedValue;
 
 		this.string = getPropertyString(key, stringifiedValue);
 		this.size = this.string.length;
