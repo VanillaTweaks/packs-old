@@ -1,2 +1,2 @@
 /** A superclass for `PropertyStart` and `PropertyEnd`. */
-export default class PropertyBoundary {}
+export default abstract class PropertyBoundary {}
