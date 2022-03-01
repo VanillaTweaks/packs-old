@@ -34,6 +34,7 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 	/** All subcomponents with `PropertyBoundary`s mixed in to mark where properties start and end within the subcomponents. */
 	const nodes: Array<FlatJSONTextComponent | PropertyBoundary> = [];
 	const properties: PropertyStart[] = [];
+
 	/** An mapping from each `PropertyString` to its `PropertyStart` if it has no respective `PropertyEnd` yet. */
 	const openProperties: Record<PropertyString, PropertyStart> = {};
 
@@ -47,6 +48,14 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 	for (let subcomponentIndex = 0; subcomponentIndex < subcomponents.length; subcomponentIndex++) {
 		const subcomponent = subcomponents[subcomponentIndex];
 
+		// End any open properties that would affect this subcomponent.
+		for (const property of Object.values(openProperties)) {
+			if (isAffectedByInheriting(subcomponent, [property.key])) {
+				endProperty(property);
+			}
+		}
+
+		// Continue or start properties which this subcomponent has.
 		if (typeof subcomponent === 'object') {
 			for (const key of getHeritableKeys(subcomponent)) {
 				const value = subcomponent[key];
@@ -66,22 +75,14 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 			}
 		}
 
-		for (const property of Object.values(openProperties)) {
-			if (
-				// We don't need to check whether the subcomponent is affected by the property if we already know it has the property.
-				property.occurrences[property.occurrences.length - 1] !== subcomponentIndex
-				&& isAffectedByInheriting(subcomponent, [property.key])
-			) {
-				endProperty(property);
-			}
-		}
-
 		nodes.push(subcomponent);
 	}
 
 	for (const property of Object.values(openProperties)) {
 		endProperty(property);
 	}
+
+	// `nodes` and `properties` are now compiled.
 
 
 
