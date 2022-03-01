@@ -33,7 +33,8 @@ import PropertyEnd from 'lib/datapacks/textComponents/minify/factorCommonPropert
 const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 	/** All subcomponents with `PropertyBoundary`s mixed in to mark where properties start and end within the subcomponents. */
 	const nodes: Array<FlatJSONTextComponent | PropertyBoundary> = [];
-	const properties: PropertyStart[] = [];
+	/** The `PropertyStart`s of all property ranges that are not yet finalized. */
+	const tentativeProperties: PropertyStart[] = [];
 
 	/** An mapping from each `PropertyString` to its `PropertyStart` if it has no respective `PropertyEnd` yet. */
 	const openProperties: Record<PropertyString, PropertyStart> = {};
@@ -67,7 +68,7 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 					property = new PropertyStart(key, value);
 
 					nodes.push(property);
-					properties.push(property);
+					tentativeProperties.push(property);
 					openProperties[propertyString] = property;
 				}
 
@@ -82,9 +83,31 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 		endProperty(property);
 	}
 
-	// `nodes` and `properties` are now compiled.
+	// `nodes` and `tentativeProperties` are now compiled.
+
+	// Finalize all `tentativeProperties` in order of cost.
+	while (tentativeProperties.length) {
+		/** The index of the most costly element of `tentativeProperties`. */
+		let greatestPropertyIndex: number;
+
+		let greatestPropertyCost = -1;
+		for (let i = 0; i < tentativeProperties.length; i++) {
+			const property = tentativeProperties[i];
+
+			if (property.cost > greatestPropertyCost) {
+				greatestPropertyIndex = i;
+				greatestPropertyCost = property.cost;
+			}
+		}
+
+		const greatestProperty = tentativeProperties[greatestPropertyIndex!];
+
+		// Split any property ranges that cross the boundaries of the `greatestProperty`.
 
 
+		// Now that the `greatestProperty` is finalized, it is no longer tentative.
+		tentativeProperties.splice(greatestPropertyIndex!, 1)[0];
+	}
 
 	return subcomponents;
 };
