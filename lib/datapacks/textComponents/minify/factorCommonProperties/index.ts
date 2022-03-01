@@ -1,10 +1,11 @@
 import type { FlatJSONTextComponent } from 'lib/datapacks/textComponents/flatten';
 import isAffectedByInheriting from 'lib/datapacks/textComponents/minify/isAffectedByInheriting';
 import getHeritableKeys from 'lib/datapacks/textComponents/getHeritableKeys';
-import type PropertyBoundary from 'lib/datapacks/textComponents/minify/factorCommonProperties/PropertyBoundary';
+import PropertyBoundary from 'lib/datapacks/textComponents/minify/factorCommonProperties/PropertyBoundary';
 import PropertyStart from 'lib/datapacks/textComponents/minify/factorCommonProperties/PropertyStart';
 import type { PropertyString } from 'lib/datapacks/textComponents/minify/factorCommonProperties/getPropertyString';
 import getPropertyString from 'lib/datapacks/textComponents/minify/factorCommonProperties/getPropertyString';
+import type { JSONTextComponent } from 'sandstone';
 
 /**
  * Wraps certain ranges of subcomponents into arrays, utilizing array inheritance to reduce the number of properties in the wrapped subcomponents.
@@ -68,13 +69,13 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 			const subcomponentProperties: PropertyStart[] = [];
 
 			for (const key of getHeritableKeys(subcomponent)) {
-				const stringifiedValue = JSON.stringify(subcomponent[key]);
-				const propertyString = getPropertyString(key, stringifiedValue);
+				const value = subcomponent[key];
+				const propertyString = getPropertyString(key, value);
 
 				let property = openProperties[propertyString] as PropertyStart | undefined;
 
 				if (!property) {
-					property = new PropertyStart(key, stringifiedValue);
+					property = new PropertyStart(key, value);
 
 					pushPropertyNode(property);
 					properties.push(property);
@@ -121,7 +122,7 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 		/** The index in `nodes` to split the property around. */
 		splitIndex: number
 	) => {
-		const rightProperty = new PropertyStart(leftProperty.key, leftProperty.stringifiedValue);
+		const rightProperty = new PropertyStart(leftProperty.key, leftProperty.value);
 
 		for (let i = leftProperty.occurrences.length - 1; i >= 0; i--) {
 			const occurrence = leftProperty.occurrences[i];
@@ -240,7 +241,51 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 		}
 	}
 
-	return subcomponents;
+	let topArray: JSONTextComponent[] = [];
+	/** The current stack of arrays from bottom ancestor to top descendant. */
+	const arrayStack: JSONTextComponent[][] = [topArray];
+	/** The current stack of property ranges from bottom ancestor to top descendant. */
+	const propertyStack: PropertyStart[] = [];
+
+	for (const node of nodes) {
+		if (node instanceof PropertyBoundary) {
+			if (node instanceof PropertyStart) {
+				// TODO: Merge property ranges that start and end at the same place.
+
+				const newTopArray = [{
+					text: '',
+					[node.key]: node.value
+				}];
+
+				topArray.push(newTopArray);
+				arrayStack.push(newTopArray);
+				propertyStack.push(node);
+
+				topArray = newTopArray;
+			} else {
+				arrayStack.pop();
+				propertyStack.pop();
+
+				topArray = arrayStack[arrayStack.length - 1];
+			}
+		} else {
+			if (typeof node === 'object') {
+				// Remove all properties which this subcomponent would inherit from its ancestor arrays.
+				for (const property of propertyStack) {
+					if (
+						property.key in node
+						&& JSON.stringify(node[property.key]) === JSON.stringify(property.value)
+					) {
+						delete node[property.key];
+					}
+				}
+			}
+
+			topArray.push(node);
+		}
+	}
+
+	return topArray;
 };
 
 export default factorCommonProperties;
