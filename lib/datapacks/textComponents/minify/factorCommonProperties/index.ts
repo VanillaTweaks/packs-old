@@ -35,19 +35,23 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 	/** The `PropertyStart`s of all property ranges that are not yet finalized. */
 	const tentativeProperties: PropertyStart[] = [];
 
+	/** Pushes a `PropertyBoundary` to `nodes`, setting its `index`. */
+	const pushPropertyNode = (propertyBoundary: PropertyBoundary) => {
+		propertyBoundary.index = nodes.length;
+		nodes.push(propertyBoundary);
+	};
+
 	/** An mapping from each `PropertyString` to its `PropertyStart` if it has no respective `PropertyEnd` yet. */
 	const openProperties: Record<PropertyString, PropertyStart> = {};
 
 	/** Marks the end of a range of subcomponents which are unaffected by the specified property, and removes the specified property from `openProperties`. */
 	const endProperty = (property: PropertyStart) => {
-		nodes.push(property.end);
+		pushPropertyNode(property.end);
 
 		delete openProperties[property.string];
 	};
 
-	for (let subcomponentIndex = 0; subcomponentIndex < subcomponents.length; subcomponentIndex++) {
-		const subcomponent = subcomponents[subcomponentIndex];
-
+	for (const subcomponent of subcomponents) {
 		// End any open properties that would affect this subcomponent.
 		for (const property of Object.values(openProperties)) {
 			if (isAffectedByInheriting(subcomponent, [property.key])) {
@@ -57,6 +61,9 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 
 		if (typeof subcomponent === 'object') {
 			// Start or continue properties which this subcomponent has.
+
+			const newProperties: PropertyStart[] = [];
+
 			for (const key of getHeritableKeys(subcomponent)) {
 				const value = subcomponent[key];
 				const propertyString = getPropertyString(key, value);
@@ -65,13 +72,16 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 
 				if (!property) {
 					property = new PropertyStart(key, value);
+					newProperties.push(property);
 
-					nodes.push(property);
+					pushPropertyNode(property);
 					tentativeProperties.push(property);
 					openProperties[propertyString] = property;
 				}
+			}
 
-				property.occurrences.push(subcomponentIndex);
+			for (const property of newProperties) {
+				property.occurrences.push(nodes.length);
 			}
 		}
 
@@ -82,15 +92,18 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 
 	// `nodes` and `tentativeProperties` are now compiled.
 
-	/** Updates every `PropertyBoundary`'s `index`. */
-	const updatePropertyIndexes = () => {
-		for (let i = 0; i < nodes.length; i++) {
-			const node = nodes[i];
+	/**
+	 * Ends the specified property range before the specified index and starts it again after that index.
+	 *
+	 * ⚠️ Assumes the specified index is inside the range of the specified property.
+	 */
+	const splitProperty = (
+		/** The `PropertyStart` of the property to split. */
+		property: PropertyStart,
+		/** The index in `nodes` to split the property around. */
+		splitIndex: number
+	) => {
 
-			if (node instanceof PropertyBoundary) {
-				node.index = i;
-			}
-		}
 	};
 
 	// Finalize all `tentativeProperties` in order of cost.
@@ -115,8 +128,6 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 		/** The `PropertyStart` of each property which straddles the `greatestProperty`'s end boundary. */
 		const endStraddlers: PropertyStart[] = [];
 
-		updatePropertyIndexes();
-
 		for (const property of tentativeProperties) {
 			if (property.index < greatestProperty.index) {
 				if (
@@ -130,11 +141,13 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 			}
 		}
 
-		// Split the `startStraddlers` on the `greatestProperty`'s start boundary.
+		for (const property of startStraddlers) {
+			splitProperty(property, greatestProperty.index);
+		}
 
-
-		// Split the `endStraddlers` on the `greatestProperty`'s end boundary.
-
+		for (const property of endStraddlers) {
+			splitProperty(property, greatestProperty.end.index);
+		}
 
 		// Now that the `greatestProperty` is finalized, it is no longer tentative.
 		tentativeProperties.splice(greatestPropertyIndex!, 1)[0];

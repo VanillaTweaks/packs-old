@@ -31,7 +31,7 @@ export default class PropertyStart extends PropertyBoundary {
 		this.size = this.string.length;
 	}
 
-	/** An ordered array of subcomponent indexes within these property boundaries at which this property is present. */
+	/** An ordered array of subcomponent indexes in the `nodes` array at which this property is present. */
 	readonly occurrences: number[] = [];
 
 	/** The approximate total number of the characters required by this property throughout all adjacent subcomponents. */
