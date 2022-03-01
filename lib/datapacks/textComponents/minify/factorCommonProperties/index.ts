@@ -55,8 +55,8 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 			}
 		}
 
-		// Continue or start properties which this subcomponent has.
 		if (typeof subcomponent === 'object') {
+			// Start or continue properties which this subcomponent has.
 			for (const key of getHeritableKeys(subcomponent)) {
 				const value = subcomponent[key];
 				const propertyString = getPropertyString(key, value);
