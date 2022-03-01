@@ -95,6 +95,19 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 
 	// `nodes` and `tentativeProperties` are now compiled.
 
+	/** Adjusts the `index`es and `occurrences` of all properties according to the specified function. */
+	const adjustIndexes = (
+		adjustIndex: (index: number) => number
+	) => {
+		for (const property of properties) {
+			property.index = adjustIndex(property.index);
+			property.end.index = adjustIndex(property.end.index);
+			for (let i = 0; i < property.occurrences.length; i++) {
+				property.occurrences[i] = adjustIndex(property.occurrences[i]);
+			}
+		}
+	};
+
 	/**
 	 * Ends the specified property range before the specified index and starts it again after that index.
 	 *
@@ -130,25 +143,18 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 		const adjustIndex = (index: number) => {
 			if (index >= splitIndex) {
 				if (index > splitIndex) {
-					// `rightProperty.start` will shift this to the right.
+					// Inserting `rightProperty` will shift this to the right.
 					index++;
 				}
 
-				// `leftProperty.end` will shift this to the right.
+				// Inserting `leftProperty.end` will shift this to the right.
 				index++;
 			}
 
 			return index;
 		};
 
-		for (const property of properties) {
-			property.index = adjustIndex(property.index);
-			property.end.index = adjustIndex(property.end.index);
-			for (let i = 0; i < property.occurrences.length; i++) {
-				property.occurrences[i] = adjustIndex(property.occurrences[i]);
-			}
-		}
-
+		adjustIndexes(adjustIndex);
 		splitIndex = adjustIndex(splitIndex);
 
 		rightProperty.index = splitIndex + 1;
@@ -200,6 +206,30 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 
 		// The `greatestProperty` is no longer tentative.
 		tentativeProperties.delete(greatestProperty);
+	}
+
+	/** Removes a property's `PropertyBoundary`s from the `nodes` array. */
+	const removeProperty = (property: PropertyStart) => {
+		adjustIndexes(index => {
+			if (index > property.index) {
+				if (index > property.end.index) {
+					// Removing `property.end` will shift this to the left.
+					index--;
+				}
+
+				// Removing `property` will shift this to the left.
+				index--;
+			}
+
+			return index;
+		});
+	};
+
+	// Remove any property ranges with at most 1 occurrence, since they are useless to factor.
+	for (const property of properties) {
+		if (property.occurrences.length <= 1) {
+			removeProperty(property);
+		}
 	}
 
 	return subcomponents;
