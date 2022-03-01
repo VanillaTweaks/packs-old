@@ -32,8 +32,8 @@ NBTRecipe(pack, {
 	}
 });
 
-onTrigger(pack, pack.NAMESPACE, pack.TITLE, trigger => {
-	const $trigger = trigger('@s');
+onTrigger(pack, pack.NAMESPACE, pack.TITLE, triggerObjective => {
+	const $trigger = triggerObjective('@s');
 
 });
 

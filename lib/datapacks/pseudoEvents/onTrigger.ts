@@ -17,14 +17,14 @@ const onTrigger = (
 	 *
 	 * ⚠️ Do not reset the value of the trigger inside this callback. That is automatically handled already.
 	 */
-	callback: (trigger: ObjectiveInstance) => void
+	callback: (triggerObjective: ObjectiveInstance) => void
 ) => {
 	if (/[^a-z_]/.test(objectiveName)) {
 		// The reason the objective name shouldn't contain anything but lowercase letters and underscores is to make it easier for players to remember.
 		throw new TypeError('The `objectiveName` argument of `onTrigger` must contain only lowercase letters and underscores.');
 	}
 
-	const trigger = objective(
+	const triggerObjective = objective(
 		baseLocation,
 		objectiveName,
 		'trigger',
@@ -36,7 +36,7 @@ const onTrigger = (
 		execute
 			.as(`@a[scores={${objectiveName}=1..}]`)
 			.run(baseLocation`_trigger_${objectiveName}`, () => {
-				callback(trigger);
+				callback(triggerObjective);
 			});
 
 		scoreboard.players.enable('@a', objectiveName);
