@@ -4,7 +4,7 @@ import isAffectedByInheritingFrom from 'lib/datapacks/textComponents/minify/isAf
 import { notWhitespace } from 'lib/datapacks/textComponents/minify/regex';
 
 /**
- * Merges adjacent elements of the inputted `JSONTextComponent` array wherever possible.
+ * Merges adjacent elements of the inputted subcomponents wherever possible.
  *
  * ⚠️ Only for use in `minify`. May mutate the inputted subcomponents.
  */

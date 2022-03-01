@@ -270,7 +270,7 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 			}
 		} else {
 			if (typeof node === 'object') {
-				// Remove all properties which this subcomponent would inherit from its ancestor arrays.
+				// Remove all properties which this subcomponent inherits from its ancestor arrays.
 				for (const property of propertyStack) {
 					if (
 						property.key in node

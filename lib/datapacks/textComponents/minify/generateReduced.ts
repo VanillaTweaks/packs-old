@@ -6,7 +6,7 @@ import minify from 'lib/datapacks/textComponents/minify';
 type SubcomponentPossiblyWithWith = Extract<FlatJSONTextComponent, { with?: any }>;
 
 /**
- * Reduces the size of each `FlatJSONTextComponent` using only the information contained by it.
+ * Reduces the size of each inputted subcomponent using only the information contained by it.
  *
  * ⚠️ Only for use in `minify`. May mutate the inputted subcomponents.
  */
