@@ -32,7 +32,7 @@ export default class PropertyStart extends PropertyBoundary {
 	}
 
 	/** An ordered array of subcomponent indexes within these property boundaries at which this property is present. */
-	occurrences: number[] = [];
+	readonly occurrences: number[] = [];
 
 	/** The approximate total number of the characters required by this property throughout all adjacent subcomponents. */
 	get cost() {
