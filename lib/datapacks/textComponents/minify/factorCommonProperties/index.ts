@@ -243,23 +243,23 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 	}
 
 	type OutputSubcomponent = FlatJSONTextComponent | OutputSubcomponent[];
-	let topArray: OutputSubcomponent[] = [];
-	/** The current stack of arrays from bottom ancestor to top descendant. */
-	const arrayStack: OutputSubcomponent[][] = [topArray];
-	/** The current stack of property ranges from bottom ancestor to top descendant. */
-	const propertyStack: PropertyStart[] = [];
+	let currentArray: OutputSubcomponent[] = [];
+	/** The current arrays from ancestor to descendant. */
+	const ancestorArrays: OutputSubcomponent[][] = [currentArray];
+	/** The current property ranges from ancestor to descendant. */
+	const ancestorProperties: PropertyStart[] = [];
 
 	let consecutiveSubcomponents: FlatJSONTextComponent[] | undefined;
 
-	/** Reduces and merges the `consecutiveSubcomponents` and pushes them to the `topArray`. */
+	/** Reduces and merges the `consecutiveSubcomponents` and pushes them to the `currentArray`. */
 	const endConsecutiveSubcomponents = () => {
 		if (consecutiveSubcomponents) {
 			let subcomponentGenerator = generateReduced(consecutiveSubcomponents);
 			subcomponentGenerator = generateMerged(subcomponentGenerator);
 
-			// Try to merge the first subcomponent into the first element of the `topArray`.
-			if (topArray.length === 1) {
-				const firstTopArrayElement = topArray[0];
+			// Try to merge the first subcomponent into the first element of the `currentArray`.
+			if (currentArray.length === 1) {
+				const firstTopArrayElement = currentArray[0];
 				if (
 					typeof firstTopArrayElement === 'object'
 					&& 'text' in firstTopArrayElement
@@ -268,7 +268,7 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 					// `firstSubcomponent` can be asserted as non-void since there has to be at least one element in `consecutiveSubcomponents` in order for `consecutiveSubcomponents` to be set, which `subcomponentGenerator` would yield (albeit possibly transformed).
 					const firstSubcomponent = subcomponentGenerator.next().value as FlatJSONTextComponent;
 					if (typeof firstSubcomponent === 'object') {
-						topArray.push(firstSubcomponent);
+						currentArray.push(firstSubcomponent);
 					} else {
 						// The `firstSubcomponent` is plain text and would inherit all properties of the `firstTopArrayElement`, so they can be merged.
 						firstTopArrayElement.text = firstSubcomponent;
@@ -276,7 +276,7 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 				}
 			}
 
-			topArray.push(...subcomponentGenerator);
+			currentArray.push(...subcomponentGenerator);
 
 			consecutiveSubcomponents = undefined;
 		}
@@ -294,16 +294,16 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 					[node.key]: node.value
 				}];
 
-				topArray.push(newTopArray);
-				arrayStack.push(newTopArray);
-				propertyStack.push(node);
+				currentArray.push(newTopArray);
+				ancestorArrays.push(newTopArray);
+				ancestorProperties.push(node);
 
-				topArray = newTopArray;
+				currentArray = newTopArray;
 			} else {
-				arrayStack.pop();
-				propertyStack.pop();
+				ancestorArrays.pop();
+				ancestorProperties.pop();
 
-				topArray = arrayStack[arrayStack.length - 1];
+				currentArray = ancestorArrays[ancestorArrays.length - 1];
 			}
 		} else {
 			if (consecutiveSubcomponents === undefined) {
@@ -312,7 +312,7 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 
 			if (typeof node === 'object') {
 				// Remove all properties which this subcomponent inherits from its ancestor arrays.
-				for (const property of propertyStack) {
+				for (const property of ancestorProperties) {
 					if (
 						property.key in node
 						&& JSON.stringify(node[property.key]) === JSON.stringify(property.value)
@@ -328,7 +328,7 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 
 	endConsecutiveSubcomponents();
 
-	return topArray;
+	return currentArray;
 };
 
 export default factorCommonProperties;
