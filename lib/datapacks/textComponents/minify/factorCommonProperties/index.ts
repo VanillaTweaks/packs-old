@@ -36,8 +36,6 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 	const nodes: Array<FlatJSONTextComponent | PropertyBoundary> = [];
 	/** The `PropertyStart`s of all property ranges (unordered). */
 	const properties: PropertyStart[] = [];
-	/** The `PropertyStart`s of all property ranges that are not yet finalized. */
-	const tentativeProperties = new Set<PropertyStart>();
 
 	/** Pushes a `PropertyBoundary` to `nodes`, setting its `index`. */
 	const pushPropertyNode = (propertyBoundary: PropertyBoundary) => {
@@ -80,7 +78,6 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 
 					pushPropertyNode(property);
 					properties.push(property);
-					tentativeProperties.add(property);
 					openProperties[propertyString] = property;
 				}
 
@@ -166,10 +163,10 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 		leftProperty.end.index = splitIndex - 1;
 
 		properties.push(rightProperty);
-		tentativeProperties.add(rightProperty);
 	};
 
 	// Split properties that straddle the boundaries of more costly properties.
+	const tentativeProperties = new Set<PropertyStart>(properties);
 	while (tentativeProperties.size) {
 		const tentativePropertyIterator = tentativeProperties.values();
 
@@ -241,6 +238,8 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 			removeProperty(property);
 		}
 	}
+
+	// Compile the output from `nodes`.
 
 	type OutputSubcomponent = FlatJSONTextComponent | OutputSubcomponent[];
 	let currentArray: OutputSubcomponent[] = [];
