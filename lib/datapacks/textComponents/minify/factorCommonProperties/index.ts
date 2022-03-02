@@ -7,6 +7,7 @@ import type { PropertyString } from 'lib/datapacks/textComponents/minify/factorC
 import getPropertyString from 'lib/datapacks/textComponents/minify/factorCommonProperties/getPropertyString';
 import generateReduced from 'lib/datapacks/textComponents/minify/generateReduced';
 import generateMerged from 'lib/datapacks/textComponents/minify/generateMerged';
+import type { HeritableKey } from 'lib/datapacks/textComponents/heritableKeys';
 
 /**
  * Wraps certain ranges of subcomponents into arrays, utilizing array inheritance to reduce the number of properties in the wrapped subcomponents.
@@ -173,6 +174,8 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 		/** The most costly element of `tentativeProperties`. */
 		let greatestProperty = tentativePropertyIterator.next().value;
 
+		// TODO: Properly handle intersecting (but non-straddling) property ranges with the same key.
+
 		for (const property of tentativePropertyIterator) {
 			if (property.cost > greatestProperty.cost) {
 				greatestProperty = property;
@@ -311,7 +314,20 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 
 			if (typeof node === 'object') {
 				// Remove all properties which this subcomponent inherits from its ancestor arrays.
-				for (const property of ancestorProperties) {
+
+				const inheritedKeys: Partial<Record<HeritableKey, true>> = {};
+
+				// Iterate through the `ancestorProperties` backward since the last elements are the deepest and would thus have the highest inheritance priority.
+				for (let i = ancestorProperties.length - 1; i >= 0; i--) {
+					const property = ancestorProperties[i];
+
+					if (inheritedKeys[property.key]) {
+						// Don't delete a subcomponent's property if a different value from a higher-priority property with the same key would otherwise affect the subcomponent.
+						continue;
+					}
+					// This property has the highest priority for its key because it's the deepest of the `ancestorProperties` with that key.
+					inheritedKeys[property.key] = true;
+
 					if (
 						property.key in node
 						&& JSON.stringify(node[property.key]) === JSON.stringify(property.value)
