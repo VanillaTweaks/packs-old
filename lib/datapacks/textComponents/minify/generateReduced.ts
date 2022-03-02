@@ -11,9 +11,9 @@ type SubcomponentPossiblyWithWith = Extract<FlatJSONTextComponent, { with?: any 
  * ⚠️ Only for use in `minify`. May mutate the inputted subcomponents.
  */
 const generateReduced = function* (
-	subcomponentGenerator: Generator<FlatJSONTextComponent, void>
+	subcomponentIterable: Iterable<FlatJSONTextComponent>
 ): Generator<FlatJSONTextComponent, void> {
-	for (const subcomponent of subcomponentGenerator) {
+	for (const subcomponent of subcomponentIterable) {
 		if (typeof subcomponent === 'object') {
 			if ('text' in subcomponent) {
 				if (subcomponent.text === '') {

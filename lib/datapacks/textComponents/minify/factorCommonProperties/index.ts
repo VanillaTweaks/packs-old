@@ -5,7 +5,8 @@ import PropertyBoundary from 'lib/datapacks/textComponents/minify/factorCommonPr
 import PropertyStart from 'lib/datapacks/textComponents/minify/factorCommonProperties/PropertyStart';
 import type { PropertyString } from 'lib/datapacks/textComponents/minify/factorCommonProperties/getPropertyString';
 import getPropertyString from 'lib/datapacks/textComponents/minify/factorCommonProperties/getPropertyString';
-import type { JSONTextComponent } from 'sandstone';
+import generateReduced from 'lib/datapacks/textComponents/minify/generateReduced';
+import generateMerged from 'lib/datapacks/textComponents/minify/generateMerged';
 
 /**
  * Wraps certain ranges of subcomponents into arrays, utilizing array inheritance to reduce the number of properties in the wrapped subcomponents.
@@ -241,14 +242,50 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 		}
 	}
 
-	let topArray: JSONTextComponent[] = [];
+	type OutputSubcomponent = FlatJSONTextComponent | OutputSubcomponent[];
+	let topArray: OutputSubcomponent[] = [];
 	/** The current stack of arrays from bottom ancestor to top descendant. */
-	const arrayStack: JSONTextComponent[][] = [topArray];
+	const arrayStack: OutputSubcomponent[][] = [topArray];
 	/** The current stack of property ranges from bottom ancestor to top descendant. */
 	const propertyStack: PropertyStart[] = [];
 
+	let consecutiveSubcomponents: FlatJSONTextComponent[] | undefined;
+
+	/** Reduces and merges the `consecutiveSubcomponents` and pushes them to the `topArray`. */
+	const endConsecutiveSubcomponents = () => {
+		if (consecutiveSubcomponents) {
+			let subcomponentGenerator = generateReduced(consecutiveSubcomponents);
+			subcomponentGenerator = generateMerged(subcomponentGenerator);
+
+			// Try to merge the first subcomponent into the first element of the `topArray`.
+			if (topArray.length === 1) {
+				const firstTopArrayElement = topArray[0];
+				if (
+					typeof firstTopArrayElement === 'object'
+					&& 'text' in firstTopArrayElement
+					&& firstTopArrayElement.text === ''
+				) {
+					// `firstSubcomponent` can be asserted as non-void since there has to be at least one element in `consecutiveSubcomponents` in order for `consecutiveSubcomponents` to be set, which `subcomponentGenerator` would yield (albeit possibly transformed).
+					const firstSubcomponent = subcomponentGenerator.next().value as FlatJSONTextComponent;
+					if (typeof firstSubcomponent === 'object') {
+						topArray.push(firstSubcomponent);
+					} else {
+						// The `firstSubcomponent` is plain text and would inherit all properties of the `firstTopArrayElement`, so they can be merged.
+						firstTopArrayElement.text = firstSubcomponent;
+					}
+				}
+			}
+
+			topArray.push(...subcomponentGenerator);
+
+			consecutiveSubcomponents = undefined;
+		}
+	};
+
 	for (const node of nodes) {
 		if (node instanceof PropertyBoundary) {
+			endConsecutiveSubcomponents();
+
 			if (node instanceof PropertyStart) {
 				// TODO: Merge property ranges that start and end at the same place.
 
@@ -269,6 +306,10 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 				topArray = arrayStack[arrayStack.length - 1];
 			}
 		} else {
+			if (consecutiveSubcomponents === undefined) {
+				consecutiveSubcomponents = [];
+			}
+
 			if (typeof node === 'object') {
 				// Remove all properties which this subcomponent inherits from its ancestor arrays.
 				for (const property of propertyStack) {
@@ -281,9 +322,11 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 				}
 			}
 
-			topArray.push(node);
+			consecutiveSubcomponents.push(node);
 		}
 	}
+
+	endConsecutiveSubcomponents();
 
 	return topArray;
 };
