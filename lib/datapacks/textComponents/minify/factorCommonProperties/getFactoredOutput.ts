@@ -35,7 +35,10 @@ const getFactoredOutput = (nodes: Array<FlatJSONTextComponent | PropertyBoundary
 				) {
 					// `firstSubcomponent` can be asserted as non-void since there has to be at least one element in `consecutiveSubcomponents` in order for `consecutiveSubcomponents` to be set, which `subcomponentGenerator` would yield (albeit possibly transformed).
 					const firstSubcomponent = subcomponentGenerator.next().value as FlatJSONTextComponent;
+
 					if (typeof firstSubcomponent === 'object') {
+						// TODO: Merge `firstSubcomponent` into `inheritedElement` if `firstSubcomponent` does not affect all the other elements in the array. Move this merging elsewhere so that it can take into account past or future elements of the `currentArray` beyond the `consecutiveSubcomponents`.
+
 						currentArray.push(firstSubcomponent);
 					} else {
 						// The `firstSubcomponent` is plain text and would inherit all properties of the `inheritedElement`, so they can be merged.
