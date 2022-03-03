@@ -97,7 +97,7 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 
 	Object.values(openProperties).reverse().forEach(endProperty);
 
-	// `nodes` and `tentativeProperties` are now compiled.
+	// `nodes` and `properties` are now compiled.
 
 	/** Adjusts the `index`es and `occurrences` of all properties according to the specified function. */
 	const adjustIndexes = (
