@@ -32,6 +32,8 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 
 	splitPropertyRanges(nodes, properties);
 
+	// TODO: Properly handle intersecting (but non-straddling) property ranges with the same key.
+
 	removeUselessPropertyRanges(nodes, properties);
 
 	return getFactoredOutput(nodes);

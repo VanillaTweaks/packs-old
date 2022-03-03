@@ -15,8 +15,6 @@ const splitPropertyRanges = (
 		/** The most costly element of `tentativeProperties`. */
 		let greatestProperty = tentativePropertyIterator.next().value;
 
-		// TODO: Properly handle intersecting (but non-straddling) property ranges with the same key.
-
 		for (const property of tentativePropertyIterator) {
 			if (property.cost > greatestProperty.cost) {
 				greatestProperty = property;
