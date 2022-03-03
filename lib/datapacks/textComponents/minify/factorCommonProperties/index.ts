@@ -250,6 +250,8 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 	const ancestorArrays: OutputSubcomponent[][] = [currentArray];
 	/** The current property ranges from ancestor to descendant. */
 	const ancestorProperties: PropertyStart[] = [];
+	/** Each number in this array corresponds to that number of properties in the `ancestorProperties` array which start and end at the same place. */
+	const simultaneousPropertyCounts: number[] = [];
 
 	let consecutiveSubcomponents: FlatJSONTextComponent[] | undefined;
 
@@ -284,27 +286,65 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 		}
 	};
 
-	for (const node of nodes) {
+	for (let i = 0; i < nodes.length; i++) {
+		const node = nodes[i];
+
 		if (node instanceof PropertyBoundary) {
 			endConsecutiveSubcomponents();
 
 			if (node instanceof PropertyStart) {
-				// TODO: Merge property ranges that start and end at the same place.
-
-				const newTopArray = [{
+				const firstTopArrayElement = {
 					text: '',
 					[node.key]: node.value
-				}];
+				};
+				const newTopArray = [firstTopArrayElement];
 
 				currentArray.push(newTopArray);
 				ancestorArrays.push(newTopArray);
 				ancestorProperties.push(node);
 
+				let simultaneousPropertyCount = 1;
+
+				let previousSimultaneousProperty = node;
+				while (true) {
+					const nextNode = nodes[i + 1];
+					if (
+						nextNode instanceof PropertyStart
+						&& nextNode.end.index === previousSimultaneousProperty.end.index - 1
+					) {
+						// The `nextNode` is simultaneous with the `previousSimultaneousProperty`, meaning it ends and starts at the same place.
+
+						simultaneousPropertyCount++;
+
+						Object.assign(firstTopArrayElement, {
+							[nextNode.key]: nextNode.value
+						});
+
+						ancestorProperties.push(nextNode);
+
+						// We've processed the `nextNode`, so we can skip it.
+						i++;
+
+						previousSimultaneousProperty = nextNode;
+					} else {
+						break;
+					}
+				}
+
+				simultaneousPropertyCounts.push(simultaneousPropertyCount);
+
 				currentArray = newTopArray;
 			} else {
-				ancestorArrays.pop();
-				ancestorProperties.pop();
+				let propertyCount = simultaneousPropertyCounts.pop()!;
 
+				// Skip past the ends of all simultaneous properties.
+				i += propertyCount - 1;
+
+				while (propertyCount--) {
+					ancestorProperties.pop();
+				}
+
+				ancestorArrays.pop();
 				currentArray = ancestorArrays[ancestorArrays.length - 1];
 			}
 		} else {
