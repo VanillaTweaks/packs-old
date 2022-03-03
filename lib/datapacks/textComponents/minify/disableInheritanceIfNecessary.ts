@@ -1,30 +1,34 @@
 import getHeritableKeys from 'lib/datapacks/textComponents/getHeritableKeys';
-import type { FlatJSONTextComponent } from 'lib/datapacks/textComponents/flatten';
+import type { JSONTextComponent } from 'sandstone';
 import isAffectedByInheriting from 'lib/datapacks/textComponents/minify/isAffectedByInheriting';
+import { generateFlat } from 'lib/datapacks/textComponents/flatten';
 
 /**
- * Returns the `output` array with `''` inserted at the beginning, only if necessary to prevent other subcomponents from inheriting properties from the first.
+ * Returns the `subcomponents` array with `''` inserted at the beginning, only if necessary to prevent other subcomponents from inheriting properties from the first.
  *
- * ⚠️ Only for use in `minify`. Assumes `output.length > 1`. May mutate the `output` array.
+ * ⚠️ Only for use in `minify`. Assumes `subcomponents.length > 1`. May mutate the `subcomponents` array.
  */
-const disableInheritanceIfNecessary = (output: FlatJSONTextComponent[]) => {
+const disableInheritanceIfNecessary = (subcomponents: JSONTextComponent[]) => {
 	// Check if other subcomponents would inherit unwanted properties from the first subcomponent.
 
 	/** The first subcomponent's heritable keys. */
-	const keys = getHeritableKeys(output[0]);
+	const heritableKeys = getHeritableKeys(subcomponents[0]);
 
-	if (keys.length) {
-		for (let i = 1; i < output.length; i++) {
-			const subcomponent = output[i];
+	if (heritableKeys.length) {
+		checkingSubcomponents:
+		for (let i = 1; i < subcomponents.length; i++) {
+			const subcomponent = subcomponents[i];
 
-			if (isAffectedByInheriting(subcomponent, keys)) {
-				output.unshift('');
-				break;
+			for (const flatSubcomponent of generateFlat(subcomponent)) {
+				if (isAffectedByInheriting(flatSubcomponent, heritableKeys)) {
+					subcomponents.unshift('');
+					break checkingSubcomponents;
+				}
 			}
 		}
 	}
 
-	return output;
+	return subcomponents;
 };
 
 export default disableInheritanceIfNecessary;

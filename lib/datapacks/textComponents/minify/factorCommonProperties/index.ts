@@ -9,6 +9,8 @@ import generateReduced from 'lib/datapacks/textComponents/minify/generateReduced
 import generateMerged from 'lib/datapacks/textComponents/minify/generateMerged';
 import type { HeritableKey } from 'lib/datapacks/textComponents/heritableKeys';
 
+export type OutputComponent = FlatJSONTextComponent | OutputComponent[];
+
 /**
  * Wraps certain ranges of subcomponents into arrays, utilizing array inheritance to reduce the number of properties in the wrapped subcomponents.
  *
@@ -244,10 +246,9 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 
 	// Compile the output from `nodes`.
 
-	type OutputSubcomponent = FlatJSONTextComponent | OutputSubcomponent[];
-	let currentArray: OutputSubcomponent[] = [];
+	let currentArray: OutputComponent[] = [];
 	/** The current arrays from ancestor to descendant. */
-	const ancestorArrays: OutputSubcomponent[][] = [currentArray];
+	const ancestorArrays: OutputComponent[][] = [currentArray];
 	/** The current property ranges from ancestor to descendant. */
 	const ancestorProperties: PropertyStart[] = [];
 	/** Each number in this array corresponds to that number of properties in the `ancestorProperties` array which start and end at the same place. */
@@ -263,19 +264,19 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 
 			// Try to merge the first subcomponent into the first element of the `currentArray`.
 			if (currentArray.length === 1) {
-				const firstTopArrayElement = currentArray[0];
+				const inheritedElement = currentArray[0];
 				if (
-					typeof firstTopArrayElement === 'object'
-					&& 'text' in firstTopArrayElement
-					&& firstTopArrayElement.text === ''
+					typeof inheritedElement === 'object'
+					&& 'text' in inheritedElement
+					&& inheritedElement.text === ''
 				) {
 					// `firstSubcomponent` can be asserted as non-void since there has to be at least one element in `consecutiveSubcomponents` in order for `consecutiveSubcomponents` to be set, which `subcomponentGenerator` would yield (albeit possibly transformed).
 					const firstSubcomponent = subcomponentGenerator.next().value as FlatJSONTextComponent;
 					if (typeof firstSubcomponent === 'object') {
 						currentArray.push(firstSubcomponent);
 					} else {
-						// The `firstSubcomponent` is plain text and would inherit all properties of the `firstTopArrayElement`, so they can be merged.
-						firstTopArrayElement.text = firstSubcomponent;
+						// The `firstSubcomponent` is plain text and would inherit all properties of the `inheritedElement`, so they can be merged.
+						inheritedElement.text = firstSubcomponent;
 					}
 				}
 			}
@@ -293,14 +294,14 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 			endConsecutiveSubcomponents();
 
 			if (node instanceof PropertyStart) {
-				const firstTopArrayElement = {
+				const inheritedElement = {
 					text: '',
 					[node.key]: node.value
 				};
-				const newTopArray = [firstTopArrayElement];
+				const newCurrentArray = [inheritedElement];
 
-				currentArray.push(newTopArray);
-				ancestorArrays.push(newTopArray);
+				currentArray.push(newCurrentArray);
+				ancestorArrays.push(newCurrentArray);
 				ancestorProperties.push(node);
 
 				let simultaneousPropertyCount = 1;
@@ -316,7 +317,7 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 
 						simultaneousPropertyCount++;
 
-						Object.assign(firstTopArrayElement, {
+						Object.assign(inheritedElement, {
 							[nextNode.key]: nextNode.value
 						});
 
@@ -333,7 +334,7 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 
 				simultaneousPropertyCounts.push(simultaneousPropertyCount);
 
-				currentArray = newTopArray;
+				currentArray = newCurrentArray;
 			} else {
 				let propertyCount = simultaneousPropertyCounts.pop()!;
 
