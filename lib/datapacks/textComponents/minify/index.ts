@@ -4,8 +4,6 @@ import disableInheritanceIfNecessary from 'lib/datapacks/textComponents/minify/d
 import { generateFlat } from 'lib/datapacks/textComponents/flatten';
 import generateReduced from 'lib/datapacks/textComponents/minify/generateReduced';
 import factorCommonProperties from 'lib/datapacks/textComponents/minify/factorCommonProperties';
-import getHeritableKeys from 'lib/datapacks/textComponents/getHeritableKeys';
-import isAffectedByInheriting from 'lib/datapacks/textComponents/minify/isAffectedByInheriting';
 
 /** Transforms a `JSONTextComponent` to be as short and simplified as possible while keeping it indistinguishable in-game. */
 const minify = (component: JSONTextComponent) => {
