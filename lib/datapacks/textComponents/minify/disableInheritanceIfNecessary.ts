@@ -11,9 +11,7 @@ import { generateFlat } from 'lib/datapacks/textComponents/flatten';
 const disableInheritanceIfNecessary = (subcomponents: JSONTextComponent[]) => {
 	// Check if other subcomponents would inherit unwanted properties from the first subcomponent.
 
-	/** The first subcomponent's heritable keys. */
 	const heritableKeys = getHeritableKeys(subcomponents[0]);
-
 	if (heritableKeys.length) {
 		checkingSubcomponents:
 		for (let i = 1; i < subcomponents.length; i++) {
