@@ -18,7 +18,7 @@ const getPropertyRanges = (subcomponents: FlatJSONTextComponent[]) => {
 		nodes.push(propertyBoundary);
 	};
 
-	/** An mapping from each `PropertyString` to its `PropertyStart` if it has no respective `PropertyEnd` yet. */
+	/** A mapping from each `PropertyString` to its `PropertyStart` if it has no respective `PropertyEnd` yet. */
 	const openProperties: Record<PropertyString, PropertyStart> = {};
 
 	/** Marks the end of a range of subcomponents which are unaffected by the specified property, and removes the specified property from `openProperties`. */
