@@ -60,10 +60,11 @@ const getFactoredOutput = (nodes: Array<FlatJSONTextComponent | PropertyBoundary
 
 				// The `firstSubcomponent` can merge with the `inheritedElement`.
 
-				// Note: If the first element of an outer array could be another inner array, then the outer array's other elements would inherit the heritable properties of the inner array's first element, in which case the outer array's other elements could equivalently be included in the inner array instead, which is what `factorCommonProperties` would necessarily do. Thus, it's impossible for the `firstSubcomponent` to be mergeable with the `inheritedElement` and also be an array.
-
-				Object.assign(firstSubcomponent, getHeritableProperties(inheritedElement));
-				mergedElement = firstSubcomponent;
+				mergedElement = Object.assign(
+					// If the first element of an outer array could be another inner array, then the outer array's other elements would inherit the heritable properties of the inner array's first element. In that case, the outer array's other elements could equivalently be included in the inner array instead, which is what `factorCommonProperties` would necessarily do. Thus, it's impossible for the `firstSubcomponent` to be mergeable with the `inheritedElement` and also be an array. Because we've already verified they can merge, we can assert `firstSubcomponent` as not an array.
+					firstSubcomponent as Exclude<typeof firstSubcomponent, any[]>,
+					getHeritableProperties(inheritedElement)
+				);
 			} else {
 				// The `firstSubcomponent` is plain text and would inherit all properties of the `inheritedElement`, so they can be merged.
 				inheritedElement.text = firstSubcomponent;
