@@ -180,10 +180,7 @@ const configLine = (
 		});
 	}
 	return () => {
-		tellraw('@s', [
-			'',
-			minify(component)
-		]);
+		tellraw('@s', minify(component));
 	};
 };
 

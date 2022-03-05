@@ -32,11 +32,7 @@ export const setHasConfigFunction = (newValue: boolean) => {
 type MetaAdvancementOptions = {
 	/** The number of spaces after the title, so the advancement's description isn't so squished. */
 	titlePadding?: number,
-	/**
-	 * The advancement's description, with gold as the default color.
-	 *
-	 * Disables array inheritance on the inputted component.
-	 */
+	/** The advancement's description, with gold as the default color. */
 	description: JSONTextComponent
 };
 

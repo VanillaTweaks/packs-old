@@ -6,13 +6,8 @@ import join from 'lib/datapacks/textComponents/join';
 import { containerWidth } from 'lib/datapacks/textComponents/withContainer';
 import minify from 'lib/datapacks/textComponents/minify';
 import wrap from 'lib/datapacks/textComponents/wrap';
-import disableArrayInheritance from 'lib/datapacks/textComponents/disableArrayInheritance';
 
-/**
- * Adds padding before each line of a text component (counting lines caused by wrapping), automatically minified.
- *
- * Disables array inheritance on the inputted component.
- */
+/** Adds padding before each line of a text component (counting lines caused by wrapping), automatically minified. */
 const padEachLine = (
 	component: JSONTextComponent,
 	/** The ideal amount of padding to insert before each line in in-game pixels, or a function which returns the ideal amount of padding for each line it's called on. */
@@ -31,10 +26,7 @@ const padEachLine = (
 	);
 
 	return minify(join(
-		split(
-			wrap(disableArrayInheritance(component)),
-			'\n'
-		).map(componentLine => {
+		split(wrap(component), '\n').map(componentLine => {
 			const width = getSingleLineWidth(componentLine);
 
 			if (width === 0) {

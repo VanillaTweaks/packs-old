@@ -5,7 +5,6 @@ import minify from 'lib/datapacks/textComponents/minify';
 import join from 'lib/datapacks/textComponents/join';
 import padding from 'lib/datapacks/textComponents/padding';
 import { containerWidth } from 'lib/datapacks/textComponents/withContainer';
-import disableArrayInheritance from 'lib/datapacks/textComponents/disableArrayInheritance';
 
 type JSONTextComponentRange = {
 	/** The component in the range. Should not contain whitespace. */
@@ -18,8 +17,6 @@ type JSONTextComponentRange = {
 
 /**
  * Overlaps multiple text components into the same text component, as if they were all rendered simultaneously in the same place, automatically minified.
- *
- * Disables array inheritance on the inputted components.
  *
  * Example:
  *
@@ -36,7 +33,7 @@ const overlap = (...components: JSONTextComponent[]) => {
 	const rangeLines: JSONTextComponentRange[][] = [];
 
 	for (const component of components) {
-		const componentLines = split(disableArrayInheritance(component), '\n');
+		const componentLines = split(component, '\n');
 
 		for (let lineIndex = 0; lineIndex < componentLines.length; lineIndex++) {
 			if (lineIndex >= rangeLines.length) {
