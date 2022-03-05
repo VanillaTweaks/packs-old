@@ -32,7 +32,7 @@ const factorCommonProperties = (subcomponents: FlatJSONTextComponent[]) => {
 
 	splitPropertyRanges(nodes, properties);
 
-	// TODO: Properly handle intersecting (but non-straddling) property ranges with the same key.
+	// Ideally, this would properly handle overlapping (but non-straddling) property ranges with the same key, but I couldn't figure out any good algorithm for that faster than exponential time.
 
 	removeUselessPropertyRanges(nodes, properties);
 
