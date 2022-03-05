@@ -1,5 +1,5 @@
-import nonLegacyUnicodeChars from 'lib/datapacks/textComponents/getWidth/nonLegacyUnicodeChars.json';
 import codePointWidths from 'lib/datapacks/textComponents/getWidth/codePointWidths.json';
+import legacyUnicodeCodePointWidths from 'lib/datapacks/textComponents/getWidth/legacyUnicodeCodePointWidths.json';
 
 /** The width of an unknown code point in in-game pixels. */
 const UNKNOWN_CODE_POINT_WIDTH = 6;
@@ -31,6 +31,8 @@ const getCodePointWidth = (
 
 	if (codePoint in codePointWidths) {
 		width += codePointWidths[codePoint as keyof typeof codePointWidths];
+	} else if (codePoint in legacyUnicodeCodePointWidths) {
+		width += legacyUnicodeCodePointWidths[codePoint as keyof typeof legacyUnicodeCodePointWidths];
 	} else {
 		const charCode = codePoint.charCodeAt(0);
 		if (
@@ -47,15 +49,10 @@ const getCodePointWidth = (
 	}
 
 	if (options.bold) {
-		const nonLegacyUnicode = codePoint.length === 1 && (
-			!(codePoint in codePointWidths)
-			|| nonLegacyUnicodeChars.includes(codePoint)
-		);
-
 		width += (
-			nonLegacyUnicode
-				? BOLD_CODE_POINT_EXTRA_WIDTH
-				: BOLD_LEGACY_UNICODE_CODE_POINT_EXTRA_WIDTH
+			codePoint in legacyUnicodeCodePointWidths
+				? BOLD_LEGACY_UNICODE_CODE_POINT_EXTRA_WIDTH
+				: BOLD_CODE_POINT_EXTRA_WIDTH
 		);
 	}
 
