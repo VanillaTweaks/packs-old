@@ -1,4 +1,4 @@
-import nonLegacyUnicodeCodePoints from 'lib/datapacks/textComponents/getWidth/nonLegacyUnicodeCodePoints.json';
+import nonLegacyUnicodeChars from 'lib/datapacks/textComponents/getWidth/nonLegacyUnicodeChars.json';
 import codePointWidths from 'lib/datapacks/textComponents/getWidth/codePointWidths.json';
 
 /** The width of an unknown code point in in-game pixels. */
@@ -49,7 +49,7 @@ const getCodePointWidth = (
 	if (options.bold) {
 		const nonLegacyUnicode = (
 			!(codePoint in codePointWidths)
-			|| nonLegacyUnicodeCodePoints.includes(codePoint)
+			|| nonLegacyUnicodeChars.includes(codePoint)
 		);
 		width += (
 			nonLegacyUnicode
