@@ -1,7 +1,6 @@
 import axios from 'axios';
 import fs from 'fs-extra';
 import path from 'path';
-import type { Image } from 'canvas';
 import { createCanvas, loadImage } from 'canvas';
 
 type BitmapFontProvider = {
