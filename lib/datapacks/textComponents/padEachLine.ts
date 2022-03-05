@@ -10,7 +10,7 @@ import wrap from 'lib/datapacks/textComponents/wrap';
 /** Adds whitespace before each line of a text component (counting lines caused by wrapping), automatically minified. */
 const padEachLine = (
 	component: JSONTextComponent,
-	/** The ideal amount of whitespace to insert before each line in in-game pixels, or a function which returns the ideal amount of whitespace for each line it's called on. */
+	/** The ideal number of in-game pixels of whitespace to insert before each line in in-game pixels, or a function which returns the ideal amount of whitespace for each line it's called on. */
 	idealPaddingWidth: number | (
 		(
 			/** The width of the line (with start and end whitespaced trimmed off) in in-game pixels. */

@@ -30,7 +30,7 @@ export const setHasConfigFunction = (newValue: boolean) => {
 };
 
 type MetaAdvancementOptions = {
-	/** The number of in-game pixels of whitespace after the title, so the advancement's description isn't so squished. */
+	/** The number of in-game pixels of whitespace to add after the title, so the advancement's description isn't so squished. */
 	titlePadding?: number,
 	/** The advancement's description, with gold as the default color. */
 	description: JSONTextComponent
