@@ -2,15 +2,15 @@ import minify from 'lib/datapacks/textComponents/minify';
 import SPACE_WIDTH from 'lib/datapacks/textComponents/getWidth/SPACE_WIDTH';
 
 /** Returns a `JSONTextComponent` of a combination of plain and bold spaces to achieve a specified width in in-game pixels. */
-const padding = (
+const whitespace = (
 	/** The number of in-game pixels to generate spaces for. */
 	width: number,
 	{ floor = false }: {
-		/** Whether to floor the inputted width to the nearest valid padding, rather than (roughly) round which is the default. */
+		/** Whether to floor the inputted width to the nearest valid whitespace, rather than (roughly) round which is the default. */
 		floor?: boolean
 	} = {}
 ) => {
-	// If the width is small, then round up to the smallest valid width rather than rounding down, since it is most likely intended that the padding is non-zero.
+	// If the width is small, then round up to the smallest valid width rather than rounding down, since it is most likely intended that the whitespace is non-zero.
 	if (width > 0 && width < 4) {
 		width = floor ? 0 : 4;
 	}
@@ -26,7 +26,7 @@ const padding = (
 	} else if (width === 11) {
 		width = 10;
 	} else if (width < 0) {
-		throw TypeError('The padding width must not be negative.');
+		throw TypeError('The whitespace width must not be negative.');
 	}
 
 	const boldSpaces = width % SPACE_WIDTH;
@@ -38,4 +38,4 @@ const padding = (
 	]);
 };
 
-export default padding;
+export default whitespace;

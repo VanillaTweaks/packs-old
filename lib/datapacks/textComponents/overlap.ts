@@ -3,11 +3,11 @@ import split from 'lib/datapacks/textComponents/split';
 import getSingleLineWidth from 'lib/datapacks/textComponents/getWidth/getSingleLineWidth';
 import minify from 'lib/datapacks/textComponents/minify';
 import join from 'lib/datapacks/textComponents/join';
-import padding from 'lib/datapacks/textComponents/padding';
+import whitespace from 'lib/datapacks/textComponents/whitespace';
 import { containerWidth } from 'lib/datapacks/textComponents/withContainer';
 
 type JSONTextComponentRange = {
-	/** The component in the range. Should not contain whitespace. */
+	/** The component in the range. Should not contain any whitespace. */
 	value: JSONTextComponent,
 	/** The horizontal position at which the component starts in in-game pixels. */
 	start: number,
@@ -99,7 +99,7 @@ const overlap = (...components: JSONTextComponent[]) => {
 			/** The `componentLine` split into an array in which odd indexes have whitespace-only segments and even indexes do not. */
 			const subcomponents = split(
 				componentLine,
-				// The reason it's ` {2,}` instead of ` +` is because a single space in the middle of the string is most likely just a normal space that should not allow things to overlap it or be adjustable by missed padding when constructing the output.
+				// The reason it's ` {2,}` instead of ` +` is because a single space in the middle of the string is most likely just a normal space that should not allow things to overlap it or be adjustable by missed whitespace when constructing the output.
 				/(^ +| {2,}| +$)/
 			);
 
@@ -136,14 +136,14 @@ const overlap = (...components: JSONTextComponent[]) => {
 		const rangeLine = rangeLines[lineIndex];
 
 		let outputLine: JSONTextComponent[];
-		/** The amount of width in in-game pixels to add to the padding in order to avoid the line overflowing the container. */
-		let paddingWidthOffset = 0;
-		/** The maximum value that `paddingWidthOffset` is allowed to be before disallowing further overflow correction attempts. */
-		const maxPaddingWidthOffset = 4;
+		/** The amount of width in in-game pixels to add to the whitespace in order to avoid the line overflowing the container. */
+		let whitespaceWidthOffset = 0;
+		/** The maximum value that `whitespaceWidthOffset` is allowed to be before disallowing further overflow correction attempts. */
+		const maxWhitespaceWidthOffset = 4;
 		/** The amount that `outputLine`'s width exceeds the container width. */
 		let overflowingWidth = 0;
-		/** Each range's original `paddingWidth` value. */
-		const paddingWidthsWithoutOffset: number[] = [];
+		/** Each range's original `whitespaceWidth` value. */
+		const whitespaceWidthsWithoutOffset: number[] = [];
 
 		do {
 			// Attempt to construct the `outputLine`.
@@ -151,30 +151,30 @@ const overlap = (...components: JSONTextComponent[]) => {
 			outputLine = [''];
 			/** The position in the line at which the previous range ended in in-game pixels. */
 			let previousEnd = 0;
-			let paddingWidthOffsetRemaining = paddingWidthOffset;
+			let whitespaceWidthOffsetRemaining = whitespaceWidthOffset;
 
 			for (let rangeIndex = 0; rangeIndex < rangeLine.length; rangeIndex++) {
 				const range = rangeLine[rangeIndex];
 
-				const idealPaddingWidth = Math.max(0, range.start - previousEnd + paddingWidthOffsetRemaining);
-				const paddingBeforeRange = padding(idealPaddingWidth);
+				const idealWhitespaceWidth = Math.max(0, range.start - previousEnd + whitespaceWidthOffsetRemaining);
+				const whitespaceBeforeRange = whitespace(idealWhitespaceWidth);
 
 				outputLine.push(
-					paddingBeforeRange,
+					whitespaceBeforeRange,
 					range.value
 				);
 
 				const rangeWidth = range.end - range.start;
-				const paddingWidth = getSingleLineWidth(paddingBeforeRange);
-				previousEnd += paddingWidth + rangeWidth;
+				const whitespaceWidth = getSingleLineWidth(whitespaceBeforeRange);
+				previousEnd += whitespaceWidth + rangeWidth;
 
-				if (paddingWidthOffset === 0) {
-					paddingWidthsWithoutOffset[rangeIndex] = paddingWidth;
-				} else if (paddingWidthOffsetRemaining) {
-					const paddingWidthWithoutOffset = paddingWidthsWithoutOffset[rangeIndex];
-					paddingWidthOffsetRemaining = Math.min(
+				if (whitespaceWidthOffset === 0) {
+					whitespaceWidthsWithoutOffset[rangeIndex] = whitespaceWidth;
+				} else if (whitespaceWidthOffsetRemaining) {
+					const whitespaceWidthWithoutOffset = whitespaceWidthsWithoutOffset[rangeIndex];
+					whitespaceWidthOffsetRemaining = Math.min(
 						0,
-						paddingWidthOffsetRemaining + paddingWidthWithoutOffset - paddingWidth
+						whitespaceWidthOffsetRemaining + whitespaceWidthWithoutOffset - whitespaceWidth
 					);
 				}
 			}
@@ -186,8 +186,8 @@ const overlap = (...components: JSONTextComponent[]) => {
 			}
 
 			// The line overflows the container, so either try again with more overflow correction.
-			paddingWidthOffset -= 0.5;
-		} while (paddingWidthOffset <= maxPaddingWidthOffset);
+			whitespaceWidthOffset -= 0.5;
+		} while (whitespaceWidthOffset <= maxWhitespaceWidthOffset);
 
 		if (overflowingWidth > 0) {
 			// The line still overflows the container.

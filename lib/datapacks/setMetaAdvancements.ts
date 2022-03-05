@@ -2,7 +2,7 @@ import vt from 'lib/vt';
 import { Advancement, NBT } from 'sandstone';
 import type { AdvancementJSON, JSONTextComponent } from 'sandstone';
 import pack from 'lib/pack';
-import padding from 'lib/datapacks/textComponents/padding';
+import whitespace from 'lib/datapacks/textComponents/whitespace';
 import minify from 'lib/datapacks/textComponents/minify';
 import beforeSave from 'lib/beforeSave';
 import color from 'lib/datapacks/textComponents/color';
@@ -30,7 +30,7 @@ export const setHasConfigFunction = (newValue: boolean) => {
 };
 
 type MetaAdvancementOptions = {
-	/** The number of spaces after the title, so the advancement's description isn't so squished. */
+	/** The number of in-game pixels of whitespace after the title, so the advancement's description isn't so squished. */
 	titlePadding?: number,
 	/** The advancement's description, with gold as the default color. */
 	description: JSONTextComponent
@@ -74,7 +74,7 @@ const setMetaAdvancements = (options: {
 			icon: options.root.icon,
 			title: minify([
 				pack.TITLE,
-				padding(options.root.titlePadding || 0)
+				whitespace(options.root.titlePadding || 0)
 			]),
 			description: color('gold', options.root.description),
 			show_toast: false,
@@ -170,7 +170,7 @@ const setMetaAdvancements = (options: {
 						icon: metaAdvancementType.icon,
 						title: minify([
 							metaAdvancementType.title,
-							padding(advancementOptions.titlePadding || 0)
+							whitespace(advancementOptions.titlePadding || 0)
 						]),
 						description: color('gold', advancementOptions.description),
 						show_toast: false,

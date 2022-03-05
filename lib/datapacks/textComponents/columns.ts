@@ -2,7 +2,7 @@ import type { JSONTextComponent } from 'sandstone';
 import getWidth from 'lib/datapacks/textComponents/getWidth';
 import SPACE_WIDTH from 'lib/datapacks/textComponents/getWidth/SPACE_WIDTH';
 import { containerWidth } from 'lib/datapacks/textComponents/withContainer';
-import padding from 'lib/datapacks/textComponents/padding';
+import whitespace from 'lib/datapacks/textComponents/whitespace';
 import padEachLine from 'lib/datapacks/textComponents/padEachLine';
 import overlap from 'lib/datapacks/textComponents/overlap';
 import getSingleLineWidth from 'lib/datapacks/textComponents/getWidth/getSingleLineWidth';
@@ -25,10 +25,10 @@ const columns = (...components: JSONTextComponent[]) => {
 		freeSpace -= componentWidth;
 	}
 
-	/** Whether there should be padding to the left and right of all columns rather than only between columns. */
+	/** Whether there should be whitespace to the left and right of all columns rather than only between columns. */
 	let spacingAroundColumns = true;
 
-	/** The amount of padding around or between each column, rounded to the nearest valid padding width. */
+	/** The amount of whitespace around or between each column, rounded to the nearest valid whitespace width. */
 	let columnSpacing = freeSpace / (components.length + 1);
 
 	if (
@@ -47,28 +47,28 @@ const columns = (...components: JSONTextComponent[]) => {
 		}
 	}
 
-	// Round to the nearest valid padding width.
-	columnSpacing = getSingleLineWidth(padding(columnSpacing));
+	// Round to the nearest valid whitespace width.
+	columnSpacing = getSingleLineWidth(whitespace(columnSpacing));
 
 	const paddedColumns: JSONTextComponent[] = [];
 
-	/** The amount of padding to insert before the next component pushed to `paddedColumns`. */
-	let precedingPadding = 0;
+	/** The amount of whitespace to insert before the next component pushed to `paddedColumns`. */
+	let precedingWhitespace = 0;
 
 	if (spacingAroundColumns) {
-		precedingPadding += columnSpacing;
+		precedingWhitespace += columnSpacing;
 	}
 
 	for (let columnIndex = 0; columnIndex < components.length; columnIndex++) {
 		const component = components[columnIndex];
 
 		paddedColumns.push(
-			padEachLine(component, precedingPadding)
+			padEachLine(component, precedingWhitespace)
 		);
 
 		const componentWidth = componentWidths[columnIndex];
-		precedingPadding += componentWidth;
-		precedingPadding += columnSpacing;
+		precedingWhitespace += componentWidth;
+		precedingWhitespace += columnSpacing;
 	}
 
 	return overlap(...paddedColumns);
