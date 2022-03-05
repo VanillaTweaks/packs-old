@@ -41,16 +41,17 @@ const getCodePointWidth = (
 			// This code point is a single surrogate character outside of a pair, which is invalid.
 			width += INVALID_SURROGATE_WIDTH;
 		} else {
-			// This code point is only unknown.
+			// This code point is unknown.
 			width += UNKNOWN_CODE_POINT_WIDTH;
 		}
 	}
 
 	if (options.bold) {
-		const nonLegacyUnicode = (
+		const nonLegacyUnicode = codePoint.length === 1 && (
 			!(codePoint in codePointWidths)
 			|| nonLegacyUnicodeChars.includes(codePoint)
 		);
+
 		width += (
 			nonLegacyUnicode
 				? BOLD_CODE_POINT_EXTRA_WIDTH
