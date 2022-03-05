@@ -49,7 +49,7 @@ const getCodePointWidth = (
 	if (options.bold) {
 		const nonLegacyUnicode = (
 			!(codePoint in codePointWidths)
-			|| nonLegacyUnicodeCodePoints[codePoint.length as 1 | 2].includes(codePoint)
+			|| nonLegacyUnicodeCodePoints.includes(codePoint)
 		);
 		width += (
 			nonLegacyUnicode
