@@ -9,8 +9,10 @@ To compile a pack, run `npm run build` followed by the path of the data pack's d
 Example:
 
 ```sh
-npm run build datapacks/1.17/graves
+npm run build datapacks/1.18/graves
 ```
+
+The data pack will be installed to `%appdata%/.minecraft/saves/<game version>/datapacks`, so you should already have created a world named by the game version (e.g. `1_18`).
 
 ## Development
 
@@ -19,5 +21,5 @@ To actively develop a pack, do the same but with `watch` instead of `build`. Thi
 Example:
 
 ```sh
-npm run watch datapacks/1.17/graves
+npm run watch datapacks/1.18/graves
 ```
