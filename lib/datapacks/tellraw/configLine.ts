@@ -1,4 +1,4 @@
-import minify from 'lib/datapacks/textComponents/minify';
+import { minify } from 'minecraft-text-components';
 import { tellraw } from 'sandstone';
 import type { JSONTextComponent } from 'sandstone';
 

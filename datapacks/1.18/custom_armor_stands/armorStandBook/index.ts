@@ -1,9 +1,6 @@
 import customModelData from 'lib/customModelData';
 import pack from 'lib/pack';
-import center from 'lib/datapacks/textComponents/center';
-import columns from 'lib/datapacks/textComponents/columns';
-import minify from 'lib/datapacks/textComponents/minify';
-import withContainer, { BOOK } from 'lib/datapacks/textComponents/withContainer';
+import { center, columns, minify, withContainer, BOOK } from 'minecraft-text-components';
 import vt from 'lib/vt';
 import { PAGE_TITLE_COLOR, DETAILS_COLOR, HEADING_COLOR, CLICKABLE_COLOR, CLICKABLE_COLOR_2, NEGATIVE_NUMBER_COLOR, POSITIVE_NUMBER_COLOR, NUMBER_COLOR } from '../armorStandBook/colors';
 import page from '../armorStandBook/page';

@@ -2,10 +2,8 @@ import vt from 'lib/vt';
 import { Advancement, NBT } from 'sandstone';
 import type { AdvancementJSON, JSONTextComponent } from 'sandstone';
 import pack from 'lib/pack';
-import whitespace from 'lib/datapacks/textComponents/whitespace';
-import minify from 'lib/datapacks/textComponents/minify';
+import { color, minify, whitespace } from 'minecraft-text-components';
 import beforeSave from 'lib/beforeSave';
-import color from 'lib/datapacks/textComponents/color';
 
 /** Whether the `pack` has an uninstall function. */
 let hasUninstallFunction = false;

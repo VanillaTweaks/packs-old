@@ -1,6 +1,4 @@
-import center from 'lib/datapacks/textComponents/center';
-import overlap from 'lib/datapacks/textComponents/overlap';
-import right from 'lib/datapacks/textComponents/right';
+import { center, overlap, right } from 'minecraft-text-components';
 import type { JSONTextComponent } from 'sandstone';
 import { FIRST_PAGE_LINK_COLOR, PAGE_TITLE_COLOR, INFO_COLOR, DETAILS_COLOR } from '../armorStandBook/colors';
 

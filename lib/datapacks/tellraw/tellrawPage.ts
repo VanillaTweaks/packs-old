@@ -2,8 +2,7 @@ import pack from 'lib/pack';
 import horizontalBar from 'lib/datapacks/tellraw/horizontalBar';
 import type { JSONTextComponent, MultiplePlayersArgument } from 'sandstone';
 import { tellraw } from 'sandstone';
-import overlap from 'lib/datapacks/textComponents/overlap';
-import center from 'lib/datapacks/textComponents/center';
+import { center, overlap } from 'minecraft-text-components';
 
 /** Runs `tellraw` commands to display the top and bottom of a page UI. */
 const tellrawPage = (

@@ -1,7 +1,6 @@
 import type { MultiplePlayersArgument } from 'sandstone';
 import { tellraw } from 'sandstone';
-import { containerWidth } from 'lib/datapacks/textComponents/withContainer';
-import whitespace from 'lib/datapacks/textComponents/whitespace';
+import { containerWidth, whitespace } from 'minecraft-text-components';
 
 /** Runs a `tellraw` command to display a horizontal bar in chat. */
 const horizontalBar = (targets: MultiplePlayersArgument) => {
