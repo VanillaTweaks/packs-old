@@ -2,7 +2,7 @@ import { center, overlap, right } from 'minecraft-text-components';
 import type { JSONTextComponent } from 'sandstone';
 import { FIRST_PAGE_LINK_COLOR, PAGE_TITLE_COLOR, INFO_COLOR, DETAILS_COLOR } from './colors';
 
-type ContentArgument = [
+type ContentParameter = [
 	/** A text component placed after a line break following the heading. */
 	content: JSONTextComponent
 ];
@@ -10,10 +10,10 @@ type ContentArgument = [
 /** A page of the armor stand book (other than the first). */
 const page = (
 	heading: string,
-	...args: ContentArgument | [
+	...args: ContentParameter | [
 		/** A string inserted immediately after the heading, centered along with it. */
 		headingDetails: string,
-		...contentArg: ContentArgument
+		...contentParam: ContentParameter
 	]
 ) => {
 	const content = args.pop()!;
