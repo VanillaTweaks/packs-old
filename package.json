@@ -14,7 +14,7 @@
 	},
 	"dependencies": {
 		"fs-extra": "^10.0.1",
-		"minecraft-text-components": "^1.0.1",
+		"minecraft-text-components": "^1.0.2",
 		"sandstone": "^0.14.0-alpha.10"
 	},
 	"devDependencies": {
