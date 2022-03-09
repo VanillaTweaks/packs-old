@@ -1,4 +1,4 @@
-import { center, overlap, right } from 'minecraft-text-components';
+import { center, minify, overlap, right } from 'minecraft-text-components';
 import type { JSONTextComponent } from 'sandstone';
 import { FIRST_PAGE_LINK_COLOR, PAGE_TITLE_COLOR, INFO_COLOR, DETAILS_COLOR } from './colors';
 
@@ -7,7 +7,7 @@ type ContentParameter = [
 	content: JSONTextComponent
 ];
 
-/** A page of the armor stand book (other than the first). */
+/** A page of the armor stand book (other than the first), automatically formatted and minified. */
 const page = (
 	heading: string,
 	...args: ContentParameter | [
@@ -22,7 +22,7 @@ const page = (
 			: args
 	);
 
-	return [
+	return minify([
 		overlap(
 			{ text: '⏪', color: FIRST_PAGE_LINK_COLOR },
 			center([
@@ -38,7 +38,7 @@ const page = (
 		),
 		'\n',
 		content
-	];
+	]);
 };
 
 export default page;

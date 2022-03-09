@@ -36,7 +36,7 @@ const armorStandBook = Item(pack, 'armor_stand_book', {
 					'\n',
 					{ text: 'Use Mouse', color: CLICKABLE_COLOR }
 				]),
-				[
+				minify([
 					center([
 						{ text: pack.TITLE, color: PAGE_TITLE_COLOR },
 						'\n',
@@ -76,7 +76,7 @@ const armorStandBook = Item(pack, 'armor_stand_book', {
 						'\n',
 						{ text: 'Right Leg', color: CLICKABLE_COLOR_2 }
 					])
-				],
+				]),
 				page('Manage Selection', [
 					'\n',
 					center([
@@ -494,7 +494,7 @@ const armorStandBook = Item(pack, 'armor_stand_book', {
 						{ text: 'Away From Your Feet', color: CLICKABLE_COLOR }
 					])
 				])
-			].map(page => JSON.stringify(minify(page)))
+			].map(page => JSON.stringify(page))
 		))
 	}
 });
