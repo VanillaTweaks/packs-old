@@ -1,6 +1,6 @@
 import { center, overlap, right } from 'minecraft-text-components';
 import type { JSONTextComponent } from 'sandstone';
-import { FIRST_PAGE_LINK_COLOR, PAGE_TITLE_COLOR, INFO_COLOR, DETAILS_COLOR } from '../armorStandBook/colors';
+import { FIRST_PAGE_LINK_COLOR, PAGE_TITLE_COLOR, INFO_COLOR, DETAILS_COLOR } from './colors';
 
 type ContentArgument = [
 	/** A text component placed after a line break following the heading. */

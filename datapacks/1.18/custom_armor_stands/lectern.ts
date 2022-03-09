@@ -42,7 +42,7 @@ Advancement(lectern`use`, {
 				execute
 					.if.block('~ ~ ~', 'minecraft:lectern')
 					.run(lectern`_mark`, () => {
-						// Mark the lectern so that it can be associated with the player who clicked it via a score.
+						// Mark the lectern so it can be associated with the player who clicked it via a score.
 
 						summon('minecraft:marker', '~ ~ ~', {
 							Tags: [pack.lectern, pack.new]
