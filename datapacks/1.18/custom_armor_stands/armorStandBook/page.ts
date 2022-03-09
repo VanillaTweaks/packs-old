@@ -16,8 +16,11 @@ const page = (
 		...contentParam: ContentParameter
 	]
 ) => {
-	const content = args.pop()!;
-	const headingDetails = args.pop() as string | undefined;
+	const [headingDetails, content] = (
+		args.length === 1
+			? [undefined, args[0]]
+			: args
+	);
 
 	return [
 		overlap(
