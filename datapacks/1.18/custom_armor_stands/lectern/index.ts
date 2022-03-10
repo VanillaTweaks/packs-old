@@ -4,7 +4,7 @@ import objective from 'lib/datapacks/objective';
 import checkLoadStatus from 'lib/datapacks/lanternLoad/checkLoadStatus';
 import temp from 'lib/datapacks/temp';
 import vt from 'lib/vt';
-import armorStandBook from './armorStandBook';
+import armorStandBook from '../armorStandBook';
 
 const lectern = pack.getChild('lectern');
 
@@ -20,9 +20,13 @@ Advancement(lectern`use`, {
 				location: {
 					block: {
 						nbt: NBT.stringify({
-							data: {
-								[vt.NAMESPACE]: {
-									item: armorStandBook.name
+							Book: {
+								tag: {
+									data: {
+										[vt.NAMESPACE]: {
+											item: armorStandBook.name
+										}
+									}
 								}
 							}
 						})
