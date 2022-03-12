@@ -1,3 +1,12 @@
+- selecting armor stands
+	- nearest
+	- use mouse
+- custom_armor_stands trigger functionality
+- compiling the book pages based on book data & properties of selected armor stand
+- compiling the book lore based on clipboard/macro
+- apply operations from storage onto armor stand
+
+```json
 // This is an example of the pack's NBT storage, for developmental use.
 {
 	"book": {
@@ -29,3 +38,4 @@
 		"id": "copy_rotation"
 	}
 }
+```
