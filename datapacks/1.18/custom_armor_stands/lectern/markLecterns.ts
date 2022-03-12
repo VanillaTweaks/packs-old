@@ -7,7 +7,7 @@ import vt from 'lib/vt';
 import armorStandBook from '../armorStandBook';
 import openBook from '../openBook';
 import every from 'lib/datapacks/every';
-import matchesLecternID from '../matchesLecternID';
+import matchesLecternID from './matchesLecternID';
 
 const lectern = pack.getChild('lectern');
 
