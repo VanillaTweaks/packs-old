@@ -5,7 +5,7 @@ import { scoreboard } from 'sandstone';
 import lecternID from './lectern/lecternID';
 
 /** A `minecraft.used:minecraft.written_book` objective which is reset whenever the player uses a lectern. */
-const useBook = objective(pack, 'open_book', 'minecraft.used:minecraft.written_book');
+const useBook = objective(pack, 'use_book', 'minecraft.used:minecraft.written_book');
 
 export default useBook;
 
