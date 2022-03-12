@@ -5,6 +5,7 @@ import checkLoadStatus from 'lib/datapacks/lanternLoad/checkLoadStatus';
 import temp from 'lib/datapacks/temp';
 import vt from 'lib/vt';
 import armorStandBook from '../armorStandBook';
+import openBook from '../openBook';
 
 const lectern = pack.getChild('lectern');
 
@@ -37,9 +38,11 @@ Advancement(lectern`use`, {
 	},
 	rewards: {
 		function: MCFunction(lectern`_use`, () => {
+			// When a player opens a lectern, we know they are no longer opening a book in their hand.
+			scoreboard.players.reset('@s', openBook);
+
 			/** A score of the number of steps which have occurred in the lectern raycast. */
 			const $steps = temp('$steps');
-
 			scoreboard.players.set($steps, 0);
 
 			MCFunction(lectern`_find`, function () {
@@ -48,9 +51,7 @@ Advancement(lectern`use`, {
 					.run(lectern`_mark`, () => {
 						// Mark the lectern so it can be associated with the player who clicked it via a score.
 
-						summon('minecraft:marker', '~ ~ ~', {
-							Tags: [pack.lectern, pack.new]
-						});
+						summon('minecraft:marker', '~ ~ ~', { Tags: [pack.lectern, pack.new] });
 
 						execute
 							.store.result.score(`@e[tag=${pack.new},distance=..0.01,limit=1]`, lecternID)
