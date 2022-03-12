@@ -1,7 +1,7 @@
 import hasEqualScore from 'lib/datapacks/hasEqualScore';
 import temp from 'lib/datapacks/temp';
 import pack from 'lib/pack';
-import { lecternID } from './markLecterns';
+import lecternID from './lecternID';
 
 const $lecternID = temp('$lecternID');
 

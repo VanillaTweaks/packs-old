@@ -1,6 +1,5 @@
 import { Advancement, MCFunction, NBT, execute, summon, scoreboard } from 'sandstone';
 import pack from 'lib/pack';
-import objective from 'lib/datapacks/objective';
 import checkLoadStatus from 'lib/datapacks/lanternLoad/checkLoadStatus';
 import temp from 'lib/datapacks/temp';
 import vt from 'lib/vt';
@@ -8,13 +7,11 @@ import armorStandBook from '../armorStandBook';
 import openBook from '../openBook';
 import every from 'lib/datapacks/every';
 import matchesLecternID from './matchesLecternID';
+import lecternID from './lecternID';
 
-const lectern = pack.getChild('lectern');
-
-export const lecternID = objective(pack, 'lectern_id');
 const $lastValue = lecternID('$last_value');
 
-Advancement(lectern`use`, {
+Advancement(pack`use_lectern`, {
 	criteria: {
 		requirement: {
 			trigger: 'minecraft:item_used_on_block',
@@ -39,7 +36,7 @@ Advancement(lectern`use`, {
 		}
 	},
 	rewards: {
-		function: MCFunction(lectern`_use`, () => {
+		function: MCFunction(pack`_use_lectern`, () => {
 			// When a player opens a lectern, we know they are no longer opening a book in their hand.
 			scoreboard.players.reset('@s', openBook);
 
@@ -47,10 +44,10 @@ Advancement(lectern`use`, {
 			const $steps = temp('$steps');
 			scoreboard.players.set($steps, 0);
 
-			MCFunction(lectern`_find`, function () {
+			MCFunction(pack`_find_lectern`, function () {
 				execute
 					.if.block('~ ~ ~', 'minecraft:lectern')
-					.run(lectern`_mark`, () => {
+					.run(pack`_mark_lectern`, () => {
 						// Mark the lectern so it can be associated with the player who clicked it via a score.
 
 						summon('minecraft:marker', '~ ~ ~', { Tags: [pack.lectern, pack.new] });
