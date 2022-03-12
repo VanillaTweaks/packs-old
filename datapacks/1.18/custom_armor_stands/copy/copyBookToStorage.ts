@@ -11,7 +11,7 @@ import matchesLecternID from '../lectern/matchesLecternID';
  *
  * ⚠️ `copyStorageToBook` must always be called within the same tick after calling this, unless the book is not found.
  */
-export const copyBookToStorage = MCFunction(pack`_copy_book_to_storage`, () => {
+const copyBookToStorage = MCFunction(pack`_copy_book_to_storage`, () => {
 	scoreboard.players.set($bookInHand, 0);
 
 	execute
@@ -68,3 +68,5 @@ export const copyBookToStorage = MCFunction(pack`_copy_book_to_storage`, () => {
 				});
 		});
 });
+
+export default copyBookToStorage;

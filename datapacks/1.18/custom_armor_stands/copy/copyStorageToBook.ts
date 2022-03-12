@@ -23,7 +23,7 @@ const copyStorageToBookItemModifier = ItemModifier(pack`copy_storage_to_book`, {
  *
  * ⚠️ `copyBookToStorage` must always be called within the same tick before calling this.
  */
-export const copyStorageToBook = MCFunction(pack`_copy_storage_to_book`, () => {
+const copyStorageToBook = MCFunction(pack`_copy_storage_to_book`, () => {
 	execute
 		.if($bookInHand.matches(0))
 		// Note: If no lectern marker was found by `copyBookToStorage`, then `currentLectern` won't target anything.
@@ -43,3 +43,5 @@ export const copyStorageToBook = MCFunction(pack`_copy_storage_to_book`, () => {
 		.if($bookInHand.matches(2))
 		.run.item.modify.entity('@s', 'weapon.offhand', copyStorageToBookItemModifier);
 });
+
+export default copyStorageToBook;
