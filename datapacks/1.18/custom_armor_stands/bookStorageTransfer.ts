@@ -81,11 +81,11 @@ const copyStorageToBookItemModifier = ItemModifier(pack`copy_storage_to_book`, {
 		type: 'minecraft:storage',
 		source: pack`main`
 	},
-	ops: [{
-		source: 'book',
-		target: '{}',
+	ops: ['data', 'pages', 'display', 'CustomModelData'].map(path => ({
+		source: `book.${path}`,
+		target: path,
 		op: 'replace'
-	}]
+	}))
 });
 
 /**
