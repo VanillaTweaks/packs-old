@@ -3,6 +3,7 @@ import pack from 'lib/pack';
 import { data, execute, ItemModifier, MCFunction, scoreboard, tag } from 'sandstone';
 import { bookInMainhand, bookInOffhand } from './armorStandBook/predicates';
 import { lecternID } from './lectern';
+import matchesLecternID from './matchesLecternID';
 
 /** A score with 0 if the armor stand book is in neither hand, 1 if it's in the mainhand, or 2 if it's in the offhand. */
 const $bookInHand = temp('$bookInHand');
@@ -22,14 +23,9 @@ export const copyBookToStorage = MCFunction(pack`_copy_book_to_storage`, () => {
 		// TODO: Remove `as any`.
 		.if.score('@s', lecternID, 'matches', '1..' as any)
 		.run(pack`_copy_lectern_book_to_storage`, () => {
-			const $lecternID = temp('$lecternID');
-			scoreboard.players.operation($lecternID, '=', '@s', lecternID);
-
-			execute
-				.as(`@e[type=minecraft:marker,tag=${pack.lectern}]`)
-				// TODO: Replace `'$lecternID', temp` with `$lecternID`.
-				.if.score('$lecternID', temp, '=', '@s', lecternID)
-				.run.tag('@s').add(pack.current_lectern);
+			scoreboard.players.operation('$lecternID', temp, '=', '@s', lecternID);
+			tag(`@e[type=minecraft:marker,tag=${pack.lectern},predicate=${matchesLecternID}]`)
+				.add(pack.current_lectern);
 
 			execute
 				.at(currentLectern)

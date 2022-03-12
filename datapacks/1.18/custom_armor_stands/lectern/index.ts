@@ -6,6 +6,8 @@ import temp from 'lib/datapacks/temp';
 import vt from 'lib/vt';
 import armorStandBook from '../armorStandBook';
 import openBook from '../openBook';
+import every from 'lib/datapacks/every';
+import matchesLecternID from '../matchesLecternID';
 
 const lectern = pack.getChild('lectern');
 
@@ -68,4 +70,15 @@ Advancement(lectern`use`, {
 			})();
 		})
 	}
+});
+
+every('1s', pack, () => {
+	execute
+		.as(`@e[type=minecraft:marker,tag=${pack.lectern}]`)
+		.run(pack`_kill_lectern_marker_without_player`, () => {
+			scoreboard.players.operation('$lecternID', temp, '=', '@s', lecternID);
+			execute
+				.unless.entity(`@a[predicate=${matchesLecternID}]`)
+				.run.kill('@s');
+		});
 });
