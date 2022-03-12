@@ -2,7 +2,7 @@ import temp from 'lib/datapacks/temp';
 import pack from 'lib/pack';
 import { data, execute, ItemModifier, MCFunction, scoreboard, tag } from 'sandstone';
 import { bookInMainhand, bookInOffhand } from './armorStandBook/predicates';
-import { lecternID } from './lectern/markLecterns';
+import lecternID from './lectern/lecternID';
 import matchesLecternID from './lectern/matchesLecternID';
 
 /** A score with 0 if the armor stand book is in neither hand, 1 if it's in the mainhand, or 2 if it's in the offhand. */

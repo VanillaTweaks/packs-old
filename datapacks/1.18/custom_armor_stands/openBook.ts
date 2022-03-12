@@ -2,7 +2,7 @@ import every from 'lib/datapacks/every';
 import objective from 'lib/datapacks/objective';
 import pack from 'lib/pack';
 import { scoreboard } from 'sandstone';
-import { lecternID } from './lectern/markLecterns';
+import lecternID from './lectern/lecternID';
 
 /** A `minecraft.used:minecraft.written_book` objective which is reset whenever the player opens a lectern. */
 const openBook = objective(pack, 'open_book', 'minecraft.used:minecraft.written_book');
