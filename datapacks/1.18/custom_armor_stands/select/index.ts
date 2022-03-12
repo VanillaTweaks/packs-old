@@ -13,7 +13,7 @@ const select = MCFunction(pack`_select`, () => {
 		.run.scoreboard.players.add($lastArmorStandID, 1);
 
 	execute
-		.store.result.storage(pack`main`, `book.tag.data.${pack}.armorStandID`, 'int')
+		.store.result.storage(pack`main`, `book.data.${pack}.armorStandID`, 'int')
 		.run.scoreboard.players.get('@s', armorStandID);
 });
 
