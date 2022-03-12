@@ -16,7 +16,7 @@ setMetaAdvancements({
 });
 
 const id = objective(pack, 'id');
-const $lastValue = id('$last_value');
+const $lastItemFrameID = id('$last_value');
 
 const mark = MCFunction(pack`_mark`, () => {
 	summon('minecraft:marker', '~ ~ ~', { Tags: [pack.marked_frame] });
@@ -102,7 +102,7 @@ every('1t', pack, () => {
 	execute
 		.as(`@e[type=minecraft:item_frame,tag=!${pack.has_id}]`)
 		.store.result.score('@s', id)
-		.run.scoreboard.players.add($lastValue, 1);
+		.run.scoreboard.players.add($lastItemFrameID, 1);
 
 	execute
 		.as(`@e[type=minecraft:marker,tag=${pack.mark_frame}]`)

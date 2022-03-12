@@ -9,7 +9,7 @@ import every from 'lib/datapacks/every';
 import matchesLecternID from './matchesLecternID';
 import lecternID from './lecternID';
 
-const $lastValue = lecternID('$last_value');
+const $lastLecternID = lecternID('$last_value');
 
 Advancement(pack`use_lectern`, {
 	criteria: {
@@ -54,8 +54,8 @@ Advancement(pack`use_lectern`, {
 
 						execute
 							.store.result.score(`@e[tag=${pack.new},distance=..0.01,limit=1]`, lecternID)
-							.run.scoreboard.players.add($lastValue, 1);
-						scoreboard.players.operation('@s', lecternID, '=', $lastValue);
+							.run.scoreboard.players.add($lastLecternID, 1);
+						scoreboard.players.operation('@s', lecternID, '=', $lastLecternID);
 					});
 
 				execute
