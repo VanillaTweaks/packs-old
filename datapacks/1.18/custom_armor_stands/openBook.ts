@@ -4,12 +4,12 @@ import pack from 'lib/pack';
 import { scoreboard } from 'sandstone';
 import lecternID from './lectern/lecternID';
 
-/** A `minecraft.used:minecraft.written_book` objective which is reset whenever the player opens a lectern. */
-const openBook = objective(pack, 'open_book', 'minecraft.used:minecraft.written_book');
+/** A `minecraft.used:minecraft.written_book` objective which is reset whenever the player uses a lectern. */
+const useBook = objective(pack, 'open_book', 'minecraft.used:minecraft.written_book');
 
-export default openBook;
+export default useBook;
 
 every('1t', pack, () => {
-	// When a player opens a book in their hand, we know they are no longer opening a lectern.
-	scoreboard.players.reset(`@a[scores={${openBook}=1..}]`, lecternID);
+	// When a player uses a book in their hand, we know they are no longer using a lectern.
+	scoreboard.players.reset(`@a[scores={${useBook}=1..}]`, lecternID);
 });

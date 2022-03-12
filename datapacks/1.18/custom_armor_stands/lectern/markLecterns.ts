@@ -4,7 +4,7 @@ import checkLoadStatus from 'lib/datapacks/lanternLoad/checkLoadStatus';
 import temp from 'lib/datapacks/temp';
 import vt from 'lib/vt';
 import armorStandBook from '../armorStandBook';
-import openBook from '../openBook';
+import useBook from '../useBook';
 import every from 'lib/datapacks/every';
 import matchesLecternID from './matchesLecternID';
 import lecternID from './lecternID';
@@ -37,8 +37,8 @@ Advancement(pack`use_lectern`, {
 	},
 	rewards: {
 		function: MCFunction(pack`_use_lectern`, () => {
-			// When a player opens a lectern, we know they are no longer opening a book in their hand.
-			scoreboard.players.reset('@s', openBook);
+			// When a player uses a lectern, we know they are no longer using a book in their hand.
+			scoreboard.players.reset('@s', useBook);
 
 			/** A score of the number of steps which have occurred in the lectern raycast. */
 			const $steps = temp('$steps');
