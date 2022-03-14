@@ -1,8 +1,9 @@
 import temp from 'lib/datapacks/temp';
 import pack from 'lib/pack';
-import { data, execute, MCFunction, scoreboard, tag } from 'sandstone';
+import { data, execute, MCFunction, scoreboard } from 'sandstone';
 import { $bookLocation, BookLocation, currentLectern } from '.';
 import { bookInMainhand, bookInOffhand } from '../armorStandBook/predicates';
+import { lecternWithArmorStandBook } from '../lectern';
 import lecternID from '../lectern/lecternID';
 import matchesLecternID from '../lectern/matchesLecternID';
 
@@ -19,8 +20,12 @@ const copyBookToStorage = MCFunction(pack`_copy_book_to_storage`, () => {
 		.if.score('@s', lecternID, 'matches', '1..' as any)
 		.run(pack`_find_lectern_book_to_copy_to_storage`, () => {
 			scoreboard.players.operation('$lecternID', temp, '=', '@s', lecternID);
-			tag(`@e[type=minecraft:marker,tag=${pack.lectern},predicate=${matchesLecternID}]`)
-				.add(pack.current_lectern);
+			execute
+				.as(`@e[type=minecraft:marker,tag=${pack.lectern},predicate=${matchesLecternID},limit=1]`)
+				.at('@s')
+				// Check that the lectern marker is at a lectern with an armor stand book, in case it isn't but hasn't been killed yet.
+				.if.block('~ ~ ~', lecternWithArmorStandBook)
+				.run.tag('@s').add(pack.current_lectern);
 
 			execute
 				.at(currentLectern)

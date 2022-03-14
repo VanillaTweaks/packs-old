@@ -1,15 +1,17 @@
-import { Advancement, MCFunction, NBT, execute, summon, scoreboard, advancement, particle } from 'sandstone';
+import { Advancement, MCFunction, execute, summon, scoreboard, advancement, kill } from 'sandstone';
 import pack from 'lib/pack';
 import checkLoadStatus from 'lib/datapacks/lanternLoad/checkLoadStatus';
 import temp from 'lib/datapacks/temp';
-import vt from 'lib/vt';
-import armorStandBook from '../armorStandBook';
 import useBook from '../useBook';
 import every from 'lib/datapacks/every';
 import matchesLecternID from './matchesLecternID';
 import lecternID from './lecternID';
+import { lecternWithArmorStandBook, lecternWithArmorStandBookSNBT } from '.';
 
 const $lastLecternID = lecternID('$last_value');
+
+/** A score of whether there is a lectern with an armor stand book at `~ ~ ~`. */
+const $lectern = temp('$lectern');
 
 const useLecternAdvancement = Advancement(pack`use_lectern`, {
 	criteria: {
@@ -19,17 +21,8 @@ const useLecternAdvancement = Advancement(pack`use_lectern`, {
 				player: [checkLoadStatus()],
 				location: {
 					block: {
-						nbt: NBT.stringify({
-							Book: {
-								tag: {
-									data: {
-										[vt.NAMESPACE]: {
-											item: armorStandBook.name
-										}
-									}
-								}
-							}
-						})
+						blocks: ['minecraft:lectern'],
+						nbt: lecternWithArmorStandBookSNBT
 					}
 				}
 			}
@@ -48,9 +41,12 @@ const useLecternAdvancement = Advancement(pack`use_lectern`, {
 
 			execute
 				.anchored('eyes')
+				.positioned('^ ^ ^')
 				.run(MCFunction(pack`_find_lectern`, function () {
+					scoreboard.players.set($lectern, 0);
+
 					execute
-						.if.block('~ ~ ~', 'minecraft:lectern')
+						.if.block('~ ~ ~', lecternWithArmorStandBook)
 						.run(pack`_mark_lectern`, () => {
 							// Mark the lectern so it can be associated with the player who clicked it via a score.
 
@@ -60,10 +56,12 @@ const useLecternAdvancement = Advancement(pack`use_lectern`, {
 								.store.result.score(`@e[tag=${pack.new},distance=..0.01,limit=1]`, lecternID)
 								.run.scoreboard.players.add($lastLecternID, 1);
 							scoreboard.players.operation('@s', lecternID, '=', $lastLecternID);
+
+							scoreboard.players.set($lectern, 1);
 						});
 
 					execute
-						.unless.block('~ ~ ~', 'minecraft:lectern')
+						.if($lectern.matches(0))
 						.positioned('^ ^ ^0.01')
 						// TODO: Remove `as any`.
 						.if($steps.matches('..500' as any))
@@ -78,16 +76,22 @@ every('1s', pack, () => {
 		.as(`@e[type=minecraft:marker,tag=${pack.lectern}]`)
 		.at('@s')
 		.run(pack`_kill_invalid_lectern_marker`, () => {
-			execute
-				.unless.block('~ ~ ~', 'minecraft:lectern')
-				.run.kill('@s');
+			scoreboard.players.set($lectern, 1);
 
 			execute
-				.if.block('~ ~ ~', 'minecraft:lectern')
+				.unless.block('~ ~ ~', lecternWithArmorStandBook)
+				.run(pack`_kill_lectern_marker_without_lectern`, () => {
+					kill('@s');
+
+					scoreboard.players.set($lectern, 0);
+				});
+
+			execute
+				.if($lectern.matches(1))
 				.run(pack`_kill_lectern_marker_without_player`, () => {
 					scoreboard.players.operation('$lecternID', temp, '=', '@s', lecternID);
 					execute
-						.unless.entity(`@a[predicate=${matchesLecternID}]`)
+						.unless.entity(`@a[predicate=${matchesLecternID},limit=1]`)
 						.run.kill('@s');
 				});
 		});
