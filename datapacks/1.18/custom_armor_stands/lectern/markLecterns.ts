@@ -76,10 +76,19 @@ const useLecternAdvancement = Advancement(pack`use_lectern`, {
 every('1s', pack, () => {
 	execute
 		.as(`@e[type=minecraft:marker,tag=${pack.lectern}]`)
-		.run(pack`_kill_lectern_marker_without_player`, () => {
-			scoreboard.players.operation('$lecternID', temp, '=', '@s', lecternID);
+		.at('@s')
+		.run(pack`_kill_invalid_lectern_marker`, () => {
 			execute
-				.unless.entity(`@a[predicate=${matchesLecternID}]`)
+				.unless.block('~ ~ ~', 'minecraft:lectern')
 				.run.kill('@s');
+
+			execute
+				.if.block('~ ~ ~', 'minecraft:lectern')
+				.run(pack`_kill_lectern_marker_without_player`, () => {
+					scoreboard.players.operation('$lecternID', temp, '=', '@s', lecternID);
+					execute
+						.unless.entity(`@a[predicate=${matchesLecternID}]`)
+						.run.kill('@s');
+				});
 		});
 });
