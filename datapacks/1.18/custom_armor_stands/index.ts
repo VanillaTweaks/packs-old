@@ -27,11 +27,10 @@ setMetaAdvancements({
 NBTRecipe(pack, {
 	// TODO: Remove type assertion.
 	type: 'minecraft:crafting_shapeless' as 'crafting_shapeless',
-	ingredients: [{
-		item: 'minecraft:book'
-	}, {
-		item: 'minecraft:armor_stand'
-	}],
+	ingredients: [
+		{ item: 'minecraft:book' },
+		{ item: 'minecraft:armor_stand' }
+	],
 	result: {
 		item: armorStandBook
 	}
