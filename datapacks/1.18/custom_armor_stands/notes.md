@@ -6,6 +6,7 @@
 - compiling the book pages based on book data & properties of selected armor stand
 - compiling the book lore based on clipboard/macro
 - apply operations from storage onto armor stand
+- potentially handle clicking a lectern through another lectern
 
 ```json
 // This is an example of the pack's NBT storage, for developmental use.

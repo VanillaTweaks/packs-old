@@ -1,4 +1,4 @@
-import { Advancement, MCFunction, NBT, execute, summon, scoreboard } from 'sandstone';
+import { Advancement, MCFunction, NBT, execute, summon, scoreboard, advancement, particle } from 'sandstone';
 import pack from 'lib/pack';
 import checkLoadStatus from 'lib/datapacks/lanternLoad/checkLoadStatus';
 import temp from 'lib/datapacks/temp';
@@ -11,7 +11,7 @@ import lecternID from './lecternID';
 
 const $lastLecternID = lecternID('$last_value');
 
-Advancement(pack`use_lectern`, {
+const useLecternAdvancement = Advancement(pack`use_lectern`, {
 	criteria: {
 		requirement: {
 			trigger: 'minecraft:item_used_on_block',
@@ -37,6 +37,8 @@ Advancement(pack`use_lectern`, {
 	},
 	rewards: {
 		function: MCFunction(pack`_use_lectern`, () => {
+			advancement.revoke('@s').only(useLecternAdvancement);
+
 			// When a player uses a lectern, we know they are no longer using a book in their hand.
 			scoreboard.players.reset('@s', useBook);
 
@@ -44,27 +46,29 @@ Advancement(pack`use_lectern`, {
 			const $steps = temp('$steps');
 			scoreboard.players.set($steps, 0);
 
-			MCFunction(pack`_find_lectern`, function () {
-				execute
-					.if.block('~ ~ ~', 'minecraft:lectern')
-					.run(pack`_mark_lectern`, () => {
-						// Mark the lectern so it can be associated with the player who clicked it via a score.
+			execute
+				.anchored('eyes')
+				.run(MCFunction(pack`_find_lectern`, function () {
+					execute
+						.if.block('~ ~ ~', 'minecraft:lectern')
+						.run(pack`_mark_lectern`, () => {
+							// Mark the lectern so it can be associated with the player who clicked it via a score.
 
-						summon('minecraft:marker', '~ ~ ~', { Tags: [pack.lectern, pack.new] });
+							summon('minecraft:marker', '~ ~ ~', { Tags: [pack.lectern, pack.new] });
 
-						execute
-							.store.result.score(`@e[tag=${pack.new},distance=..0.01,limit=1]`, lecternID)
-							.run.scoreboard.players.add($lastLecternID, 1);
-						scoreboard.players.operation('@s', lecternID, '=', $lastLecternID);
-					});
+							execute
+								.store.result.score(`@e[tag=${pack.new},distance=..0.01,limit=1]`, lecternID)
+								.run.scoreboard.players.add($lastLecternID, 1);
+							scoreboard.players.operation('@s', lecternID, '=', $lastLecternID);
+						});
 
-				execute
-					.anchored('eyes')
-					.positioned('^ ^ ^0.01')
-					// TODO: Remove `as any`.
-					.if($steps.matches('..500' as any))
-					.run(this);
-			})();
+					execute
+						.unless.block('~ ~ ~', 'minecraft:lectern')
+						.positioned('^ ^ ^0.01')
+						// TODO: Remove `as any`.
+						.if($steps.matches('..500' as any))
+						.run(this);
+				}));
 		})
 	}
 });
