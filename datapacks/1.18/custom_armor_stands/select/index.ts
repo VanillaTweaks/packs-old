@@ -21,26 +21,20 @@ const select = MCFunction(pack`_select`, () => {
 
 	effect.give('@s', 'minecraft:glowing', 4, 0, true);
 
-	const posComponents: JSONTextComponent[] = [];
-
-	for (const posIndex of [0, 1, 2]) {
-		const $pos = temp(`$pos.${posIndex}`);
-
-		execute
-			.store.result.score($pos)
-			.run.data.get.entity('@s', `Pos[${posIndex}]`);
-
-		posComponents.push(
-			// TODO: Set `score` to `$pos` instead.
-			{ score: { name: $pos.target, objective: $pos.objective.toString() }, color: 'yellow' }
-		);
-	}
-
 	tellraw(`@a[tag=${pack.triggerer},limit=1]`, minify([
 		{ text: 'Selected the armor stand at ', color: 'gold' },
 		{ text: '(', color: 'yellow' },
 		join(
-			posComponents,
+			[0, 1, 2].map(posIndex => {
+				const $pos = temp(`$pos.${posIndex}`);
+
+				execute
+					.store.result.score($pos)
+					.run.data.get.entity('@s', `Pos[${posIndex}]`);
+
+				// TODO: Replace `{ name: $pos.target, objective: $pos.objective.toString() }` with `$pos`.
+				return { score: { name: $pos.target, objective: $pos.objective.toString() }, color: 'yellow' };
+			}),
 			{ text: ', ', color: 'yellow' }
 		),
 		{ text: ')', color: 'yellow' },

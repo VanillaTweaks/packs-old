@@ -50,12 +50,12 @@ onTrigger(pack, pack.NAMESPACE, pack.TITLE, triggerObjective => {
 	execute
 		// TODO: Remove `as any`.
 		.if($trigger.matches('100..' as any))
-		.run(pack`trigger/store_book`, () => {
+		.run(pack`trigger/100_or_more`, () => {
 			copyBookToStorage();
 
 			execute
 				.unless($bookLocation.matches(BookLocation.NOT_FOUND))
-				.run(pack`trigger/main`, () => {
+				.run(pack`trigger/with_book`, () => {
 					// Tag the player so they can still be selected when executing as something else (e.g. an armor stand).
 					tag('@s').add(pack.triggerer);
 
