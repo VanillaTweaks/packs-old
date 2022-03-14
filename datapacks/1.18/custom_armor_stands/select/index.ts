@@ -1,7 +1,6 @@
 import temp from 'lib/datapacks/temp';
 import pack from 'lib/pack';
 import { join, minify } from 'minecraft-text-components';
-import type { JSONTextComponent } from 'sandstone';
 import { effect, execute, MCFunction, tellraw } from 'sandstone';
 import armorStandID from './armorStandID';
 
