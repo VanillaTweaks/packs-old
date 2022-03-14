@@ -1,7 +1,7 @@
 import temp from 'lib/datapacks/temp';
 import pack from 'lib/pack';
 import { data, execute, MCFunction, scoreboard, tag } from 'sandstone';
-import { $bookInHand, currentLectern } from '.';
+import { $bookLocation, BookLocation, currentLectern } from '.';
 import { bookInMainhand, bookInOffhand } from '../armorStandBook/predicates';
 import lecternID from '../lectern/lecternID';
 import matchesLecternID from '../lectern/matchesLecternID';
@@ -12,22 +12,26 @@ import matchesLecternID from '../lectern/matchesLecternID';
  * ⚠️ `copyStorageToBook` must always be called within the same tick after calling this, unless the book is not found.
  */
 const copyBookToStorage = MCFunction(pack`_copy_book_to_storage`, () => {
-	scoreboard.players.set($bookInHand, 0);
+	scoreboard.players.set($bookLocation, BookLocation.NOT_FOUND);
 
 	execute
 		// TODO: Remove `as any`.
 		.if.score('@s', lecternID, 'matches', '1..' as any)
-		.run(pack`_copy_lectern_book_to_storage`, () => {
+		.run(pack`_find_lectern_book_to_copy_to_storage`, () => {
 			scoreboard.players.operation('$lecternID', temp, '=', '@s', lecternID);
 			tag(`@e[type=minecraft:marker,tag=${pack.lectern},predicate=${matchesLecternID}]`)
 				.add(pack.current_lectern);
 
 			execute
 				.at(currentLectern)
-				.run.data.modify.storage(pack`main`, 'book').set.from.block('~ ~ ~', 'Book.tag');
+				.run(pack`_copy_lectern_book_to_storage`, () => {
+					data.modify.storage(pack`main`, 'book').set.from.block('~ ~ ~', 'Book.tag');
+
+					scoreboard.players.set($bookLocation, BookLocation.LECTERN);
+				});
 
 			execute
-				.unless.entity(currentLectern)
+				.if($bookLocation.matches(BookLocation.NOT_FOUND))
 				.run.tellraw('@s', {
 					text: 'The lectern you used could not be found.',
 					color: 'red'
@@ -47,21 +51,21 @@ const copyBookToStorage = MCFunction(pack`_copy_book_to_storage`, () => {
 				.run(pack`_copy_mainhand_book_to_storage`, () => {
 					data.modify.storage(pack`main`, 'book').set.from.entity('@s', 'SelectedItem.tag');
 
-					scoreboard.players.set($bookInHand, 1);
+					scoreboard.players.set($bookLocation, BookLocation.MAINHAND);
 				});
 
 			execute
-				.if($bookInHand.matches(0))
+				.if($bookLocation.matches(BookLocation.NOT_FOUND))
 				// TODO: Remove `as any`.
 				.if.predicate(bookInOffhand as any)
 				.run(pack`_copy_offhand_book_to_storage`, () => {
 					data.modify.storage(pack`main`, 'book').set.from.entity('@s', 'Inventory[{Slot:-106b}].tag');
 
-					scoreboard.players.set($bookInHand, 2);
+					scoreboard.players.set($bookLocation, BookLocation.OFFHAND);
 				});
 
 			execute
-				.if($bookInHand.matches(0))
+				.if($bookLocation.matches(BookLocation.NOT_FOUND))
 				.run.tellraw('@s', {
 					text: 'The book you used could not be found.',
 					color: 'red'

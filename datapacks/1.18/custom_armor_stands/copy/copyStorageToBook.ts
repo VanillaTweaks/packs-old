@@ -1,6 +1,6 @@
 import pack from 'lib/pack';
 import { data, execute, ItemModifier, MCFunction, tag } from 'sandstone';
-import { $bookInHand, currentLectern } from '.';
+import { $bookLocation, BookLocation, currentLectern } from '.';
 
 const copyStorageToBookItemModifier = ItemModifier(pack`copy_storage_to_book`, {
 	// TODO: Remove `as 'copy_nbt'`.
@@ -25,7 +25,6 @@ const copyStorageToBookItemModifier = ItemModifier(pack`copy_storage_to_book`, {
  */
 const copyStorageToBook = MCFunction(pack`_copy_storage_to_book`, () => {
 	execute
-		.if($bookInHand.matches(0))
 		// Note: If no lectern marker was found by `copyBookToStorage`, then `currentLectern` won't target anything.
 		.as(currentLectern)
 		.at('@s')
@@ -36,11 +35,11 @@ const copyStorageToBook = MCFunction(pack`_copy_storage_to_book`, () => {
 		});
 
 	execute
-		.if($bookInHand.matches(1))
+		.if($bookLocation.matches(BookLocation.MAINHAND))
 		.run.item.modify.entity('@s', 'weapon.mainhand', copyStorageToBookItemModifier);
 
 	execute
-		.if($bookInHand.matches(2))
+		.if($bookLocation.matches(BookLocation.OFFHAND))
 		.run.item.modify.entity('@s', 'weapon.offhand', copyStorageToBookItemModifier);
 });
 

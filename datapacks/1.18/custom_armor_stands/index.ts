@@ -4,6 +4,9 @@ import setMetaAdvancements from 'lib/datapacks/setMetaAdvancements';
 import setConfigFunction from 'lib/datapacks/setConfigFunction';
 import armorStandBook from './armorStandBook';
 import NBTRecipe from 'lib/datapacks/NBTRecipe';
+import { execute } from 'sandstone';
+import copyBookToStorage from './copy/copyBookToStorage';
+import copyStorageToBook from './copy/copyStorageToBook';
 
 setMetaAdvancements({
 	root: {
@@ -35,6 +38,23 @@ NBTRecipe(pack, {
 onTrigger(pack, pack.NAMESPACE, pack.TITLE, triggerObjective => {
 	const $trigger = triggerObjective('@s');
 
+	execute
+		.if($trigger.matches(1))
+		.run.tellraw('@s', {
+			text: 'For help with Custom Armor Stands, see the Vanilla Tweaks advancement tab.',
+			color: 'gold'
+		});
+
+	execute
+		// TODO: Remove `as any`.
+		.if($trigger.matches('100..' as any))
+		.run(pack`trigger/main`, () => {
+			copyBookToStorage();
+
+
+
+			copyStorageToBook();
+		});
 });
 
 setConfigFunction(pack, () => {
