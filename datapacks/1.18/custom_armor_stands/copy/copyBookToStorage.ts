@@ -8,6 +8,7 @@ import matchesLecternID from '../lectern/matchesLecternID';
 import vt from 'lib/vt';
 import type { ItemCriterion } from 'sandstone/arguments/resources/criteria';
 import armorStandBook from '../armorStandBook';
+import useBook from '../useBook';
 
 const armorStandBookCriterion: ItemCriterion = {
 	items: ['minecraft:written_book'],
@@ -27,6 +28,9 @@ const armorStandBookCriterion: ItemCriterion = {
  */
 const copyBookToStorage = MCFunction(pack`_copy_book_to_storage`, () => {
 	scoreboard.players.set($bookLocation, BookLocation.NOT_FOUND);
+
+	// If a player last used a book in their hand, we know they didn't use a lectern.
+	scoreboard.players.reset(`@a[scores={${useBook}=1..}]`, lecternID);
 
 	execute
 		// TODO: Remove `as any`.
