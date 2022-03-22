@@ -7,7 +7,7 @@ import lecternID from '../lectern/lecternID';
 import matchesLecternID from '../lectern/matchesLecternID';
 import vt from 'lib/vt';
 import type { ItemCriterion } from 'sandstone/arguments/resources/criteria';
-import armorStandBook from '../armorStandBook';
+import armorStandBook from '../pages';
 import useBook from '../useBook';
 
 const armorStandBookCriterion: ItemCriterion = {

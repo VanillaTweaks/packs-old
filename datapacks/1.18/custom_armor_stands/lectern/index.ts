@@ -1,6 +1,6 @@
 import vt from 'lib/vt';
 import { NBT } from 'sandstone';
-import armorStandBook from '../armorStandBook';
+import armorStandBook from '../pages';
 
 export const lecternWithArmorStandBookSNBT = NBT.stringify({
 	Book: {

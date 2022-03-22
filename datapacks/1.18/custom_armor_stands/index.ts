@@ -2,7 +2,7 @@ import onTrigger from 'lib/datapacks/pseudoEvents/onTrigger';
 import pack from 'lib/pack';
 import setMetaAdvancements from 'lib/datapacks/setMetaAdvancements';
 import setConfigFunction from 'lib/datapacks/setConfigFunction';
-import armorStandBook from './armorStandBook';
+import armorStandBook from './pages';
 import NBTRecipe from 'lib/datapacks/NBTRecipe';
 import { execute, tag } from 'sandstone';
 import copyBookToStorage from './copy/copyBookToStorage';
