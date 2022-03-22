@@ -6,7 +6,7 @@ import armorStandID from './armorStandID';
 
 const $lastArmorStandID = armorStandID('$last_value');
 
-/** Selects the armor stand `@s` by assigning it an `armorStandID` score (or using the one it has already) and setting that ID on the book in storage. */
+/** Selects the armor stand `@s` by assigning it an `armorStandID` score (or using the one it already has) and setting that ID on the book in storage. */
 const select = MCFunction(pack`_select`, () => {
 	execute
 		// TODO: Remove `as any`.
